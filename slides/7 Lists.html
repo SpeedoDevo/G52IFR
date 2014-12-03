@@ -1,0 +1,883 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1"/>
+<link href="coqdoc.css" rel="stylesheet" type="text/css"/>
+<title>Lists</title>
+</head>
+
+<body>
+
+<div id="page">
+
+<div id="header">
+</div>
+
+<div id="main">
+
+<h1 class="libtitle">Library Lists</h1>
+
+<div class="code">
+
+<br/>
+</div>
+
+<div class="doc">
+<H0>Lists</H0> 
+</div>
+<div class="code">
+<span class="id" type="keyword">Section</span> <span class="id" type="var">Lists</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Lists are the ubiqitous datastructure in functional programming, as you should know from Haskell.
+    Given a set <span class="inlinecode"><span class="id" type="var">A</span></span> we define <span class="inlinecode"><span class="id" type="var">list</span></span> <span class="inlinecode"><span class="id" type="var">A</span></span> to be the set of finite sequences of elements of <span class="inlinecode"><span class="id" type="var">A</span></span>. E.g.
+    the sequence <span class="inlinecode">[1,2,3]</span> is an element of <span class="inlinecode"><span class="id" type="var">list</span></span> <span class="inlinecode"><span class="id" type="var">nat</span></span>. We can iterate this process and construct
+    lists of lists, e.g. <span class="inlinecode">[[1,2],[3]]</span> is an element of <span class="inlinecode"><span class="id" type="var">list</span></span> <span class="inlinecode">(<span class="id" type="var">list</span></span> <span class="inlinecode"><span class="id" type="var">nat</span>)</span>. However lists are uniform, that 
+    is all elements need to have the same type so we cannot form a list like <span class="inlinecode">[1,<span class="id" type="var">true</span>]</span> or <span class="inlinecode">[[1,2],3]</span>.
+
+<div class="paragraph"> </div>
+
+    We are going to formally introduce lists using an <i>inductive definition</i> which has a lot in 
+    common with the definition of the natural numbers in the previous chapter. And indeed the theory of lists has a 
+    lot in common with the theory of the natural number, so we can call this <i>list arithmetic</i>.
+    
+<div class="paragraph"> </div>
+
+<a name="lab37"></a><h1 class="section">Arithmetic for lists</h1>
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" type="keyword">Set Implicit Arguments</span>.<br/>
+<span class="id" type="keyword">Load</span> <span class="id" type="var">Arith</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+We define lists <i>inductively</i>. Given a set <span class="inlinecode"><span class="id" type="var">A</span></span> a list over A is either
+   the empty list <span class="inlinecode"><span class="id" type="var">nil</span></span> or it is the result of putting an element <span class="inlinecode"><span class="id" type="var">a</span></span> in fornt 
+   of an already constructed list <span class="inlinecode"><span class="id" type="var">l</span></span>, we write <span class="inlinecode"><span class="id" type="var">cons</span></span> <span class="inlinecode"><span class="id" type="var">a</span></span> <span class="inlinecode"><span class="id" type="var">l</span></span>. 
+   <span class="inlinecode"><span class="id" type="var">nil</span></span> and <span class="inlinecode"><span class="id" type="var">cons</span></span> are <i>constructors</i> of <span class="inlinecode"><span class="id" type="var">list</span></span> <span class="inlinecode"><span class="id" type="var">A</span></span>, as <span class="inlinecode">0</span> and <span class="inlinecode"><span class="id" type="var">S</span></span> (successor) were
+   constructors of <span class="inlinecode"><span class="id" type="var">nat</span></span>. 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" type="keyword">Inductive</span> <span class="id" type="var">list</span> (<span class="id" type="var">A</span> : <span class="id" type="keyword">Set</span>) : <span class="id" type="keyword">Set</span> :=<br/>
+&nbsp;| <span class="id" type="var">nil</span> : <span class="id" type="var">list</span> <span class="id" type="var">A</span><br/>
+&nbsp;| <span class="id" type="var">cons</span> : <span class="id" type="var">A</span> -&gt; <span class="id" type="var">list</span> <span class="id" type="var">A</span> -&gt; <span class="id" type="var">list</span> <span class="id" type="var">A</span>.<br/>
+
+<br/>
+<span class="id" type="keyword">Implicit Arguments</span> <span class="id" type="var">nil</span> [<span class="id" type="var">A</span>].<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+In functional programming <span class="inlinecode"><span class="id" type="var">cons</span></span> is usually written as an infix operation. In Haskell this is
+   <span class="inlinecode">:</span> but since this symbol is used for membership in Coq, we use <span class="inlinecode">::</span> instead. Hence the meaning of <span class="inlinecode">:</span> and <span class="inlinecode">::</span> in Coq and Haskell are exactly swapped.
+</div>
+<div class="code">
+
+<br/>
+<span class="id" type="keyword">Infix</span> "::" := <span class="id" type="var">cons</span> (<span class="id" type="tactic">at</span> <span class="id" type="keyword">level</span> 60, <span class="id" type="tactic">right</span> <span class="id" type="keyword">associativity</span>).<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+As an example we can define the list <span class="inlinecode">[2,3]</span> 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" type="keyword">Definition</span> <span class="id" type="var">l23</span> : <span class="id" type="var">list</span> <span class="id" type="var">nat</span><br/>
+&nbsp;&nbsp;:= 2 :: 3 :: <span class="id" type="var">nil</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+And by consing another <span class="inlinecode">1</span> in front we obtain <span class="inlinecode">[1,2,3]</span>. 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" type="keyword">Definition</span> <span class="id" type="var">l123</span> : <span class="id" type="var">list</span> <span class="id" type="var">nat</span><br/>
+&nbsp;&nbsp;:= 1 :: <span class="id" type="var">l23</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+We are going to prove some basic theorems about lists following the development 
+   for natural numbers. There we showed that no successor of a natural number is <span class="inlinecode">0</span>
+   (<span class="inlinecode"><span class="id" type="var">peano7</span></span>), here we show that no cons list is equal to the empty list.
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" type="keyword">Theorem</span> <span class="id" type="var">nil_cons</span> : <span class="id" type="keyword">forall</span> (<span class="id" type="var">A</span>:<span class="id" type="keyword">Set</span>)(<span class="id" type="var">x</span>:<span class="id" type="var">A</span>) (<span class="id" type="var">l</span>:<span class="id" type="var">list</span> <span class="id" type="var">A</span>), <br/>
+&nbsp;&nbsp;<span class="id" type="var">nil</span> &lt;&gt; <span class="id" type="var">x</span> :: <span class="id" type="var">l</span>.<br/>
+<span class="id" type="tactic">intros</span>.<br/>
+<span class="id" type="tactic">discriminate</span>.<br/>
+<span class="id" type="keyword">Qed</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+The next peano axiom <span class="inlinecode"><span class="id" type="var">peano8</span></span> expressed the injectivity of the successor.
+   We have a similar statement for lists: if two cons lists are equal then
+   their tail is equal. To prove this we define <span class="inlinecode"><span class="id" type="var">tail</span></span> as we had define predecessor
+   for numbers.  
+</div>
+<div class="code">
+
+<br/>
+<span class="id" type="keyword">Definition</span> <span class="id" type="var">tail</span> (<span class="id" type="var">A</span>:<span class="id" type="keyword">Set</span>)(<span class="id" type="var">l</span> : <span class="id" type="var">list</span> <span class="id" type="var">A</span>) : <span class="id" type="var">list</span> <span class="id" type="var">A</span> :=<br/>
+&nbsp;&nbsp;<span class="id" type="keyword">match</span> <span class="id" type="var">l</span> <span class="id" type="keyword">with</span><br/>
+&nbsp;&nbsp;| <span class="id" type="var">nil</span> =&gt; <span class="id" type="var">nil</span><br/>
+&nbsp;&nbsp;| <span class="id" type="var">cons</span> <span class="id" type="var">a</span> <span class="id" type="var">l</span> =&gt; <span class="id" type="var">l</span><br/>
+&nbsp;&nbsp;<span class="id" type="keyword">end</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+The proof follows exactly the one for <span class="inlinecode"><span class="id" type="var">peano8</span></span>. 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" type="keyword">Theorem</span> <span class="id" type="var">cons_injective</span> : <br/>
+&nbsp;&nbsp;<span class="id" type="keyword">forall</span> (<span class="id" type="var">A</span> : <span class="id" type="keyword">Set</span>)(<span class="id" type="var">a</span> <span class="id" type="var">b</span> : <span class="id" type="var">A</span>)(<span class="id" type="var">l</span> <span class="id" type="var">m</span> : <span class="id" type="var">list</span> <span class="id" type="var">A</span>),<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" type="var">a</span> :: <span class="id" type="var">l</span> = <span class="id" type="var">b</span> :: <span class="id" type="var">m</span> -&gt; <span class="id" type="var">l</span> = <span class="id" type="var">m</span>.<br/>
+<span class="id" type="tactic">intros</span> <span class="id" type="var">A</span> <span class="id" type="var">a</span> <span class="id" type="var">b</span> <span class="id" type="var">l</span> <span class="id" type="var">m</span> <span class="id" type="var">h</span>.<br/>
+<span class="id" type="tactic">fold</span> (<span class="id" type="var">tail</span> (<span class="id" type="var">cons</span> <span class="id" type="var">a</span> <span class="id" type="var">l</span>)).<br/>
+<span class="id" type="tactic">rewrite</span> <span class="id" type="var">h</span>.<br/>
+<span class="id" type="tactic">unfold</span> <span class="id" type="var">tail</span>.<br/>
+<span class="id" type="tactic">reflexivity</span>.<br/>
+<span class="id" type="keyword">Qed</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+However, unlike <span class="inlinecode"><span class="id" type="var">S</span></span>, <span class="inlinecode"><span class="id" type="var">cons</span></span> has another argument, the head of the list. We can also show that it is
+   injective in this argument, that is if two cons lists are equal then their head is equal.
+
+<div class="paragraph"> </div>
+
+   There is a slight problem in defining <span class="inlinecode"><span class="id" type="var">head</span></span>, we cannot (as in Haskell) define <span class="inlinecode"><span class="id" type="var">head</span></span> <span class="inlinecode">:</span> <span class="inlinecode"><span class="id" type="var">list</span></span> <span class="inlinecode"><span class="id" type="var">A</span></span> <span class="inlinecode">-&gt;</span> <span class="inlinecode"><span class="id" type="var">A</span></span>,
+   because it could be that <span class="inlinecode"><span class="id" type="var">A</span></span> is empty but there is still <span class="inlinecode"><span class="id" type="var">nil</span></span> <span class="inlinecode">:</span> <span class="inlinecode"><span class="id" type="var">list</span></span> <span class="inlinecode"><span class="id" type="var">A</span></span> and what should be the head
+   of this list?
+
+<div class="paragraph"> </div>
+
+   To overcome this issue we define <span class="inlinecode"><span class="id" type="var">head</span></span> <span class="inlinecode">:</span> <span class="inlinecode"><span class="id" type="var">A</span></span> <span class="inlinecode">-&gt;</span> <span class="inlinecode"><span class="id" type="var">list</span></span> <span class="inlinecode"><span class="id" type="var">A</span></span> <span class="inlinecode">-&gt;</span> <span class="inlinecode"><span class="id" type="var">A</span></span> where the first argument is a <i>dummy argument</i>
+   which is returned for the empty list.
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" type="keyword">Definition</span> <span class="id" type="var">head</span> (<span class="id" type="var">A</span> : <span class="id" type="keyword">Set</span>)(<span class="id" type="var">x</span> : <span class="id" type="var">A</span>)(<span class="id" type="var">l</span> : <span class="id" type="var">list</span> <span class="id" type="var">A</span>) : <span class="id" type="var">A</span> :=<br/>
+&nbsp;&nbsp;<span class="id" type="keyword">match</span> <span class="id" type="var">l</span> <span class="id" type="keyword">with</span> <br/>
+&nbsp;&nbsp;| <span class="id" type="var">nil</span> =&gt; <span class="id" type="var">x</span><br/>
+&nbsp;&nbsp;| <span class="id" type="var">a</span> :: <span class="id" type="var">m</span> =&gt; <span class="id" type="var">a</span><br/>
+&nbsp;&nbsp;<span class="id" type="keyword">end</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Once we have defined <span class="inlinecode"><span class="id" type="var">head</span></span> the proof of injectivity is rather straightforward. 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" type="keyword">Theorem</span> <span class="id" type="var">cons_injective'</span> : <br/>
+&nbsp;&nbsp;<span class="id" type="keyword">forall</span> (<span class="id" type="var">A</span> : <span class="id" type="keyword">Set</span>)(<span class="id" type="var">a</span> <span class="id" type="var">b</span> : <span class="id" type="var">A</span>)(<span class="id" type="var">l</span> <span class="id" type="var">m</span> : <span class="id" type="var">list</span> <span class="id" type="var">A</span>),<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" type="var">a</span> :: <span class="id" type="var">l</span> = <span class="id" type="var">b</span> :: <span class="id" type="var">m</span> -&gt; <span class="id" type="var">a</span> = <span class="id" type="var">b</span>.<br/>
+<span class="id" type="tactic">intros</span> <span class="id" type="var">A</span> <span class="id" type="var">a</span> <span class="id" type="var">b</span> <span class="id" type="var">l</span> <span class="id" type="var">m</span> <span class="id" type="var">h</span>.<br/>
+<span class="id" type="tactic">fold</span> (<span class="id" type="var">head</span> <span class="id" type="var">a</span> (<span class="id" type="var">a</span> :: <span class="id" type="var">l</span>)).<br/>
+<span class="id" type="tactic">rewrite</span> <span class="id" type="var">h</span>.<br/>
+<span class="id" type="tactic">unfold</span> <span class="id" type="var">head</span>.<br/>
+<span class="id" type="tactic">reflexivity</span>.<br/>
+<span class="id" type="keyword">Qed</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+As for natural numbers we have also an induction principle for lists: if a property
+   is true for the empty list, and if it holds for a list <span class="inlinecode"><span class="id" type="var">l</span></span> then it also holds
+   for <span class="inlinecode"><span class="id" type="var">cons</span></span> <span class="inlinecode"><span class="id" type="var">a</span></span> <span class="inlinecode"><span class="id" type="var">l</span></span> for any <span class="inlinecode"><span class="id" type="var">a</span></span>, then it holds for all lists. In Coq we use the same
+   tactic <span class="inlinecode"><span class="id" type="tactic">induction</span></span> to perform list indiuction. 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" type="keyword">Theorem</span> <span class="id" type="var">ind_list</span> : <span class="id" type="keyword">forall</span> (<span class="id" type="var">A</span> : <span class="id" type="keyword">Set</span>)(<span class="id" type="var">P</span> : <span class="id" type="var">list</span> <span class="id" type="var">A</span> -&gt; <span class="id" type="keyword">Prop</span>),<br/>
+&nbsp;&nbsp;<span class="id" type="var">P</span> <span class="id" type="var">nil</span><br/>
+&nbsp;&nbsp;-&gt; (<span class="id" type="keyword">forall</span> (<span class="id" type="var">a</span>:<span class="id" type="var">A</span>)(<span class="id" type="var">l</span> : <span class="id" type="var">list</span> <span class="id" type="var">A</span>), <span class="id" type="var">P</span> <span class="id" type="var">l</span> -&gt; <span class="id" type="var">P</span> (<span class="id" type="var">a</span> :: <span class="id" type="var">l</span>))<br/>
+&nbsp;&nbsp;-&gt; <span class="id" type="keyword">forall</span> <span class="id" type="var">l</span> : <span class="id" type="var">list</span> <span class="id" type="var">A</span>, <span class="id" type="var">P</span> <span class="id" type="var">l</span>.<br/>
+<span class="id" type="tactic">intros</span> <span class="id" type="var">A</span> <span class="id" type="var">P</span> <span class="id" type="var">hnil</span> <span class="id" type="var">hcons</span> <span class="id" type="var">l</span>.<br/>
+<span class="id" type="tactic">induction</span> <span class="id" type="var">l</span>.<br/>
+<span class="id" type="tactic">exact</span> <span class="id" type="var">hnil</span>.<br/>
+<span class="id" type="tactic">apply</span> <span class="id" type="var">hcons</span>.<br/>
+<span class="id" type="tactic">exact</span> <span class="id" type="var">IHl</span>.<br/>
+<span class="id" type="keyword">Qed</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab38"></a><h1 class="section">Lists form a monoid</h1>
+
+<div class="paragraph"> </div>
+
+ Previously, we defined addition and multiplication for numbers. There is a
+   very useful operation resembling addition for lists: append. We define 
+   <span class="inlinecode"><span class="id" type="var">app</span></span> by <i>structural recursion</i> over lists.
+
+<div class="paragraph"> </div>
+
+   The idea is that to append a list to the empty list is just that list, and 
+   to append a list to a cons list has the same head as the list and the tail 
+   is obtained by recursively appending the list to the tail. 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" type="keyword">Fixpoint</span> <span class="id" type="var">app</span> (<span class="id" type="var">A</span> : <span class="id" type="keyword">Set</span>)(<span class="id" type="var">l</span> <span class="id" type="var">m</span>:<span class="id" type="var">list</span> <span class="id" type="var">A</span>) : <span class="id" type="var">list</span> <span class="id" type="var">A</span> :=<br/>
+&nbsp;&nbsp;<span class="id" type="keyword">match</span> <span class="id" type="var">l</span> <span class="id" type="keyword">with</span><br/>
+&nbsp;&nbsp;| <span class="id" type="var">nil</span> =&gt; <span class="id" type="var">m</span><br/>
+&nbsp;&nbsp;| <span class="id" type="var">a</span> :: <span class="id" type="var">l'</span> =&gt; <span class="id" type="var">a</span> :: (<span class="id" type="var">app</span> <span class="id" type="var">l'</span> <span class="id" type="var">m</span>)<br/>
+&nbsp;&nbsp;<span class="id" type="keyword">end</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+As in Haskell we use the inifx operation <span class="inlinecode">++</span> to denote append. 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" type="keyword">Infix</span> "++" := <span class="id" type="var">app</span> (<span class="id" type="tactic">right</span> <span class="id" type="keyword">associativity</span>, <span class="id" type="tactic">at</span> <span class="id" type="keyword">level</span> 60).<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+As an example we construct the list <span class="inlinecode">[2,3,1,2,3]</span> by appending 
+   <span class="inlinecode">[2,3]</span> and <span class="inlinecode">[1,2,3]</span>. 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" type="keyword">Eval</span> <span class="id" type="tactic">compute</span> <span class="id" type="keyword">in</span> (<span class="id" type="var">l23</span> ++ <span class="id" type="var">l123</span>).<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+We show that <span class="inlinecode"><span class="id" type="var">list</span></span> <span class="inlinecode"><span class="id" type="var">A</span></span> with <span class="inlinecode">++</span> and <span class="inlinecode"><span class="id" type="var">nil</span></span> forms a monoid. Indeed the proofs are basically the same as for (<span class="inlinecode"><span class="id" type="var">nat</span></span>,<span class="inlinecode">+</span>,0). 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" type="keyword">Theorem</span> <span class="id" type="var">app_nil_l</span> : <span class="id" type="keyword">forall</span> (<span class="id" type="var">A</span> : <span class="id" type="keyword">Set</span>)(<span class="id" type="var">l</span> : <span class="id" type="var">list</span> <span class="id" type="var">A</span>),<br/>
+&nbsp;&nbsp;<span class="id" type="var">nil</span> ++ <span class="id" type="var">l</span> = <span class="id" type="var">l</span>.<br/>
+<span class="id" type="tactic">intros</span> <span class="id" type="var">A</span> <span class="id" type="var">l</span>.<br/>
+<span class="id" type="tactic">reflexivity</span>.<br/>
+<span class="id" type="keyword">Qed</span>.<br/>
+
+<br/>
+<span class="id" type="keyword">Theorem</span> <span class="id" type="var">app_l_nil</span> :  <span class="id" type="keyword">forall</span> (<span class="id" type="var">A</span> : <span class="id" type="keyword">Set</span>)(<span class="id" type="var">l</span> : <span class="id" type="var">list</span> <span class="id" type="var">A</span>),<br/>
+&nbsp;&nbsp;<span class="id" type="var">l</span> ++ <span class="id" type="var">nil</span> = <span class="id" type="var">l</span>.<br/>
+<span class="id" type="tactic">intros</span> <span class="id" type="var">A</span> <span class="id" type="var">l</span>.<br/>
+<span class="id" type="tactic">induction</span> <span class="id" type="var">l</span>.<br/>
+<span class="id" type="tactic">reflexivity</span>.<br/>
+<span class="id" type="tactic">simpl</span>.<br/>
+<span class="id" type="tactic">rewrite</span> <span class="id" type="var">IHl</span>.<br/>
+<span class="id" type="tactic">reflexivity</span>.<br/>
+<span class="id" type="keyword">Qed</span>.<br/>
+
+<br/>
+<span class="id" type="keyword">Theorem</span> <span class="id" type="var">assoc_app</span> : <span class="id" type="keyword">forall</span> (<span class="id" type="var">A</span> : <span class="id" type="keyword">Set</span>)(<span class="id" type="var">l</span> <span class="id" type="var">m</span> <span class="id" type="var">n</span> : <span class="id" type="var">list</span> <span class="id" type="var">A</span>),<br/>
+&nbsp;&nbsp;<span class="id" type="var">l</span> ++ (<span class="id" type="var">m</span> ++ <span class="id" type="var">n</span>) = (<span class="id" type="var">l</span> ++ <span class="id" type="var">m</span>) ++ <span class="id" type="var">n</span>.<br/>
+<span class="id" type="tactic">intros</span> <span class="id" type="var">A</span> <span class="id" type="var">l</span> <span class="id" type="var">m</span> <span class="id" type="var">n</span>.<br/>
+<span class="id" type="tactic">induction</span> <span class="id" type="var">l</span>.<br/>
+<span class="id" type="tactic">reflexivity</span>.<br/>
+<span class="id" type="tactic">simpl</span>.<br/>
+<span class="id" type="tactic">rewrite</span> <span class="id" type="var">IHl</span>.<br/>
+<span class="id" type="tactic">reflexivity</span>.<br/>
+<span class="id" type="keyword">Qed</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab39"></a><h1 class="section">Reverse</h1>
+
+<div class="paragraph"> </div>
+
+
+<div class="paragraph"> </div>
+
+While there are many similarities between <span class="inlinecode"><span class="id" type="var">nat</span></span> and <span class="inlinecode"><span class="id" type="var">list</span></span> <span class="inlinecode"><span class="id" type="var">A</span></span> there are important differences. Commutativity 
+<span class="inlinecode"><span class="id" type="var">l</span></span> <span class="inlinecode">++</span> <span class="inlinecode"><span class="id" type="var">m</span></span> <span class="inlinecode">=</span> <span class="inlinecode"><span class="id" type="var">m</span></span> <span class="inlinecode">++</span> <span class="inlinecode"><span class="id" type="var">l</span></span>
+does not hold (what would be a counterexample?). Hence (list A,++,nil) is an example of a non-commutative monoid. Since commutativity doesn't hold it makes sense to reverse a list (while it didn't make sense to reverse a number). 
+
+<div class="paragraph"> </div>
+
+To define reverse, we first define the operation <span class="inlinecode"><span class="id" type="var">snoc</span></span> which adds an element at the end of a given list. This operation again is defined by primitive recursion.
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" type="keyword">Fixpoint</span> <span class="id" type="var">snoc</span> (<span class="id" type="var">A</span>:<span class="id" type="keyword">Set</span>)<br/>
+&nbsp;&nbsp;(<span class="id" type="var">l</span> : <span class="id" type="var">list</span> <span class="id" type="var">A</span>)(<span class="id" type="var">a</span> : <span class="id" type="var">A</span>) {<span class="id" type="keyword">struct</span> <span class="id" type="var">l</span>} : <span class="id" type="var">list</span> <span class="id" type="var">A</span><br/>
+&nbsp;&nbsp;:= <span class="id" type="keyword">match</span> <span class="id" type="var">l</span> <span class="id" type="keyword">with</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| <span class="id" type="var">nil</span> =&gt; <span class="id" type="var">a</span> :: <span class="id" type="var">nil</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| <span class="id" type="var">b</span> :: <span class="id" type="var">m</span> =&gt; <span class="id" type="var">b</span> :: (<span class="id" type="var">snoc</span> <span class="id" type="var">m</span> <span class="id" type="var">a</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" type="keyword">end</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+There is an alternative way to define <span class="inlinecode"><span class="id" type="var">snoc</span></span> just by using <span class="inlinecode">++</span>. Can you see how? 
+<div class="paragraph"> </div>
+
+ As an example we put <span class="inlinecode">1</span> at the end of <span class="inlinecode">[2,3]</span> 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" type="keyword">Eval</span> <span class="id" type="tactic">compute</span> <span class="id" type="keyword">in</span> (<span class="id" type="var">snoc</span> <span class="id" type="var">l23</span> 1).<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Using snoc it is easy to define <span class="inlinecode"><span class="id" type="var">rev</span></span> by primitive recursion. 
+   The reverse of an empty list is the empty list. To reverse a cons
+   list, reverse its tail and then snoc the head to the end of the result.
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" type="keyword">Fixpoint</span> <span class="id" type="var">rev</span> <br/>
+&nbsp;&nbsp;(<span class="id" type="var">A</span>:<span class="id" type="keyword">Set</span>)(<span class="id" type="var">l</span> : <span class="id" type="var">list</span> <span class="id" type="var">A</span>) : <span class="id" type="var">list</span> <span class="id" type="var">A</span> :=<br/>
+&nbsp;&nbsp;<span class="id" type="keyword">match</span> <span class="id" type="var">l</span> <span class="id" type="keyword">with</span><br/>
+&nbsp;&nbsp;| <span class="id" type="var">nil</span> =&gt; <span class="id" type="var">nil</span><br/>
+&nbsp;&nbsp;| <span class="id" type="var">a</span> :: <span class="id" type="var">l'</span> =&gt; <span class="id" type="var">snoc</span> (<span class="id" type="var">rev</span> <span class="id" type="var">l'</span>) <span class="id" type="var">a</span> <br/>
+&nbsp;&nbsp;<span class="id" type="keyword">end</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+This definition of <span class="inlinecode"><span class="id" type="var">rev</span></span> is called <i>naive reverse</i> and it is rather 
+   inefficient. Can you see why? How can it be improved?
+
+<div class="paragraph"> </div>
+
+ Some examples. 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" type="keyword">Eval</span> <span class="id" type="tactic">compute</span> <span class="id" type="keyword">in</span> <span class="id" type="var">rev</span> <span class="id" type="var">l123</span>.<br/>
+<span class="id" type="keyword">Eval</span> <span class="id" type="tactic">compute</span> <span class="id" type="keyword">in</span> <span class="id" type="var">rev</span> (<span class="id" type="var">rev</span> <span class="id" type="var">l123</span>).<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+The 2nd example gives rise to a theorem about <span class="inlinecode"><span class="id" type="var">rev</span></span>,
+   namely that to reverse twice is the identity (<span class="inlinecode"><span class="id" type="var">rev</span></span> <span class="inlinecode">(<span class="id" type="var">rev</span></span> <span class="inlinecode"><span class="id" type="var">l</span>)</span> <span class="inlinecode">=</span> <span class="inlinecode"><span class="id" type="var">l</span></span>).
+
+<div class="paragraph"> </div>
+
+   To prove it we first prove a lemma about <span class="inlinecode"><span class="id" type="var">rev</span></span> and <span class="inlinecode"><span class="id" type="var">snoc</span></span>.
+   How did we discover this lemma?
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" type="keyword">Lemma</span> <span class="id" type="var">revsnoc</span> : <span class="id" type="keyword">forall</span> (<span class="id" type="var">A</span>:<span class="id" type="keyword">Set</span>)(<span class="id" type="var">l</span>:<span class="id" type="var">list</span> <span class="id" type="var">A</span>)(<span class="id" type="var">a</span> : <span class="id" type="var">A</span>),<br/>
+&nbsp;&nbsp;<span class="id" type="var">rev</span> (<span class="id" type="var">snoc</span> <span class="id" type="var">l</span> <span class="id" type="var">a</span>) = <span class="id" type="var">a</span> :: (<span class="id" type="var">rev</span> <span class="id" type="var">l</span>).<br/>
+<span class="id" type="tactic">intros</span> <span class="id" type="var">A</span> <span class="id" type="var">l</span> <span class="id" type="var">a</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+We proceed by induction over <span class="inlinecode"><span class="id" type="var">l</span></span>. 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" type="tactic">induction</span> <span class="id" type="var">l</span>.<br/>
+<span class="id" type="tactic">simpl</span>.<br/>
+<span class="id" type="tactic">reflexivity</span>.<br/>
+<span class="id" type="tactic">simpl</span>.<br/>
+<span class="id" type="tactic">rewrite</span> <span class="id" type="var">IHl</span>.<br/>
+<span class="id" type="tactic">simpl</span>.<br/>
+<span class="id" type="tactic">reflexivity</span>.<br/>
+<span class="id" type="keyword">Qed</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+And now we can prove the theorem. 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" type="keyword">Theorem</span> <span class="id" type="var">revrev</span> :  <br/>
+&nbsp;&nbsp;<span class="id" type="keyword">forall</span> (<span class="id" type="var">A</span>:<span class="id" type="keyword">Set</span>)(<span class="id" type="var">l</span>:<span class="id" type="var">list</span> <span class="id" type="var">A</span>),<span class="id" type="var">rev</span> (<span class="id" type="var">rev</span> <span class="id" type="var">l</span>) = <span class="id" type="var">l</span>.<br/>
+<span class="id" type="tactic">intros</span> <span class="id" type="var">A</span> <span class="id" type="var">l</span>.<br/>
+<span class="id" type="tactic">induction</span> <span class="id" type="var">l</span>.<br/>
+<span class="id" type="tactic">simpl</span>.<br/>
+<span class="id" type="tactic">reflexivity</span>.<br/>
+<span class="id" type="tactic">simpl</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+And now it seems that <span class="inlinecode"><span class="id" type="var">revsnoc</span></span> is exactly what we need.
+   Lucky that we proved it already. 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" type="tactic">rewrite</span> <span class="id" type="var">revsnoc</span>.<br/>
+<span class="id" type="tactic">rewrite</span> <span class="id" type="var">IHl</span>.<br/>
+<span class="id" type="tactic">reflexivity</span>.<br/>
+<span class="id" type="keyword">Qed</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab40"></a><h1 class="section">Insertion sort</h1>
+
+<div class="paragraph"> </div>
+
+
+<div class="paragraph"> </div>
+
+  Our next example is sorting: we want to sort a given lists according 
+  to an given order. E.g. the list
+
+<div class="paragraph"> </div>
+
+  <span class="inlinecode">4</span> <span class="inlinecode">::</span> <span class="inlinecode">2</span> <span class="inlinecode">::</span> <span class="inlinecode">3</span> <span class="inlinecode">::</span> <span class="inlinecode">1</span> <span class="inlinecode">::</span> <span class="inlinecode"><span class="id" type="var">nil</span></span>
+
+<div class="paragraph"> </div>
+
+  should be sorted into
+
+<div class="paragraph"> </div>
+
+  <span class="inlinecode">1</span> <span class="inlinecode">::</span> <span class="inlinecode">2</span> <span class="inlinecode">::</span> <span class="inlinecode">3</span> <span class="inlinecode">::</span> <span class="inlinecode">4</span> <span class="inlinecode">::</span> <span class="inlinecode"><span class="id" type="var">nil</span></span>
+
+<div class="paragraph"> </div>
+
+  We will implement and verify "insertion sort". To keep things simple 
+  we will sort lists of natural numbers wrt to the &lt;= order. First we
+  implement a boolean function which compares two numbers:
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" type="keyword">Fixpoint</span> <span class="id" type="var">leqb</span> (<span class="id" type="var">m</span> <span class="id" type="var">n</span> : <span class="id" type="var">nat</span>) {<span class="id" type="keyword">struct</span> <span class="id" type="var">m</span>} : <span class="id" type="var">bool</span> :=<br/>
+&nbsp;&nbsp;<span class="id" type="keyword">match</span> <span class="id" type="var">m</span> <span class="id" type="keyword">with</span><br/>
+&nbsp;&nbsp;| 0 =&gt; <span class="id" type="var">true</span><br/>
+&nbsp;&nbsp;| <span class="id" type="var">S</span> <span class="id" type="var">m</span> =&gt; <span class="id" type="keyword">match</span> <span class="id" type="var">n</span> <span class="id" type="keyword">with</span> <br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| 0 =&gt; <span class="id" type="var">false</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| <span class="id" type="var">S</span> <span class="id" type="var">n</span> =&gt; <span class="id" type="var">leqb</span> <span class="id" type="var">m</span> <span class="id" type="var">n</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" type="keyword">end</span><br/>
+&nbsp;&nbsp;<span class="id" type="keyword">end</span>.<br/>
+
+<br/>
+<span class="id" type="keyword">Eval</span> <span class="id" type="tactic">compute</span> <span class="id" type="keyword">in</span> <span class="id" type="var">leqb</span> 3 4.<br/>
+<span class="id" type="keyword">Eval</span> <span class="id" type="tactic">compute</span> <span class="id" type="keyword">in</span> <span class="id" type="var">leqb</span> 4 3.<br/>
+
+<br/>
+<span class="id" type="keyword">Notation</span> "m &lt;= n" := (<span class="id" type="var">leq</span> <span class="id" type="var">m</span> <span class="id" type="var">n</span>).<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+We just assume that <span class="inlinecode"><span class="id" type="var">leq</span></span> decided <span class="inlinecode">&lt;=</span>. I leave it as an 
+   exercise to formally prove this, i.e. to replace the axioms
+   by lemmas or theorems. 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" type="keyword">Axiom</span> <span class="id" type="var">leq1</span> : <span class="id" type="keyword">forall</span> <span class="id" type="var">m</span> <span class="id" type="var">n</span> : <span class="id" type="var">nat</span>, <span class="id" type="var">leqb</span> <span class="id" type="var">m</span> <span class="id" type="var">n</span> = <span class="id" type="var">true</span> -&gt; <span class="id" type="var">m</span> &lt;= <span class="id" type="var">n</span>.<br/>
+<span class="id" type="keyword">Axiom</span> <span class="id" type="var">leq2</span> : <span class="id" type="keyword">forall</span> <span class="id" type="var">m</span> <span class="id" type="var">n</span> : <span class="id" type="var">nat</span>,  <span class="id" type="var">m</span> &lt;= <span class="id" type="var">n</span> -&gt; <span class="id" type="var">leqb</span> <span class="id" type="var">m</span> <span class="id" type="var">n</span> = <span class="id" type="var">true</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+   The main function of insertion sort is the function insert 
+   which inserts a new element into an already sorted list:
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" type="keyword">Fixpoint</span> <span class="id" type="var">insert</span> (<span class="id" type="var">n</span>:<span class="id" type="var">nat</span>)(<span class="id" type="var">ms</span> : <span class="id" type="var">list</span> <span class="id" type="var">nat</span>) {<span class="id" type="keyword">struct</span> <span class="id" type="var">ms</span>} : <span class="id" type="var">list</span> <span class="id" type="var">nat</span> :=<br/>
+&nbsp;&nbsp;<span class="id" type="keyword">match</span> <span class="id" type="var">ms</span> <span class="id" type="keyword">with</span><br/>
+&nbsp;&nbsp;| <span class="id" type="var">nil</span> =&gt; <span class="id" type="var">n</span>::<span class="id" type="var">nil</span><br/>
+&nbsp;&nbsp;| <span class="id" type="var">m</span>::<span class="id" type="var">ms'</span> =&gt; <span class="id" type="keyword">if</span> <span class="id" type="var">leqb</span> <span class="id" type="var">n</span> <span class="id" type="var">m</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" type="keyword">then</span> <span class="id" type="var">n</span>::<span class="id" type="var">ms</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" type="keyword">else</span> <span class="id" type="var">m</span>::(<span class="id" type="var">insert</span> <span class="id" type="var">n</span> <span class="id" type="var">ms'</span>)<br/>
+&nbsp;&nbsp;<span class="id" type="keyword">end</span>.<br/>
+
+<br/>
+<span class="id" type="keyword">Eval</span> <span class="id" type="tactic">compute</span> <span class="id" type="keyword">in</span> <span class="id" type="var">insert</span> 3 (1::2::4::<span class="id" type="var">nil</span>).<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+   Now sort builds a sorted list from any list by inserting each 
+   element into the empty list.
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" type="keyword">Fixpoint</span> <span class="id" type="var">sort</span> (<span class="id" type="var">ms</span> : <span class="id" type="var">list</span> <span class="id" type="var">nat</span>) : <span class="id" type="var">list</span> <span class="id" type="var">nat</span> :=<br/>
+&nbsp;&nbsp;<span class="id" type="keyword">match</span> <span class="id" type="var">ms</span> <span class="id" type="keyword">with</span><br/>
+&nbsp;&nbsp;| <span class="id" type="var">nil</span> =&gt; <span class="id" type="var">nil</span><br/>
+&nbsp;&nbsp;| <span class="id" type="var">m</span>::<span class="id" type="var">ms'</span> =&gt; <span class="id" type="var">insert</span> <span class="id" type="var">m</span> (<span class="id" type="var">sort</span> <span class="id" type="var">ms'</span>)<br/>
+&nbsp;&nbsp;<span class="id" type="keyword">end</span>.<br/>
+
+<br/>
+<span class="id" type="keyword">Eval</span> <span class="id" type="tactic">compute</span> <span class="id" type="keyword">in</span> <span class="id" type="var">sort</span> (4::2::3::1::<span class="id" type="var">nil</span>).<br/>
+
+<br/>
+
+<br/>
+<span class="id" type="keyword">Fixpoint</span> <span class="id" type="var">Sorted</span> (<span class="id" type="var">l</span> : <span class="id" type="var">list</span> <span class="id" type="var">nat</span>) : <span class="id" type="keyword">Prop</span> :=<br/>
+&nbsp;&nbsp;<span class="id" type="keyword">match</span> <span class="id" type="var">l</span> <span class="id" type="keyword">with</span><br/>
+&nbsp;&nbsp;| <span class="id" type="var">nil</span> =&gt; <span class="id" type="var">True</span><br/>
+&nbsp;&nbsp;| <span class="id" type="var">a</span> :: <span class="id" type="var">m</span> =&gt; <span class="id" type="var">Sorted</span> <span class="id" type="var">m</span> /\ <span class="id" type="var">a</span> &lt;= <span class="id" type="var">head</span> <span class="id" type="var">a</span> <span class="id" type="var">m</span><br/>
+&nbsp;&nbsp;<span class="id" type="keyword">end</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Here is another assumption about <span class="inlinecode">&lt;=</span> I am not going to prove
+   but leave as an exercise.
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" type="keyword">Axiom</span> <span class="id" type="var">total</span> : <span class="id" type="keyword">forall</span> <span class="id" type="var">m</span> <span class="id" type="var">n</span> : <span class="id" type="var">nat</span>, <span class="id" type="var">m</span> &lt;= <span class="id" type="var">n</span> \/ <span class="id" type="var">n</span> &lt;= <span class="id" type="var">m</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Our goal is to show that <span class="inlinecode"><span class="id" type="var">insert</span></span> preserves sortedness, i.e.
+    <span class="inlinecode"><span class="id" type="var">Sorted</span></span> <span class="inlinecode"><span class="id" type="var">l</span></span> <span class="inlinecode">-&gt;</span> <span class="inlinecode"><span class="id" type="var">Sorted</span></span> <span class="inlinecode">(<span class="id" type="var">insert</span></span> <span class="inlinecode"><span class="id" type="var">n</span></span> <span class="inlinecode"><span class="id" type="var">l</span>)</span>. To prove this we need to
+    lemmas. 
+<div class="paragraph"> </div>
+
+ The first one is useful in the case when the new element is not
+   smaller than the current head. In this case we need to know that
+   the head is smaller than the new element so that we can insert it
+   later. 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" type="keyword">Lemma</span> <span class="id" type="var">leqFalse</span> : <span class="id" type="keyword">forall</span> <span class="id" type="var">m</span> <span class="id" type="var">n</span> : <span class="id" type="var">nat</span>, <span class="id" type="var">leqb</span> <span class="id" type="var">m</span> <span class="id" type="var">n</span> = <span class="id" type="var">false</span> -&gt; <span class="id" type="var">n</span> &lt;= <span class="id" type="var">m</span>.<br/>
+<span class="id" type="tactic">intros</span> <span class="id" type="var">m</span> <span class="id" type="var">n</span> <span class="id" type="var">h</span>.<br/>
+<span class="id" type="tactic">destruct</span> (<span class="id" type="var">total</span> <span class="id" type="var">m</span> <span class="id" type="var">n</span>) <span class="id" type="keyword">as</span> [<span class="id" type="var">mn</span> | <span class="id" type="var">nm</span>].<br/>
+<span class="id" type="tactic">assert</span> (<span class="id" type="var">mnt</span> : <span class="id" type="var">leqb</span> <span class="id" type="var">m</span> <span class="id" type="var">n</span> = <span class="id" type="var">true</span>).<br/>
+<span class="id" type="tactic">apply</span> <span class="id" type="var">leq2</span>.<br/>
+<span class="id" type="tactic">exact</span> <span class="id" type="var">mn</span>.<br/>
+<span class="id" type="tactic">rewrite</span> <span class="id" type="var">h</span> <span class="id" type="keyword">in</span> <span class="id" type="var">mnt</span>.<br/>
+<span class="id" type="tactic">discriminate</span> <span class="id" type="var">mnt</span>.<br/>
+<span class="id" type="tactic">exact</span> <span class="id" type="var">nm</span>.<br/>
+<span class="id" type="keyword">Qed</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+The other lemma is a little case analysis: the head of the result
+   of <span class="inlinecode"><span class="id" type="var">insert</span></span> is either the inserted element or the previous head. 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" type="keyword">Lemma</span> <span class="id" type="var">insertSortCase</span> : <span class="id" type="keyword">forall</span> (<span class="id" type="var">n</span> <span class="id" type="var">a</span> : <span class="id" type="var">nat</span>)(<span class="id" type="var">l</span> : <span class="id" type="var">list</span> <span class="id" type="var">nat</span>),<br/>
+&nbsp;&nbsp;<span class="id" type="var">head</span> <span class="id" type="var">a</span> (<span class="id" type="var">insert</span> <span class="id" type="var">n</span> <span class="id" type="var">l</span>) = <span class="id" type="var">n</span> \/ <span class="id" type="var">head</span> <span class="id" type="var">a</span> (<span class="id" type="var">insert</span> <span class="id" type="var">n</span> <span class="id" type="var">l</span>) = <span class="id" type="var">head</span> <span class="id" type="var">a</span> <span class="id" type="var">l</span>.<br/>
+<span class="id" type="tactic">intros</span> <span class="id" type="var">n</span> <span class="id" type="var">a</span> <span class="id" type="var">l</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+While we say <span class="inlinecode"><span class="id" type="tactic">induction</span></span> we are not going to use the induction 
+   hypothesis here. So we could have used <span class="inlinecode"><span class="id" type="tactic">destruct</span></span> on lists here. 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" type="tactic">induction</span> <span class="id" type="var">l</span>.<br/>
+<span class="id" type="tactic">left</span>.<br/>
+<span class="id" type="tactic">simpl</span>.<br/>
+<span class="id" type="tactic">reflexivity</span>.<br/>
+<span class="id" type="tactic">simpl</span>.<br/>
+<span class="id" type="tactic">destruct</span> (<span class="id" type="var">leqb</span> <span class="id" type="var">n</span> <span class="id" type="var">a0</span>).<br/>
+<span class="id" type="tactic">left</span>.<br/>
+<span class="id" type="tactic">simpl</span>.<br/>
+<span class="id" type="tactic">reflexivity</span>.<br/>
+<span class="id" type="tactic">right</span>.<br/>
+<span class="id" type="tactic">simpl</span>.<br/>
+<span class="id" type="tactic">reflexivity</span>.<br/>
+<span class="id" type="keyword">Qed</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+We are now able to prove the main lemma on <span class="inlinecode"><span class="id" type="var">insert</span></span>. 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" type="keyword">Lemma</span> <span class="id" type="var">insertSorted</span> : <span class="id" type="keyword">forall</span> (<span class="id" type="var">n</span> : <span class="id" type="var">nat</span>)(<span class="id" type="var">l</span> : <span class="id" type="var">list</span> <span class="id" type="var">nat</span>),<br/>
+&nbsp;&nbsp;<span class="id" type="var">Sorted</span> <span class="id" type="var">l</span> -&gt; <span class="id" type="var">Sorted</span> (<span class="id" type="var">insert</span> <span class="id" type="var">n</span> <span class="id" type="var">l</span>).<br/>
+<span class="id" type="tactic">intros</span> <span class="id" type="var">n</span> <span class="id" type="var">l</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+We prove the implication by induction. Why did we not do another <span class="inlinecode"><span class="id" type="tactic">intro</span></span>? 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" type="tactic">induction</span> <span class="id" type="var">l</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+The case for the empty list is easy. 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" type="tactic">intro</span> <span class="id" type="var">h</span>.<br/>
+<span class="id" type="tactic">simpl</span>.<br/>
+<span class="id" type="tactic">split</span>.<br/>
+<span class="id" type="tactic">split</span>.<br/>
+<span class="id" type="tactic">apply</span> <span class="id" type="var">le_refl</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Now the cons case 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" type="tactic">intro</span> <span class="id" type="var">h</span>.<br/>
+<span class="id" type="tactic">simpl</span>.<br/>
+<span class="id" type="tactic">simpl</span> <span class="id" type="keyword">in</span> <span class="id" type="var">h</span>.<br/>
+<span class="id" type="tactic">destruct</span> <span class="id" type="var">h</span> <span class="id" type="keyword">as</span> [<span class="id" type="var">sl</span> <span class="id" type="var">al</span>].<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+We now analyze the result of the comparison. 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" type="var">case_eq</span> (<span class="id" type="var">leqb</span> <span class="id" type="var">n</span> <span class="id" type="var">a</span>).<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+First case <span class="inlinecode"><span class="id" type="var">leqb</span></span> <span class="inlinecode"><span class="id" type="var">n</span></span> <span class="inlinecode"><span class="id" type="var">a</span></span> <span class="inlinecode">=</span> <span class="inlinecode"><span class="id" type="var">true</span></span>, that is the element is put in front. 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" type="tactic">intro</span> <span class="id" type="var">na</span>.<br/>
+<span class="id" type="tactic">simpl</span>.<br/>
+<span class="id" type="tactic">split</span>.<br/>
+<span class="id" type="tactic">split</span>.<br/>
+<span class="id" type="tactic">exact</span> <span class="id" type="var">sl</span>.<br/>
+<span class="id" type="tactic">exact</span> <span class="id" type="var">al</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Here we need the correctness of <span class="inlinecode"><span class="id" type="var">leq</span></span> wrt <span class="inlinecode">&lt;=</span>. 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" type="tactic">apply</span> <span class="id" type="var">leq1</span>.<br/>
+<span class="id" type="tactic">exact</span> <span class="id" type="var">na</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Second case <span class="inlinecode"><span class="id" type="var">leqb</span></span> <span class="inlinecode"><span class="id" type="var">n</span></span> <span class="inlinecode"><span class="id" type="var">a</span></span> <span class="inlinecode">=</span> <span class="inlinecode"><span class="id" type="var">false</span></span> so we insert <span class="inlinecode"><span class="id" type="var">a</span></span> in the tail Here we need
+   our lemmas. 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" type="tactic">intro</span> <span class="id" type="var">na</span>.<br/>
+<span class="id" type="tactic">simpl</span>.<br/>
+<span class="id" type="tactic">split</span>.<br/>
+<span class="id" type="tactic">apply</span> <span class="id" type="var">IHl</span>.<br/>
+<span class="id" type="tactic">exact</span> <span class="id" type="var">sl</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Here we have to reason about the head of <span class="inlinecode"><span class="id" type="var">insert</span></span> <span class="inlinecode"><span class="id" type="var">n</span></span> <span class="inlinecode"><span class="id" type="var">l</span></span>, so 
+   we use our lemma. 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" type="tactic">destruct</span> (<span class="id" type="var">insertSortCase</span> <span class="id" type="var">n</span> <span class="id" type="var">a</span> <span class="id" type="var">l</span>) <span class="id" type="keyword">as</span> [<span class="id" type="var">H1</span> | <span class="id" type="var">H2</span>].<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+First case: it is the new element. 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" type="tactic">rewrite</span> <span class="id" type="var">H1</span>.<br/>
+<span class="id" type="tactic">apply</span> <span class="id" type="var">leqFalse</span>.<br/>
+<span class="id" type="tactic">exact</span> <span class="id" type="var">na</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Second case: it is the old head. 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" type="tactic">rewrite</span> <span class="id" type="var">H2</span>.<br/>
+<span class="id" type="tactic">exact</span> <span class="id" type="var">al</span>.<br/>
+<span class="id" type="keyword">Qed</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+using the previous lemma it is easy to prove our main theorem. 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" type="keyword">Theorem</span> <span class="id" type="var">sortSorted</span> : <span class="id" type="keyword">forall</span> <span class="id" type="var">ms</span>:<span class="id" type="var">list</span> <span class="id" type="var">nat</span>,<span class="id" type="var">Sorted</span> (<span class="id" type="var">sort</span> <span class="id" type="var">ms</span>).<br/>
+<span class="id" type="tactic">induction</span> <span class="id" type="var">ms</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+ case ms=nil: 
+</div>
+<div class="code">
+
+<br/>
+&nbsp;&nbsp;<span class="id" type="tactic">simpl</span>.<br/>
+&nbsp;&nbsp;<span class="id" type="tactic">split</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+ case a::ms 
+</div>
+<div class="code">
+
+<br/>
+&nbsp;&nbsp;<span class="id" type="tactic">simpl</span>.<br/>
+&nbsp;&nbsp;<span class="id" type="tactic">apply</span> <span class="id" type="var">insertSorted</span>.<br/>
+&nbsp;&nbsp;<span class="id" type="tactic">exact</span> <span class="id" type="var">IHms</span>.<br/>
+<span class="id" type="keyword">Qed</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Is this enough? No, we could have implemented a function with the 
+   property sort_ok by always returning the empty list. Another 
+   important property of a sorting function is that it returns a 
+   permutation of the input. I leave this as an exercise.
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" type="keyword">End</span> <span class="id" type="var">Lists</span>.<br/>
+
+<br/>
+</div>
+</div>
+
+<div id="footer">
+<hr/><a href="index.html">Index</a><hr/>This page has been generated by <a href="http://coq.inria.fr/">coqdoc</a>
+</div>
+
+</div>
+
+</body>
+</html>

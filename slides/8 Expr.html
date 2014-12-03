@@ -1,0 +1,472 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1"/>
+<link href="coqdoc.css" rel="stylesheet" type="text/css"/>
+<title>Expr</title>
+</head>
+
+<body>
+
+<div id="page">
+
+<div id="header">
+</div>
+
+<div id="main">
+
+<h1 class="libtitle">Library Expr</h1>
+
+<div class="code">
+
+<br/>
+</div>
+
+<div class="doc">
+<H1>Compiling expressions</H1> 
+</div>
+<div class="code">
+<span class="id" type="keyword">Section</span> <span class="id" type="var">Expr</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+We are going to use the standard library for lists. 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" type="keyword">Require</span> <span class="id" type="keyword">Import</span> <span class="id" type="var">Coq.Lists.List</span>.<br/>
+
+<br/>
+<span class="id" type="keyword">Set Implicit Arguments</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab41"></a><h1 class="section">Evaluating expressions.</h1>
+
+<div class="paragraph"> </div>
+
+
+<div class="paragraph"> </div>
+
+   We define a simple language of expressions over natural numbers:
+   only containing numeric constants and addition. This is already a
+   useful abstraction over the one-dimensional view of a program as a
+   sequence of symbols, i.e. we don't care about precedence or
+   balanced bracktes.
+
+<div class="paragraph"> </div>
+
+   However, this means that at some point we'd have to implement a
+   parser and verify it. 
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" type="keyword">Inductive</span> <span class="id" type="var">Expr</span> : <span class="id" type="keyword">Set</span> :=<br/>
+&nbsp;&nbsp;| <span class="id" type="var">Const</span> : <span class="id" type="var">nat</span> -&gt; <span class="id" type="var">Expr</span><br/>
+&nbsp;&nbsp;| <span class="id" type="var">Plus</span> : <span class="id" type="var">Expr</span> -&gt; <span class="id" type="var">Expr</span> -&gt; <span class="id" type="var">Expr</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+   The expression "(3 + 5) + 2" is represented by the following tree:
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" type="keyword">Definition</span> <span class="id" type="var">e1</span> : <span class="id" type="var">Expr</span> := <span class="id" type="var">Plus</span> (<span class="id" type="var">Plus</span> (<span class="id" type="var">Const</span> 3) (<span class="id" type="var">Const</span> 5)) (<span class="id" type="var">Const</span> 2).<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+   We give a "denotational" semantics to our expressions by
+   recursively assigning a value (their denotation). This process is
+   called evaluation - hence the function is called <span class="inlinecode"><span class="id" type="tactic">eval</span></span>. It is
+   defined by structural recursion over the structure of the
+   expression tree.
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" type="keyword">Fixpoint</span> <span class="id" type="tactic">eval</span> (<span class="id" type="var">e</span>:<span class="id" type="var">Expr</span>) {<span class="id" type="keyword">struct</span> <span class="id" type="var">e</span>} : <span class="id" type="var">nat</span> :=<br/>
+&nbsp;&nbsp;<span class="id" type="keyword">match</span> <span class="id" type="var">e</span> <span class="id" type="keyword">with</span><br/>
+&nbsp;&nbsp;| <span class="id" type="var">Const</span> <span class="id" type="var">n</span> =&gt; <span class="id" type="var">n</span><br/>
+&nbsp;&nbsp;| <span class="id" type="var">Plus</span> <span class="id" type="var">e1</span> <span class="id" type="var">e2</span> =&gt; (<span class="id" type="tactic">eval</span> <span class="id" type="var">e1</span>) + (<span class="id" type="tactic">eval</span> <span class="id" type="var">e2</span>)<br/>
+&nbsp;&nbsp;<span class="id" type="keyword">end</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Let's evaluate our example expression: 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" type="keyword">Eval</span> <span class="id" type="tactic">compute</span> <span class="id" type="keyword">in</span> (<span class="id" type="tactic">eval</span> <span class="id" type="var">e1</span>).<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab42"></a><h1 class="section">A stack machine</h1>
+
+<div class="paragraph"> </div>
+
+
+<div class="paragraph"> </div>
+
+   We are going to describe how to calculate the value of an
+   expression on a simple stack machine - thus giving rise to an
+   "operational semantics". 
+
+<div class="paragraph"> </div>
+
+   First we specify the operation of our machine, there are only two
+   operations :
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" type="keyword">Inductive</span> <span class="id" type="var">Op</span> : <span class="id" type="keyword">Set</span> :=<br/>
+&nbsp;&nbsp;| <span class="id" type="var">Push</span> : <span class="id" type="var">nat</span> -&gt; <span class="id" type="var">Op</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<br/>
+&nbsp;&nbsp;| <span class="id" type="var">PlusC</span> : <span class="id" type="var">Op</span>.<br/>
+
+<br/>
+<span class="id" type="keyword">Definition</span> <span class="id" type="var">Code</span> := <span class="id" type="var">list</span> <span class="id" type="var">Op</span>.<br/>
+<span class="id" type="keyword">Definition</span> <span class="id" type="var">Stack</span> := <span class="id" type="var">list</span> <span class="id" type="var">nat</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+   We define recursively how to execute code wrt any given stack. This
+   function proceeds by linear recursion over the stack and could be
+   easily implemented as a "machine".
+
+<div class="paragraph"> </div>
+
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" type="keyword">Fixpoint</span> <span class="id" type="var">run</span> (<span class="id" type="var">st</span>:<span class="id" type="var">Stack</span>)(<span class="id" type="var">p</span>:<span class="id" type="var">Code</span>) : <span class="id" type="var">nat</span> := <span class="id" type="keyword">match</span> <span class="id" type="var">p</span> <span class="id" type="keyword">with</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;| <span class="id" type="var">nil</span> =&gt; <span class="id" type="keyword">match</span> <span class="id" type="var">st</span> <span class="id" type="keyword">with</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| <span class="id" type="var">nil</span> =&gt; 0<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| <span class="id" type="var">n</span> :: <span class="id" type="var">st'</span> =&gt; <span class="id" type="var">n</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" type="keyword">end</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;| <span class="id" type="var">op</span> :: <span class="id" type="var">p'</span> =&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" type="keyword">match</span> <span class="id" type="var">op</span> <span class="id" type="keyword">with</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| <span class="id" type="var">Push</span> <span class="id" type="var">n</span> =&gt; <span class="id" type="var">run</span> (<span class="id" type="var">n</span> :: <span class="id" type="var">st</span>) <span class="id" type="var">p'</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| <span class="id" type="var">PlusC</span> =&gt; <span class="id" type="keyword">match</span> <span class="id" type="var">st</span> <span class="id" type="keyword">with</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| <span class="id" type="var">nil</span> =&gt; 0<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| <span class="id" type="var">n</span> :: <span class="id" type="var">nil</span> =&gt; 0<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| <span class="id" type="var">n1</span> :: <span class="id" type="var">n2</span> :: <span class="id" type="var">st'</span> =&gt;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" type="var">run</span> ((<span class="id" type="var">n2</span> + <span class="id" type="var">n1</span>) :: <span class="id" type="var">st'</span>) <span class="id" type="var">p'</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" type="keyword">end</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" type="keyword">end</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" type="keyword">end</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+We run a piece of code by starting with the empty stack. 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" type="keyword">Definition</span> <span class="id" type="var">c1</span> : <span class="id" type="var">Code</span> <br/>
+&nbsp;&nbsp;:= <span class="id" type="var">Push</span> 2 :: <span class="id" type="var">Push</span> 3 :: <span class="id" type="var">PlusC</span> :: <span class="id" type="var">nil</span>.<br/>
+
+<br/>
+<span class="id" type="keyword">Eval</span> <span class="id" type="tactic">compute</span> <span class="id" type="keyword">in</span> (<span class="id" type="var">run</span> <span class="id" type="var">nil</span> <span class="id" type="var">c1</span>).<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab43"></a><h1 class="section">A simple compiler</h1>
+
+<div class="paragraph"> </div>
+
+
+<div class="paragraph"> </div>
+
+   We implement a simple compiler which translates an expression into
+   code for the stack machine.
+
+<div class="paragraph"> </div>
+
+   A naive implementation looks like this:
+
+<div class="paragraph"> </div>
+
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" type="keyword">Fixpoint</span> <span class="id" type="var">compile</span> (<span class="id" type="var">e</span>:<span class="id" type="var">Expr</span>) : <span class="id" type="var">list</span> <span class="id" type="var">Op</span> :=<br/>
+&nbsp;&nbsp;<span class="id" type="keyword">match</span> <span class="id" type="var">e</span> <span class="id" type="keyword">with</span><br/>
+&nbsp;&nbsp;| <span class="id" type="var">Const</span> <span class="id" type="var">n</span> =&gt; (<span class="id" type="var">Push</span> <span class="id" type="var">n</span>) :: <span class="id" type="var">nil</span><br/>
+&nbsp;&nbsp;| <span class="id" type="var">Plus</span> <span class="id" type="var">e1</span> <span class="id" type="var">e2</span> =&gt; (<span class="id" type="var">compile</span> <span class="id" type="var">e1</span>)++<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" type="var">compile</span> <span class="id" type="var">e2</span>)++<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" type="var">PlusC</span>::<span class="id" type="var">nil</span>)<br/>
+<br/>
+&nbsp;&nbsp;</div>
+
+<div class="doc">
+Why do we need to do this in this order? 
+</div>
+<div class="code">
+<br/>
+&nbsp;&nbsp;<span class="id" type="keyword">end</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+We test the compiler 
+</div>
+<div class="code">
+<span class="id" type="keyword">Eval</span> <span class="id" type="tactic">compute</span> <span class="id" type="keyword">in</span> <span class="id" type="var">compile</span> <span class="id" type="var">e1</span>.<br/>
+<span class="id" type="keyword">Eval</span> <span class="id" type="tactic">compute</span> <span class="id" type="keyword">in</span> <span class="id" type="var">run</span> <span class="id" type="var">nil</span> (<span class="id" type="var">compile</span> <span class="id" type="var">e1</span>).<br/>
+<span class="id" type="keyword">Eval</span> <span class="id" type="tactic">compute</span> <span class="id" type="keyword">in</span> <span class="id" type="tactic">eval</span> <span class="id" type="var">e1</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+The agreement of the last two lines is not a coincidence.
+    Indeed, our compiler is correct because compile and run produces the
+    same result as evaluation, i.e. we want to prove
+    <span class="inlinecode"><span class="id" type="keyword">forall</span></span> <span class="inlinecode"><span class="id" type="var">e</span></span> <span class="inlinecode">:</span> <span class="inlinecode"><span class="id" type="var">Expr</span>,</span> <span class="inlinecode"><span class="id" type="var">run</span></span> <span class="inlinecode"><span class="id" type="var">nil</span></span> <span class="inlinecode">(<span class="id" type="var">compile</span></span> <span class="inlinecode"><span class="id" type="var">e</span>)</span> <span class="inlinecode">=</span> <span class="inlinecode"><span class="id" type="tactic">eval</span></span> <span class="inlinecode"><span class="id" type="var">e</span></span>
+    We will be using induction over trees here.
+    However, in this form the result won't go through because
+    the stack will change during the proof. We have to generalize
+    the statement:
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" type="keyword">Lemma</span> <span class="id" type="var">compile_lem</span> : <br/>
+&nbsp;&nbsp;<span class="id" type="keyword">forall</span> (<span class="id" type="var">e</span>:<span class="id" type="var">Expr</span>)(<span class="id" type="var">st</span> : <span class="id" type="var">Stack</span>)(<span class="id" type="var">p</span> : <span class="id" type="var">Code</span>),<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" type="var">run</span> <span class="id" type="var">st</span> ((<span class="id" type="var">compile</span> <span class="id" type="var">e</span>)++<span class="id" type="var">p</span>) = <span class="id" type="var">run</span> (<span class="id" type="tactic">eval</span> <span class="id" type="var">e</span> :: <span class="id" type="var">st</span>) <span class="id" type="var">p</span>.<br/>
+<span class="id" type="tactic">intros</span> <span class="id" type="var">e</span>.<br/>
+</div>
+
+<div class="doc">
+It would be wrong to do additional intros because both <span class="inlinecode"><span class="id" type="var">st</span></span> and <span class="inlinecode"><span class="id" type="var">p</span></span>
+    are going to vary during the proof.  Here we are going to use induction over trees. 
+</div>
+<div class="code">
+<span class="id" type="tactic">induction</span> <span class="id" type="var">e</span>.<br/>
+</div>
+
+<div class="doc">
+The Const case is straightforward 
+</div>
+<div class="code">
+<span class="id" type="tactic">intros</span> <span class="id" type="var">p</span> <span class="id" type="var">st</span>.<br/>
+<span class="id" type="tactic">simpl</span>.<br/>
+<span class="id" type="tactic">reflexivity</span>.<br/>
+</div>
+
+<div class="doc">
+The Plus case is more intresting.  Note that we have two induction hypotheses: one for each of the subtrees. 
+</div>
+<div class="code">
+<span class="id" type="tactic">intros</span> <span class="id" type="var">p</span> <span class="id" type="var">st</span>.<br/>
+<span class="id" type="tactic">simpl</span>.<br/>
+</div>
+
+<div class="doc">
+We need to reorganize the code argument to be able to apply the 
+    induction hypothesis. 
+</div>
+<div class="code">
+<span class="id" type="tactic">rewrite</span> <span class="id" type="var">app_ass</span>.<br/>
+<span class="id" type="tactic">rewrite</span> <span class="id" type="var">IHe1</span>.<br/>
+</div>
+
+<div class="doc">
+And again for the 2nd induction hypotehsis. 
+</div>
+<div class="code">
+<span class="id" type="tactic">rewrite</span> <span class="id" type="var">app_ass</span>.<br/>
+<span class="id" type="tactic">rewrite</span> <span class="id" type="var">IHe2</span>.<br/>
+<span class="id" type="tactic">simpl</span>.<br/>
+<span class="id" type="tactic">reflexivity</span>.<br/>
+<span class="id" type="keyword">Qed</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+We are now ready to prove compiler correctness. 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" type="keyword">Theorem</span> <span class="id" type="var">compile_ok</span> : <br/>
+&nbsp;&nbsp;<span class="id" type="keyword">forall</span> <span class="id" type="var">e</span> : <span class="id" type="var">Expr</span>, <span class="id" type="var">run</span> <span class="id" type="var">nil</span> (<span class="id" type="var">compile</span> <span class="id" type="var">e</span>) = <span class="id" type="tactic">eval</span> <span class="id" type="var">e</span>.<br/>
+<span class="id" type="tactic">intro</span> <span class="id" type="var">e</span>.<br/>
+<span class="id" type="tactic">pattern</span> (<span class="id" type="var">compile</span> <span class="id" type="var">e</span>).<br/>
+</div>
+
+<div class="doc">
+To be able to apply the lemma we need to use the fact that <span class="inlinecode"><span class="id" type="var">e</span>++<span class="id" type="var">nil</span>=<span class="id" type="var">e</span></span>. 
+</div>
+<div class="code">
+<span class="id" type="tactic">rewrite</span> <span class="id" type="var">app_nil_end</span>.<br/>
+<span class="id" type="tactic">rewrite</span> <span class="id" type="var">compile_lem</span>.<br/>
+<span class="id" type="tactic">simpl</span>.<br/>
+<span class="id" type="tactic">reflexivity</span>.<br/>
+<span class="id" type="keyword">Qed</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab44"></a><h1 class="section">A continuation based compiler</h1>
+
+<div class="paragraph"> </div>
+
+
+<div class="paragraph"> </div>
+
+   A better alternative both in terms of efficiency and verification 
+   is a "continuation based" compiler. We compile an expression e wrt
+   a continuation p, some code which is going to be run after it.
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" type="keyword">Fixpoint</span> <span class="id" type="var">compile_cont</span> (<span class="id" type="var">e</span>:<span class="id" type="var">Expr</span>) (<span class="id" type="var">p</span>:<span class="id" type="var">Code</span>) : <span class="id" type="var">Code</span> := <span class="id" type="keyword">match</span> <span class="id" type="var">e</span> <span class="id" type="keyword">with</span><br/>
+&nbsp;&nbsp;&nbsp;| <span class="id" type="var">Const</span> <span class="id" type="var">n</span> =&gt; <span class="id" type="var">Push</span> <span class="id" type="var">n</span> :: <span class="id" type="var">p</span><br/>
+&nbsp;&nbsp;&nbsp;| <span class="id" type="var">Plus</span> <span class="id" type="var">e1</span> <span class="id" type="var">e2</span> =&gt; <span class="id" type="var">compile_cont</span> <span class="id" type="var">e1</span> <br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" type="var">compile_cont</span> <span class="id" type="var">e2</span> (<span class="id" type="var">PlusC</span> :: <span class="id" type="var">p</span>))<br/>
+&nbsp;&nbsp;&nbsp;<span class="id" type="keyword">end</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Test the compiler 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" type="keyword">Eval</span> <span class="id" type="tactic">compute</span> <span class="id" type="keyword">in</span> <span class="id" type="var">compile_cont</span> <span class="id" type="var">e1</span> <span class="id" type="var">nil</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+And run the compiled code: 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" type="keyword">Eval</span> <span class="id" type="tactic">compute</span> <span class="id" type="keyword">in</span> <span class="id" type="var">run</span> <span class="id" type="var">nil</span> (<span class="id" type="var">compile_cont</span> <span class="id" type="var">e1</span> <span class="id" type="var">nil</span>).<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+   As before we prove a lemma to show compiler correctness.
+   Note that we don't need to use <span class="inlinecode">++</span> anymore. 
+
+<div class="paragraph"> </div>
+
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" type="keyword">Lemma</span> <span class="id" type="var">compile_cont_lem</span> : <span class="id" type="keyword">forall</span> (<span class="id" type="var">e</span>:<span class="id" type="var">Expr</span>)(<span class="id" type="var">p</span>:<span class="id" type="var">Code</span>)(<span class="id" type="var">st</span>:<span class="id" type="var">Stack</span>),<br/>
+&nbsp;&nbsp;<span class="id" type="var">run</span> <span class="id" type="var">st</span> (<span class="id" type="var">compile_cont</span> <span class="id" type="var">e</span> <span class="id" type="var">p</span>) = <span class="id" type="var">run</span> ((<span class="id" type="tactic">eval</span> <span class="id" type="var">e</span>)::<span class="id" type="var">st</span>) <span class="id" type="var">p</span>.<br/>
+<span class="id" type="tactic">induction</span> <span class="id" type="var">e</span>.<br/>
+<span class="id" type="tactic">intros</span> <span class="id" type="var">p</span> <span class="id" type="var">st</span>.<br/>
+<span class="id" type="tactic">simpl</span>.<br/>
+<span class="id" type="tactic">reflexivity</span>.<br/>
+<span class="id" type="tactic">simpl</span>.<br/>
+<span class="id" type="tactic">intros</span>.<br/>
+</div>
+
+<div class="doc">
+Even better: no need to appeal to associativity of <span class="inlinecode">++</span> here. 
+</div>
+<div class="code">
+<span class="id" type="tactic">rewrite</span> <span class="id" type="var">IHe1</span>.<br/>
+</div>
+
+<div class="doc">
+Or here. 
+</div>
+<div class="code">
+<span class="id" type="tactic">rewrite</span> <span class="id" type="var">IHe2</span>.<br/>
+<span class="id" type="tactic">simpl</span>.<br/>
+<span class="id" type="tactic">reflexivity</span>.<br/>
+<span class="id" type="keyword">Qed</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+The main theorem is a simple application of the previous lemma: 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" type="keyword">Theorem</span> <span class="id" type="var">compile_cont_ok</span> : <span class="id" type="keyword">forall</span> <span class="id" type="var">e</span>:<span class="id" type="var">Expr</span>, <br/>
+&nbsp;&nbsp;<span class="id" type="var">run</span> <span class="id" type="var">nil</span> (<span class="id" type="var">compile_cont</span> <span class="id" type="var">e</span> <span class="id" type="var">nil</span>) = <span class="id" type="tactic">eval</span> <span class="id" type="var">e</span>.<br/>
+<span class="id" type="tactic">intro</span> <span class="id" type="var">e</span>.<br/>
+</div>
+
+<div class="doc">
+No need to use <span class="inlinecode"><span class="id" type="var">l</span>++<span class="id" type="var">nil</span>=<span class="id" type="var">l</span></span> here. 
+</div>
+<div class="code">
+<span class="id" type="tactic">apply</span> <span class="id" type="var">compile_cont_lem</span>.<br/>
+<span class="id" type="keyword">Qed</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+To summarize: the continuation based proof results in a more efficient program 
+    and in a simpler proof. 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" type="keyword">End</span> <span class="id" type="var">Expr</span>.<br/>
+</div>
+</div>
+
+<div id="footer">
+<hr/><a href="index.html">Index</a><hr/>This page has been generated by <a href="http://coq.inria.fr/">coqdoc</a>
+</div>
+
+</div>
+
+</body>
+</html>

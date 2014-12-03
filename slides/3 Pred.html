@@ -1,0 +1,834 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1"/>
+<link href="coqdoc.css" rel="stylesheet" type="text/css"/>
+<title>Pred</title>
+</head>
+
+<body>
+
+<div id="page">
+
+<div id="header">
+</div>
+
+<div id="main">
+
+<h1 class="libtitle">Library Pred</h1>
+
+<div class="code">
+
+<br/>
+</div>
+
+<div class="doc">
+<H0>Predicate Logic</H0> 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" type="keyword">Section</span> <span class="id" type="var">pred</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Predicate logic extends propositional logic: we can talk about 
+    sets of things, e.g. numbers and define properties, called
+    predicates and relations. We will soon define some useful sets and ways to
+    define sets but for the moment, we will use set variables as we
+    have used propositional variables before.
+
+<br/> <br/>
+    In Coq we can declare set variables the same way as we have
+    declared propositional variables:
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" type="keyword">Variables</span> <span class="id" type="var">A</span> <span class="id" type="var">B</span> : <span class="id" type="keyword">Set</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Thus we have declared A and B to be variables for sets. For
+    example think of A=the set of students and B= the set of
+    modules. That is any tautology using set variable remains true if
+    we substitute the set variables with any conrete set (e.g. natural
+    numbers or booleans, etc).
+
+<br/> <br/>
+    Next we also assume some predicate variables, we let P
+    and Q be properties of A (e.g. P x may mean x is clever
+    and Q x means x is funny).
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" type="keyword">Variables</span> <span class="id" type="var">P</span> <span class="id" type="var">Q</span> : <span class="id" type="var">A</span> -&gt; <span class="id" type="keyword">Prop</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Coq views these predicates as functions from <span class="inlinecode"><span class="id" type="var">A</span></span> to <span class="inlinecode"><span class="id" type="keyword">Prop</span></span>. That
+    is if we have an element of <span class="inlinecode"><span class="id" type="var">A</span></span>, e.g. <span class="inlinecode"><span class="id" type="var">a</span> : <span class="id" type="var">A</span></span>, we can apply <span class="inlinecode"><span class="id" type="var">P</span></span> to a by
+    writing <span class="inlinecode"><span class="id" type="var">P</span> <span class="id" type="var">a</span></span> to express that <span class="inlinecode"><span class="id" type="var">a</span></span> has the property <span class="inlinecode"><span class="id" type="var">P</span></span>.
+
+<br/> <br/>
+    We can also have properties relating several elements, possibly of
+    different sets, these are usually called <i>relations</i>. We introduce 
+    a relation <span class="inlinecode"><span class="id" type="var">R</span></span>, relating <span class="inlinecode"><span class="id" type="var">A</span></span> and <span class="inlinecode"><span class="id" type="var">B</span></span> by:
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" type="keyword">Variable</span> <span class="id" type="var">R</span> : <span class="id" type="var">A</span> -&gt; <span class="id" type="var">B</span> -&gt; <span class="id" type="keyword">Prop</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+E.g. R could be the relation "attends" and we would write 
+    "R jim g52ifr" to express that Jim attends g52ifr.
+
+</div>
+<div class="code">
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab18"></a><h1 class="section">Universal quantification</h1>
+
+</div>
+<div class="code">
+
+<br/>
+</div>
+
+<div class="doc">
+To say all elements of A have the property P, we write
+    <span class="inlinecode"><span class="id" type="keyword">forall</span> <span class="id" type="var">x</span>:<span class="id" type="var">A</span>, <span class="id" type="var">P</span> <span class="id" type="var">x</span></span> more general we can form <span class="inlinecode"><span class="id" type="keyword">forall</span> <span class="id" type="var">x</span>:<span class="id" type="var">A</span>, <span class="id" type="var">PP</span></span>
+    where <span class="inlinecode"><span class="id" type="var">PP</span></span> is a proposition possibly containing the variable <span class="inlinecode"><span class="id" type="var">x</span></span>. 
+    Another example is <span class="inlinecode"><span class="id" type="keyword">forall</span> <span class="id" type="var">x</span>:<span class="id" type="var">A</span>,<span class="id" type="var">P</span> <span class="id" type="var">x</span> -&gt; <span class="id" type="var">Q</span> <span class="id" type="var">x</span></span> meaning that any
+    element of <span class="inlinecode"><span class="id" type="var">A</span></span> that has the property <span class="inlinecode"><span class="id" type="var">P</span></span> will also have the
+    property <span class="inlinecode"><span class="id" type="var">Q</span></span>. In our example that would mean that any clever
+    student is also funny.
+
+<br/> <br/>
+    As an example we show that if all elements of <span class="inlinecode"><span class="id" type="var">A</span></span> have the
+    property <span class="inlinecode"><span class="id" type="var">P</span></span> and that if whenever an element of <span class="inlinecode"><span class="id" type="var">A</span></span> has the
+    property <span class="inlinecode"><span class="id" type="var">P</span></span> has also the property <span class="inlinecode"><span class="id" type="var">Q</span></span> then all alements of <span class="inlinecode"><span class="id" type="var">A</span></span>
+    have the property <span class="inlinecode"><span class="id" type="var">Q</span></span>. That is if all students are clever, and every 
+    clever student is funny, then all students are funny. In predicate
+    logic we write <span class="inlinecode"><span class="id" type="keyword">forall</span>( <span class="id" type="var">x</span>:<span class="id" type="var">A</span>,<span class="id" type="var">P</span> <span class="id" type="var">x</span>) -&gt; <span class="id" type="keyword">forall</span>( <span class="id" type="var">x</span>:<span class="id" type="var">A</span>,<span class="id" type="var">P</span> <span class="id" type="var">x</span> -&gt; <span class="id" type="var">Q</span> <span class="id" type="var">x</span>) -&gt; <span class="id" type="keyword">forall</span> <span class="id" type="var">x</span>:<span class="id" type="var">A</span>, <span class="id" type="var">Q</span> <span class="id" type="var">x</span></span>.
+
+<br/> <br/>
+    We introduce some new syntactic conventions: the scope of an forall
+    always goes as far as possible. That is we read <span class="inlinecode"><span class="id" type="keyword">forall</span> <span class="id" type="var">x</span>:<span class="id" type="var">A</span>,<span class="id" type="var">P</span> <span class="id" type="var">x</span> /\ <span class="id" type="var">Q</span></span>
+    as <span class="inlinecode"><span class="id" type="keyword">forall</span> <span class="id" type="var">x</span>:<span class="id" type="var">A</span>, (<span class="id" type="var">P</span> <span class="id" type="var">x</span> /\ <span class="id" type="var">Q</span>)</span>. Given this could we have saved any parentheses
+    in the example above without changing the meaning?
+
+<br/> <br/>
+    As before we use introduction and elimination steps. Maybe surprisingly
+    the tactics for implication and universal quantification are the same.
+    The reason is that in Coq's internal language implication and universal quantification 
+    are actually the same.
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" type="keyword">Lemma</span> <span class="id" type="var">AllMono</span> : (<span class="id" type="keyword">forall</span> <span class="id" type="var">x</span>:<span class="id" type="var">A</span>,<span class="id" type="var">P</span> <span class="id" type="var">x</span>) -&gt; (<span class="id" type="keyword">forall</span> <span class="id" type="var">x</span>:<span class="id" type="var">A</span>,<span class="id" type="var">P</span> <span class="id" type="var">x</span> -&gt; <span class="id" type="var">Q</span> <span class="id" type="var">x</span>) -&gt; <span class="id" type="keyword">forall</span> <span class="id" type="var">x</span>:<span class="id" type="var">A</span>, <span class="id" type="var">Q</span> <span class="id" type="var">x</span>.<br/>
+<span class="id" type="tactic">intros</span> <span class="id" type="var">H1</span> <span class="id" type="var">H2</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+To prove <span class="inlinecode"><span class="id" type="keyword">forall</span> <span class="id" type="var">x</span>:<span class="id" type="var">A</span>,<span class="id" type="var">Q</span> <span class="id" type="var">x</span></span> assume that there is an element <span class="inlinecode"><span class="id" type="var">a</span>:<span class="id" type="var">A</span></span> and prove <span class="inlinecode"><span class="id" type="var">Q</span> <span class="id" type="var">a</span></span>
+    We use <span class="inlinecode"><span class="id" type="tactic">intro</span> <span class="id" type="var">a</span></span> to do this. 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" type="tactic">intro</span> <span class="id" type="var">a</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+If we know <span class="inlinecode"><span class="id" type="var">H2</span> : <span class="id" type="keyword">forall</span> <span class="id" type="var">x</span>:<span class="id" type="var">A</span>,<span class="id" type="var">P</span> <span class="id" type="var">x</span> -&gt; <span class="id" type="var">Q</span> <span class="id" type="var">x</span></span> and we want to prove <span class="inlinecode"><span class="id" type="var">Q</span> <span class="id" type="var">a</span></span> we can use 
+    <span class="inlinecode"><span class="id" type="tactic">apply</span> <span class="id" type="var">H2</span></span> to instantiate the assumption to <span class="inlinecode"><span class="id" type="var">P</span> <span class="id" type="var">a</span> -&gt; <span class="id" type="var">Q</span> <span class="id" type="var">a</span></span> and at the same 
+    time eliminate the implication so that it is left to prove <span class="inlinecode"><span class="id" type="var">P</span> <span class="id" type="var">a</span></span>. 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" type="tactic">apply</span> <span class="id" type="var">H2</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Now if we know <span class="inlinecode"><span class="id" type="var">H1</span> : <span class="id" type="keyword">forall</span> <span class="id" type="var">x</span>:<span class="id" type="var">A</span>,<span class="id" type="var">P</span> <span class="id" type="var">x</span></span> and we want to show <span class="inlinecode"><span class="id" type="var">P</span> <span class="id" type="var">a</span></span>, we use
+    <span class="inlinecode"><span class="id" type="tactic">apply</span> <span class="id" type="var">H1</span></span> to prove it. After this the goal is completed. 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" type="tactic">apply</span> <span class="id" type="var">H1</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+In the last step we only instantiated the universal quantifier. 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" type="keyword">Qed</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+
+<br/> <br/>
+So to summarize:
+<ul>
+<li> introduction for <span class="inlinecode"><span class="id" type="keyword">forall</span></span>:
+     To show <span class="inlinecode"><span class="id" type="keyword">forall</span> <span class="id" type="var">x</span>:<span class="id" type="var">A</span>,<span class="id" type="var">P</span> <span class="id" type="var">x</span></span> we say <span class="inlinecode"><span class="id" type="tactic">intro</span> <span class="id" type="var">a</span></span> which introduces an assumption <span class="inlinecode"><span class="id" type="var">a</span>:<span class="id" type="var">A</span></span>
+     and it is left to show <span class="inlinecode"><span class="id" type="var">P</span></span> where each free occurence of <span class="inlinecode"><span class="id" type="var">x</span></span> is replaced by <span class="inlinecode"><span class="id" type="var">a</span></span>.
+
+</li>
+<li> elimination for <span class="inlinecode"><span class="id" type="keyword">forall</span></span>:
+     We only describe the simplest case: If we know <span class="inlinecode"><span class="id" type="var">H</span> : <span class="id" type="keyword">forall</span> <span class="id" type="var">x</span>:<span class="id" type="var">A</span>,<span class="id" type="var">P</span></span> and we want to 
+     show P where <span class="inlinecode"><span class="id" type="var">x</span></span> is replaced by <span class="inlinecode"><span class="id" type="var">a</span></span> we use <span class="inlinecode"><span class="id" type="tactic">apply</span> <span class="id" type="var">H</span></span> to prove <span class="inlinecode"><span class="id" type="var">P</span> <span class="id" type="var">a</span></span>. 
+
+</li>
+</ul>
+When I say that each free occurence of <span class="inlinecode"><span class="id" type="var">x</span></span> in the proposition <span class="inlinecode"><span class="id" type="var">P</span></span> is replaced by <span class="inlinecode"><span class="id" type="var">a</span></span>,
+I mean that occurences of <span class="inlinecode"><span class="id" type="var">x</span></span> which are in the scope of another quantifier (these are called bound) are not affected. E.g.
+if <span class="inlinecode"><span class="id" type="var">P</span></span> is <span class="inlinecode"><span class="id" type="var">Q</span> <span class="id" type="var">x</span> /\ <span class="id" type="keyword">forall</span> <span class="id" type="var">x</span>:<span class="id" type="var">A</span>,<span class="id" type="var">R</span> <span class="id" type="var">x</span> <span class="id" type="var">x</span></span> then the only free occurence of <span class="inlinecode"><span class="id" type="var">x</span></span> is the one in <span class="inlinecode"><span class="id" type="var">Q</span> <span class="id" type="var">x</span></span>. That is we obtain <span class="inlinecode"><span class="id" type="var">Q</span> <span class="id" type="var">a</span>  /\ <span class="id" type="keyword">forall</span> <span class="id" type="var">x</span>:<span class="id" type="var">A</span>,<span class="id" type="var">R</span> <span class="id" type="var">x</span> <span class="id" type="var">x</span></span>. The occurences of <span class="inlinecode"><span class="id" type="var">x</span></span> in <span class="inlinecode"><span class="id" type="keyword">forall</span> <span class="id" type="var">x</span>:<span class="id" type="var">A</span>,<span class="id" type="var">R</span> <span class="id" type="var">x</span> <span class="id" type="var">x</span></span> are bound.
+
+<br/> <br/>
+We can also use <span class="inlinecode"><span class="id" type="tactic">intros</span></span> here. That is if the current goal is <span class="inlinecode"><span class="id" type="keyword">forall</span> <span class="id" type="var">x</span>:<span class="id" type="var">A</span>,<span class="id" type="var">P</span> <span class="id" type="var">x</span> -&gt; <span class="id" type="var">Q</span> <span class="id" type="var">x</span></span> then 
+<span class="inlinecode"><span class="id" type="tactic">intros</span> <span class="id" type="var">x</span> <span class="id" type="var">P</span></span> will introduce the assumptions <span class="inlinecode"><span class="id" type="var">x</span>:<span class="id" type="var">A</span></span> and <span class="inlinecode"><span class="id" type="var">H</span>:<span class="id" type="var">P</span> <span class="id" type="var">x</span></span>.
+
+<br/> <br/>
+The general case for <span class="inlinecode"><span class="id" type="tactic">apply</span></span> is a bit hard to describe. Basically apply may introduce several
+subgoals if the assumption has a prefix of <span class="inlinecode"><span class="id" type="keyword">forall</span></span> and <span class="inlinecode">-&gt;</span>. E.g. if we have assumed
+<span class="inlinecode"><span class="id" type="var">H</span> : <span class="id" type="keyword">forall</span> <span class="id" type="var">x</span>:<span class="id" type="var">A</span><span class="id" type="keyword">forall</span>, <span class="id" type="var">y</span>:<span class="id" type="var">B</span>,<span class="id" type="var">P</span> <span class="id" type="var">x</span> -&gt; <span class="id" type="var">Q</span> <span class="id" type="var">y</span> -&gt; <span class="id" type="var">R</span> <span class="id" type="var">x</span> <span class="id" type="var">y</span></span> and our current goal is <span class="inlinecode"><span class="id" type="var">R</span> <span class="id" type="var">a</span> <span class="id" type="var">b</span></span> then
+<span class="inlinecode"><span class="id" type="tactic">apply</span> <span class="id" type="var">H</span></span> will instantiate <span class="inlinecode"><span class="id" type="var">x</span></span> with <span class="inlinecode"><span class="id" type="var">a</span></span> and <span class="inlinecode"><span class="id" type="var">y</span></span> with <span class="inlinecode"><span class="id" type="var">b</span></span> and generate the new goals 
+<span class="inlinecode"><span class="id" type="var">Q</span> <span class="id" type="var">b</span></span> and <span class="inlinecode"><span class="id" type="var">R</span> <span class="id" type="var">a</span> <span class="id" type="var">b</span></span>.
+
+<br/> <br/>
+Next we are going to show that <span class="inlinecode"><span class="id" type="keyword">forall</span></span> <i>commutes with</i> <span class="inlinecode">/\</span>. That is
+we are going to show <span class="inlinecode"><span class="id" type="keyword">forall</span>( <span class="id" type="var">x</span>:<span class="id" type="var">A</span>,<span class="id" type="var">P</span> <span class="id" type="var">x</span> /\ <span class="id" type="var">Q</span> <span class="id" type="var">x</span>) &lt;-&gt; <span class="id" type="keyword">forall</span>( <span class="id" type="var">x</span>:<span class="id" type="var">A</span>, <span class="id" type="var">P</span> <span class="id" type="var">x</span>) /\ <span class="id" type="keyword">forall</span>( <span class="id" type="var">x</span>:<span class="id" type="var">A</span>, <span class="id" type="var">Q</span> <span class="id" type="var">x</span>)</span>
+that is "all students are clever and funny" is equivalent to "all students are clever"
+and "all students are funny". 
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" type="keyword">Lemma</span> <span class="id" type="var">AllAndCom</span> : (<span class="id" type="keyword">forall</span> <span class="id" type="var">x</span>:<span class="id" type="var">A</span>,<span class="id" type="var">P</span> <span class="id" type="var">x</span> /\ <span class="id" type="var">Q</span> <span class="id" type="var">x</span>) &lt;-&gt; (<span class="id" type="keyword">forall</span> <span class="id" type="var">x</span>:<span class="id" type="var">A</span>, <span class="id" type="var">P</span> <span class="id" type="var">x</span>) /\ (<span class="id" type="keyword">forall</span> <span class="id" type="var">x</span>:<span class="id" type="var">A</span>, <span class="id" type="var">Q</span> <span class="id" type="var">x</span>).<br/>
+<span class="id" type="tactic">split</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Proving <span class="inlinecode">-&gt;</span> 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" type="tactic">intro</span> <span class="id" type="var">H</span>.<br/>
+<span class="id" type="tactic">split</span>.<br/>
+<span class="id" type="tactic">intro</span> <span class="id" type="var">a</span>.<br/>
+<span class="id" type="tactic">assert</span> (<span class="id" type="var">pq</span> : <span class="id" type="var">P</span> <span class="id" type="var">a</span> /\ <span class="id" type="var">Q</span> <span class="id" type="var">a</span>).<br/>
+<span class="id" type="tactic">apply</span> <span class="id" type="var">H</span>.<br/>
+<span class="id" type="tactic">destruct</span> <span class="id" type="var">pq</span> <span class="id" type="keyword">as</span> [<span class="id" type="var">p</span> <span class="id" type="var">q</span>].<br/>
+<span class="id" type="tactic">exact</span> <span class="id" type="var">p</span>.<br/>
+<span class="id" type="tactic">intro</span> <span class="id" type="var">a</span>.<br/>
+<span class="id" type="tactic">assert</span> (<span class="id" type="var">pq</span> : <span class="id" type="var">P</span> <span class="id" type="var">a</span> /\ <span class="id" type="var">Q</span> <span class="id" type="var">a</span>).<br/>
+<span class="id" type="tactic">apply</span> <span class="id" type="var">H</span>.<br/>
+<span class="id" type="tactic">destruct</span> <span class="id" type="var">pq</span> <span class="id" type="keyword">as</span> [<span class="id" type="var">p</span> <span class="id" type="var">q</span>].<br/>
+<span class="id" type="tactic">exact</span> <span class="id" type="var">q</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Proving <span class="inlinecode">&lt;-</span> 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" type="tactic">intro</span> <span class="id" type="var">H</span>.<br/>
+<span class="id" type="tactic">destruct</span> <span class="id" type="var">H</span> <span class="id" type="keyword">as</span> [<span class="id" type="var">p</span> <span class="id" type="var">q</span>].<br/>
+<span class="id" type="tactic">intro</span> <span class="id" type="var">a</span>.<br/>
+<span class="id" type="tactic">split</span>.<br/>
+<span class="id" type="tactic">apply</span> <span class="id" type="var">p</span>.<br/>
+<span class="id" type="tactic">apply</span> <span class="id" type="var">q</span>.<br/>
+<span class="id" type="keyword">Qed</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+This proof is quite lengthy and I even had to use <span class="inlinecode"><span class="id" type="tactic">assert</span></span>. There is a shorter proof, if we use <span class="inlinecode"><span class="id" type="var">edestruct</span></span> instead of <span class="inlinecode"><span class="id" type="tactic">destruct</span></span>.  
+     The "e" version of tactics introduce metavariables (visible as ?x) which are instantiated 
+    when we are using them. See the Coq reference manual for details.
+
+<br/> <br/>
+    I only do the <span class="inlinecode">-&gt;</span> direction using <span class="inlinecode"><span class="id" type="var">edestruct</span></span>, the other one stays the same.
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" type="keyword">Lemma</span> <span class="id" type="var">AllAndComE</span> : (<span class="id" type="keyword">forall</span> <span class="id" type="var">x</span>:<span class="id" type="var">A</span>,<span class="id" type="var">P</span> <span class="id" type="var">x</span> /\ <span class="id" type="var">Q</span> <span class="id" type="var">x</span>) -&gt; (<span class="id" type="keyword">forall</span> <span class="id" type="var">x</span>:<span class="id" type="var">A</span>, <span class="id" type="var">P</span> <span class="id" type="var">x</span>) /\ (<span class="id" type="keyword">forall</span> <span class="id" type="var">x</span>:<span class="id" type="var">A</span>, <span class="id" type="var">Q</span> <span class="id" type="var">x</span>).<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Proving <span class="inlinecode">-&gt;</span> 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" type="tactic">intro</span> <span class="id" type="var">H</span>.<br/>
+<span class="id" type="tactic">split</span>.<br/>
+<span class="id" type="tactic">intro</span> <span class="id" type="var">a</span>.<br/>
+<span class="id" type="var">edestruct</span> <span class="id" type="var">H</span> <span class="id" type="keyword">as</span> [<span class="id" type="var">p</span> <span class="id" type="var">q</span>].<br/>
+<span class="id" type="tactic">apply</span> <span class="id" type="var">p</span>.<br/>
+<span class="id" type="tactic">intro</span> <span class="id" type="var">a</span>.<br/>
+<span class="id" type="var">edestruct</span> <span class="id" type="var">H</span> <span class="id" type="keyword">as</span> [<span class="id" type="var">p</span> <span class="id" type="var">q</span>].<br/>
+<span class="id" type="tactic">apply</span> <span class="id" type="var">q</span>.<br/>
+<span class="id" type="keyword">Qed</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Question: Does <span class="inlinecode"><span class="id" type="keyword">forall</span></span> also commute with <span class="inlinecode">\/</span>? That is does 
+    <span class="inlinecode"><span class="id" type="keyword">forall</span>( <span class="id" type="var">x</span>:<span class="id" type="var">A</span>,<span class="id" type="var">P</span> <span class="id" type="var">x</span> \/ <span class="id" type="var">Q</span> <span class="id" type="var">x</span>) &lt;-&gt; <span class="id" type="keyword">forall</span>( <span class="id" type="var">x</span>:<span class="id" type="var">A</span>, <span class="id" type="var">P</span> <span class="id" type="var">x</span>) \/ <span class="id" type="keyword">forall</span>( <span class="id" type="var">x</span>:<span class="id" type="var">A</span>, <span class="id" type="var">Q</span> <span class="id" type="var">x</span>)</span>
+    hold? If not, how can you show that?
+
+</div>
+<div class="code">
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab19"></a><h1 class="section">Existential quantification</h1>
+
+</div>
+<div class="code">
+
+<br/>
+</div>
+
+<div class="doc">
+To say that there is an element of A having the property P, we write
+    <span class="inlinecode"><span class="id" type="var">exists</span> <span class="id" type="var">x</span>:<span class="id" type="var">A</span>, <span class="id" type="var">P</span> <span class="id" type="var">x</span></span> more general we can form <span class="inlinecode"><span class="id" type="var">exists</span> <span class="id" type="var">x</span>:<span class="id" type="var">A</span>, <span class="id" type="var">PP</span></span>
+    where <span class="inlinecode"><span class="id" type="var">PP</span></span> is a proposition possibly containing the variable <span class="inlinecode"><span class="id" type="var">x</span></span>. 
+    Another example is <span class="inlinecode"><span class="id" type="var">exists</span> <span class="id" type="var">x</span>:<span class="id" type="var">A</span>,<span class="id" type="var">P</span> <span class="id" type="var">x</span> /\ <span class="id" type="var">Q</span> <span class="id" type="var">x</span></span> meaning that there
+    is an element of <span class="inlinecode"><span class="id" type="var">A</span></span> that has the property <span class="inlinecode"><span class="id" type="var">P</span></span> and the
+    property <span class="inlinecode"><span class="id" type="var">Q</span></span>. In our example that would mean that 
+    there is a student who is both clever and funny.
+
+<br/> <br/>
+    As an example we show that if there is an element of <span class="inlinecode"><span class="id" type="var">A</span></span> having the
+    property <span class="inlinecode"><span class="id" type="var">P</span></span> and that if whenever an element of <span class="inlinecode"><span class="id" type="var">A</span></span> has the
+    property <span class="inlinecode"><span class="id" type="var">P</span></span> has also the property <span class="inlinecode"><span class="id" type="var">Q</span></span> then there is an elements of <span class="inlinecode"><span class="id" type="var">A</span></span>
+    having the property <span class="inlinecode"><span class="id" type="var">Q</span></span>. That is if there is a clever student, and every 
+    clever student is funny, then there is a funny student. In predicate
+    logic we write <span class="inlinecode">(<span class="id" type="var">exists</span> <span class="id" type="var">x</span>:<span class="id" type="var">A</span>,<span class="id" type="var">P</span> <span class="id" type="var">x</span>) -&gt; <span class="id" type="keyword">forall</span>( <span class="id" type="var">x</span>:<span class="id" type="var">A</span>,<span class="id" type="var">P</span> <span class="id" type="var">x</span> -&gt; <span class="id" type="var">Q</span> <span class="id" type="var">x</span>) -&gt; <span class="id" type="var">exists</span> <span class="id" type="var">x</span>:<span class="id" type="var">A</span>, <span class="id" type="var">Q</span> <span class="id" type="var">x</span></span>.
+
+<br/> <br/>
+    Btw, we are not changing the 2nd quantifier, it stays <span class="inlinecode"><span class="id" type="keyword">forall</span></span>. What would happen
+    if we would replace it by <span class="inlinecode"><span class="id" type="var">exists</span></span>?
+
+<br/> <br/>
+    The syntactic conventions for <span class="inlinecode"><span class="id" type="var">exists</span></span> are the same as for <span class="inlinecode"><span class="id" type="keyword">forall</span></span>: the scope of an <span class="inlinecode"><span class="id" type="var">exists</span></span>
+    always goes as far as possible. That is we read <span class="inlinecode"><span class="id" type="var">exists</span> <span class="id" type="var">x</span>:<span class="id" type="var">A</span>,<span class="id" type="var">P</span> <span class="id" type="var">x</span> /\ <span class="id" type="var">Q</span></span>
+    as <span class="inlinecode"><span class="id" type="var">exists</span> <span class="id" type="var">x</span>:<span class="id" type="var">A</span>, (<span class="id" type="var">P</span> <span class="id" type="var">x</span> /\ <span class="id" type="var">Q</span>)</span>. 
+
+<br/> <br/>
+    The tactics for existential quatification are similar to the ones for conjunction. 
+    To prove an existential statement <span class="inlinecode"><span class="id" type="var">exists</span> <span class="id" type="var">x</span>:<span class="id" type="var">A</span>,<span class="id" type="var">PP</span></span> we use <span class="inlinecode"><span class="id" type="var">exists</span> <span class="id" type="var">a</span></span> where
+    <span class="inlinecode"><span class="id" type="var">a</span> : <span class="id" type="var">A</span></span> is our <i>witness</i>. We then have to prove <span class="inlinecode"><span class="id" type="var">PP</span></span> where each free occurence of <span class="inlinecode"><span class="id" type="var">x</span></span>
+    is replaced by <span class="inlinecode"><span class="id" type="var">a</span></span>. To use an assumption <span class="inlinecode"><span class="id" type="var">H</span> : <span class="id" type="var">exists</span> <span class="id" type="var">x</span>:<span class="id" type="var">A</span>,<span class="id" type="var">PP</span></span> we employ 
+    <span class="inlinecode"><span class="id" type="tactic">destruct</span> <span class="id" type="var">H</span> <span class="id" type="keyword">as</span> [<span class="id" type="var">a</span> <span class="id" type="var">p</span>]</span> which destructs <span class="inlinecode"><span class="id" type="var">H</span></span> into <span class="inlinecode"><span class="id" type="var">a</span> : <span class="id" type="var">A</span></span> and <span class="inlinecode"><span class="id" type="var">p</span> : <span class="id" type="var">PP'</span></span> where <span class="inlinecode"><span class="id" type="var">PP'</span></span> is <span class="inlinecode"><span class="id" type="var">PP</span></span> 
+    where all free occurences of <span class="inlinecode"><span class="id" type="var">x</span></span> have been replaced by <span class="inlinecode"><span class="id" type="var">a</span></span>.
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" type="keyword">Lemma</span> <span class="id" type="var">ExistsMono</span> : (<span class="id" type="var">exists</span> <span class="id" type="var">x</span>:<span class="id" type="var">A</span>,<span class="id" type="var">P</span> <span class="id" type="var">x</span>) -&gt; (<span class="id" type="keyword">forall</span> <span class="id" type="var">x</span>:<span class="id" type="var">A</span>,<span class="id" type="var">P</span> <span class="id" type="var">x</span> -&gt; <span class="id" type="var">Q</span> <span class="id" type="var">x</span>) -&gt; <span class="id" type="var">exists</span> <span class="id" type="var">x</span>:<span class="id" type="var">A</span>, <span class="id" type="var">Q</span> <span class="id" type="var">x</span>.<br/>
+<span class="id" type="tactic">intros</span> <span class="id" type="var">H1</span> <span class="id" type="var">H2</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+We first eliminate or assumption. 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" type="tactic">destruct</span> <span class="id" type="var">H1</span> <span class="id" type="keyword">as</span> [<span class="id" type="var">a</span> <span class="id" type="var">p</span>].<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+And now we introduce the existential. 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" type="var">exists</span> <span class="id" type="var">a</span>.<br/>
+<span class="id" type="tactic">apply</span> <span class="id" type="var">H2</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+In the last step we instantiated a universal quantifier. 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" type="tactic">exact</span> <span class="id" type="var">p</span>.<br/>
+<span class="id" type="keyword">Qed</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+
+<br/> <br/>
+So to summarize:
+<ul>
+<li> introduction for <span class="inlinecode"><span class="id" type="var">exists</span></span>
+     To show <span class="inlinecode"><span class="id" type="var">exists</span> <span class="id" type="var">x</span>:<span class="id" type="var">A</span>,<span class="id" type="var">P</span></span> we say <span class="inlinecode"><span class="id" type="var">exists</span> <span class="id" type="var">a</span></span> where <span class="inlinecode"><span class="id" type="var">a</span> : <span class="id" type="var">A</span></span> is any expression of type <span class="inlinecode"><span class="id" type="var">a</span></span>.
+     It remains to show <span class="inlinecode"><span class="id" type="var">P</span></span> where any free occurence of <span class="inlinecode"><span class="id" type="var">x</span></span> is replaced by <span class="inlinecode"><span class="id" type="var">a</span></span>.
+
+</li>
+<li> elimination for <span class="inlinecode"><span class="id" type="var">exists</span></span>
+     If we know <span class="inlinecode"><span class="id" type="var">H</span> : <span class="id" type="var">exists</span> <span class="id" type="var">x</span>:<span class="id" type="var">A</span>,<span class="id" type="var">P</span></span> we can use <span class="inlinecode"><span class="id" type="tactic">destruct</span> <span class="id" type="var">H</span> <span class="id" type="keyword">as</span> [<span class="id" type="var">a</span> <span class="id" type="var">p</span>]</span> which destructs <span class="inlinecode"><span class="id" type="var">H</span></span>
+     intwo two assumptions: <span class="inlinecode"><span class="id" type="var">a</span> : <span class="id" type="var">A</span></span> and <span class="inlinecode"><span class="id" type="var">p</span> : <span class="id" type="var">P'</span></span> where <span class="inlinecode"><span class="id" type="var">P'</span></span> is obtained from <span class="inlinecode"><span class="id" type="var">P</span></span> by
+     replacing all free occurences of <span class="inlinecode"><span class="id" type="var">x</span></span> in <span class="inlinecode"><span class="id" type="var">P</span></span> by <span class="inlinecode"><span class="id" type="var">a</span></span>.
+
+</li>
+</ul>
+Next we are going to show that <span class="inlinecode"><span class="id" type="var">exists</span></span> <i>commutes with</i> <span class="inlinecode">\/</span>. That is
+we are going to show <span class="inlinecode">(<span class="id" type="var">exists</span> <span class="id" type="var">x</span>:<span class="id" type="var">A</span>,<span class="id" type="var">P</span> <span class="id" type="var">x</span> \/ <span class="id" type="var">Q</span> <span class="id" type="var">x</span>) &lt;-&gt; (<span class="id" type="var">exists</span> <span class="id" type="var">x</span>:<span class="id" type="var">A</span>, <span class="id" type="var">P</span> <span class="id" type="var">x</span>) \/ (<span class="id" type="var">exits</span> <span class="id" type="var">x</span>:<span class="id" type="var">A</span>, <span class="id" type="var">Q</span> <span class="id" type="var">x</span>)</span>
+that is "there is a student who is clever or funny" is equivalent to "there is a clever student
+or there is a funny student".
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" type="keyword">Lemma</span> <span class="id" type="var">ExOrCom</span> : (<span class="id" type="var">exists</span> <span class="id" type="var">x</span>:<span class="id" type="var">A</span>,<span class="id" type="var">P</span> <span class="id" type="var">x</span> \/ <span class="id" type="var">Q</span> <span class="id" type="var">x</span>) &lt;-&gt; (<span class="id" type="var">exists</span> <span class="id" type="var">x</span>:<span class="id" type="var">A</span>, <span class="id" type="var">P</span> <span class="id" type="var">x</span>) \/ (<span class="id" type="var">exists</span> <span class="id" type="var">x</span>:<span class="id" type="var">A</span>, <span class="id" type="var">Q</span> <span class="id" type="var">x</span>).<br/>
+<span class="id" type="tactic">split</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Proving <span class="inlinecode">-&gt;</span> 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" type="tactic">intro</span> <span class="id" type="var">H</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+It would be too early to use the introduction rules now.
+    We first need to analyze the assumptions. This is a common
+    situation. 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" type="tactic">destruct</span> <span class="id" type="var">H</span> <span class="id" type="keyword">as</span> [<span class="id" type="var">a</span> <span class="id" type="var">pq</span>].<br/>
+<span class="id" type="tactic">destruct</span> <span class="id" type="var">pq</span> <span class="id" type="keyword">as</span> [<span class="id" type="var">p</span> | <span class="id" type="var">q</span>].<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+First case <span class="inlinecode"><span class="id" type="var">P</span> <span class="id" type="var">a</span></span>. 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" type="var">left</span>.<br/>
+<span class="id" type="var">exists</span> <span class="id" type="var">a</span>.<br/>
+<span class="id" type="tactic">exact</span> <span class="id" type="var">p</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Second case <span class="inlinecode"><span class="id" type="var">Q</span> <span class="id" type="var">a</span></span>. 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" type="var">right</span>.<br/>
+<span class="id" type="var">exists</span> <span class="id" type="var">a</span>.<br/>
+<span class="id" type="tactic">exact</span> <span class="id" type="var">q</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Proving <span class="inlinecode">&lt;-</span> 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" type="tactic">intro</span> <span class="id" type="var">H</span>.<br/>
+<span class="id" type="tactic">destruct</span> <span class="id" type="var">H</span> <span class="id" type="keyword">as</span> [<span class="id" type="var">p</span> | <span class="id" type="var">q</span>].<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+First case <span class="inlinecode"><span class="id" type="var">exists</span> <span class="id" type="var">x</span>:<span class="id" type="var">A</span>,<span class="id" type="var">P</span> <span class="id" type="var">x</span></span> 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" type="tactic">destruct</span> <span class="id" type="var">p</span> <span class="id" type="keyword">as</span> [<span class="id" type="var">a</span> <span class="id" type="var">p</span>].<br/>
+<span class="id" type="var">exists</span> <span class="id" type="var">a</span>.<br/>
+<span class="id" type="var">left</span>.<br/>
+<span class="id" type="tactic">exact</span> <span class="id" type="var">p</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Second case <span class="inlinecode"><span class="id" type="var">exists</span> <span class="id" type="var">x</span>:<span class="id" type="var">A</span>,<span class="id" type="var">Q</span> <span class="id" type="var">x</span></span> 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" type="tactic">destruct</span> <span class="id" type="var">q</span> <span class="id" type="keyword">as</span> [<span class="id" type="var">a</span> <span class="id" type="var">q</span>].<br/>
+<span class="id" type="var">exists</span> <span class="id" type="var">a</span>.<br/>
+<span class="id" type="var">right</span>.<br/>
+<span class="id" type="tactic">exact</span> <span class="id" type="var">q</span>.<br/>
+<span class="id" type="keyword">Qed</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab20"></a><h1 class="section">Another Currying Theorem</h1>
+
+</div>
+<div class="code">
+
+<br/>
+</div>
+
+<div class="doc">
+There is also a currying theorem in predicate logic which exploits 
+    the relation between <span class="inlinecode">-&gt;</span> and <span class="inlinecode"><span class="id" type="keyword">forall</span></span> on the one hand and 
+    <span class="inlinecode">/\</span> and exists on the other. That is we can show that 
+    <span class="inlinecode"><span class="id" type="keyword">forall</span> <span class="id" type="var">x</span>:<span class="id" type="var">A</span>,<span class="id" type="var">P</span> <span class="id" type="var">x</span> -&gt; <span class="id" type="var">S</span></span> is equivalent to <span class="inlinecode">(<span class="id" type="var">exists</span> <span class="id" type="var">x</span>:<span class="id" type="var">A</span>,<span class="id" type="var">P</span> <span class="id" type="var">x</span>) -&gt; <span class="id" type="var">S</span></span>.
+    Intuitively, think of <span class="inlinecode"><span class="id" type="var">S</span></span> to be "the lecturer is happy". Then
+    the left hand side can be translated as "If there is any student
+    who is clever, then the lecturer is happy" and the right hand side
+    as "If there exists a student who is clever, then the lecturer is happy".
+    The relation to the propositional currying theorem can be seen, when we
+    replace <span class="inlinecode"><span class="id" type="keyword">forall</span></span> by <span class="inlinecode">-&gt;</span> and <span class="inlinecode"><span class="id" type="var">exists</span></span> by <span class="inlinecode">/\</span>.
+
+<br/> <br/>
+    To prove this tautology we assume an additional proposition.
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" type="keyword">Variable</span> <span class="id" type="var">S</span> : <span class="id" type="keyword">Prop</span>.<br/>
+
+<br/>
+<span class="id" type="keyword">Lemma</span> <span class="id" type="var">Curry</span> : (<span class="id" type="keyword">forall</span> <span class="id" type="var">x</span>:<span class="id" type="var">A</span>,<span class="id" type="var">P</span> <span class="id" type="var">x</span> -&gt; <span class="id" type="var">S</span>) &lt;-&gt; ((<span class="id" type="var">exists</span> <span class="id" type="var">x</span>:<span class="id" type="var">A</span>,<span class="id" type="var">P</span> <span class="id" type="var">x</span>) -&gt; <span class="id" type="var">S</span>).<br/>
+<span class="id" type="tactic">split</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+proving <span class="inlinecode">-&gt;</span> 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" type="tactic">intro</span> <span class="id" type="var">H</span>.<br/>
+<span class="id" type="tactic">intro</span> <span class="id" type="var">p</span>.<br/>
+<span class="id" type="tactic">destruct</span> <span class="id" type="var">p</span> <span class="id" type="keyword">as</span> [<span class="id" type="var">a</span> <span class="id" type="var">p</span>].<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+With our limited knowledge of Coq's tactic language we need
+    to instantiate <span class="inlinecode"><span class="id" type="var">H</span></span> using <span class="inlinecode"><span class="id" type="tactic">assert</span></span>. There are better ways 
+    to do this... We will see later.
+</div>
+<div class="code">
+
+<br/>
+<span class="id" type="tactic">assert</span> (<span class="id" type="var">H'</span> : <span class="id" type="var">P</span> <span class="id" type="var">a</span> -&gt; <span class="id" type="var">S</span>).<br/>
+<span class="id" type="tactic">apply</span> <span class="id" type="var">H</span>.<br/>
+<span class="id" type="tactic">apply</span> <span class="id" type="var">H'</span>.<br/>
+<span class="id" type="tactic">exact</span> <span class="id" type="var">p</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+proving <span class="inlinecode">&lt;-</span>. 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" type="tactic">intro</span> <span class="id" type="var">H</span>.<br/>
+<span class="id" type="tactic">intros</span> <span class="id" type="var">a</span> <span class="id" type="var">p</span>.<br/>
+<span class="id" type="tactic">apply</span> <span class="id" type="var">H</span>.<br/>
+<span class="id" type="var">exists</span> <span class="id" type="var">a</span>.<br/>
+<span class="id" type="tactic">exact</span> <span class="id" type="var">p</span>.<br/>
+<span class="id" type="keyword">Qed</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+As before the explicit instantiation using <span class="inlinecode"><span class="id" type="tactic">assert</span></span> can be avoided by using the "e" version of a tactic. In
+    this case it is <span class="inlinecode"><span class="id" type="tactic">eapply</span></span>. Again, I refer to the Coq reference manual for details. I only do one direction, the other one stays the same.
+</div>
+<div class="code">
+
+<br/>
+<span class="id" type="keyword">Lemma</span> <span class="id" type="var">CurryE</span> : (<span class="id" type="keyword">forall</span> <span class="id" type="var">x</span>:<span class="id" type="var">A</span>,<span class="id" type="var">P</span> <span class="id" type="var">x</span> -&gt; <span class="id" type="var">S</span>) -&gt; ((<span class="id" type="var">exists</span> <span class="id" type="var">x</span>:<span class="id" type="var">A</span>,<span class="id" type="var">P</span> <span class="id" type="var">x</span>) -&gt; <span class="id" type="var">S</span>).<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+proving <span class="inlinecode">-&gt;</span> 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" type="tactic">intro</span> <span class="id" type="var">H</span>.<br/>
+<span class="id" type="tactic">intro</span> <span class="id" type="var">p</span>.<br/>
+<span class="id" type="tactic">destruct</span> <span class="id" type="var">p</span> <span class="id" type="keyword">as</span> [<span class="id" type="var">a</span> <span class="id" type="var">p</span>].<br/>
+<span class="id" type="tactic">eapply</span> <span class="id" type="var">H</span>.<br/>
+<span class="id" type="tactic">apply</span> <span class="id" type="var">p</span>.<br/>
+<span class="id" type="keyword">Qed</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab21"></a><h1 class="section">Equality</h1>
+
+</div>
+<div class="code">
+
+<br/>
+</div>
+
+<div class="doc">
+Predicate logic comes with one generic relation which is defined for 
+    all sets: equality (<span class="inlinecode">=</span>). Given two expressions <span class="inlinecode"><span class="id" type="var">a</span>,<span class="id" type="var">b</span> : <span class="id" type="var">A</span></span> we write 
+    <span class="inlinecode"><span class="id" type="var">a</span> = <span class="id" type="var">b</span> : <span class="id" type="keyword">Prop</span></span> for the proposition that <span class="inlinecode"><span class="id" type="var">a</span></span> and <span class="inlinecode"><span class="id" type="var">b</span></span> are equal,
+    that is they describe the same object. 
+
+<br/> <br/>
+    How can we prove an equality? That is what is the introduction rule for equality? 
+    We can prove that every expression is <span class="inlinecode"><span class="id" type="var">a</span> : <span class="id" type="var">A</span></span> is equal to itself <span class="inlinecode"><span class="id" type="var">a</span> = <span class="id" type="var">a</span></span>
+    using the tactic <span class="inlinecode"><span class="id" type="tactic">reflexivity</span></span>. How can we use an assumption
+    <span class="inlinecode"><span class="id" type="var">H</span> : <span class="id" type="var">a</span> = <span class="id" type="var">b</span></span>? That is how can we eliminate equality? If we want to
+    prove a goal <span class="inlinecode"><span class="id" type="var">P</span></span> which contains the expression <span class="inlinecode"><span class="id" type="var">a</span></span> we can use
+    <span class="inlinecode"><span class="id" type="tactic">rewrite</span> <span class="id" type="var">H</span></span> to <i>rewrite</i> all those <span class="inlinecode"><span class="id" type="var">a</span></span>s into <span class="inlinecode"><span class="id" type="var">b</span></span>s.
+
+<br/> <br/>
+    To demonstrate how to use these tactics we show that equality is
+    an <i>equivalence relation</i> that is, it is:
+<ul>
+<li> reflexive (<span class="inlinecode"><span class="id" type="keyword">forall</span> <span class="id" type="var">a</span>:<span class="id" type="var">A</span>, <span class="id" type="var">a</span> = <span class="id" type="var">a</span></span>)
+
+</li>
+<li> symmetric (<span class="inlinecode"><span class="id" type="keyword">forall</span> <span class="id" type="var">a</span> <span class="id" type="var">b</span>:<span class="id" type="var">A</span>, <span class="id" type="var">a</span>=<span class="id" type="var">b</span> -&gt; <span class="id" type="var">b</span>=<span class="id" type="var">a</span></span>)
+
+</li>
+<li> transitive (<span class="inlinecode"><span class="id" type="keyword">forall</span> <span class="id" type="var">a</span> <span class="id" type="var">b</span> <span class="id" type="var">c</span>:<span class="id" type="var">A</span>, <span class="id" type="var">a</span>=<span class="id" type="var">b</span> -&gt; <span class="id" type="var">b</span>=<span class="id" type="var">c</span> -&gt; <span class="id" type="var">a</span>=<span class="id" type="var">c</span></span>.
+
+</li>
+</ul>
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" type="keyword">Lemma</span> <span class="id" type="var">eq_refl</span> : <span class="id" type="keyword">forall</span> <span class="id" type="var">a</span>:<span class="id" type="var">A</span>, <span class="id" type="var">a</span> = <span class="id" type="var">a</span>.<br/>
+<span class="id" type="tactic">intro</span> <span class="id" type="var">a</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Here we just invoke the reflexivity tactic. 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" type="tactic">reflexivity</span>.<br/>
+<span class="id" type="keyword">Qed</span>.<br/>
+
+<br/>
+<span class="id" type="keyword">Lemma</span> <span class="id" type="var">eq_sym</span> : <span class="id" type="keyword">forall</span> <span class="id" type="var">a</span> <span class="id" type="var">b</span>:<span class="id" type="var">A</span>, <span class="id" type="var">a</span>=<span class="id" type="var">b</span> -&gt; <span class="id" type="var">b</span>=<span class="id" type="var">a</span>.<br/>
+<span class="id" type="tactic">intros</span> <span class="id" type="var">a</span> <span class="id" type="var">b</span> <span class="id" type="var">H</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Here we use rewrite to reduce the goal. 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" type="tactic">rewrite</span> <span class="id" type="var">H</span>.<br/>
+<span class="id" type="tactic">reflexivity</span>.<br/>
+<span class="id" type="keyword">Qed</span>.<br/>
+
+<br/>
+<span class="id" type="keyword">Lemma</span> <span class="id" type="var">eq_trans</span> : <span class="id" type="keyword">forall</span> <span class="id" type="var">a</span> <span class="id" type="var">b</span> <span class="id" type="var">c</span>:<span class="id" type="var">A</span>, <span class="id" type="var">a</span>=<span class="id" type="var">b</span> -&gt; <span class="id" type="var">b</span>=<span class="id" type="var">c</span> -&gt; <span class="id" type="var">a</span>=<span class="id" type="var">c</span>.<br/>
+<span class="id" type="tactic">intros</span> <span class="id" type="var">a</span> <span class="id" type="var">b</span> <span class="id" type="var">c</span> <span class="id" type="var">ab</span> <span class="id" type="var">bc</span>.<br/>
+<span class="id" type="tactic">rewrite</span> <span class="id" type="var">ab</span>.<br/>
+<span class="id" type="tactic">exact</span> <span class="id" type="var">bc</span>.<br/>
+<span class="id" type="keyword">Qed</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Do you know any other equivalence relations? 
+</div>
+<div class="code">
+
+<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab22"></a><h1 class="section">Classical Predicate Logic</h1>
+
+</div>
+<div class="code">
+
+<br/>
+</div>
+
+<div class="doc">
+The principle of the excluded middle <span class="inlinecode"><span class="id" type="var">classic</span> <span class="id" type="var">P</span> : <span class="id" type="var">P</span> \/ ~<span class="id" type="var">P</span></span> has many important 
+    applications in predicate logic. As an example we show that <span class="inlinecode"><span class="id" type="var">exists</span> <span class="id" type="var">x</span>:<span class="id" type="var">A</span>,<span class="id" type="var">P</span> <span class="id" type="var">x</span></span>
+    is equivalent to <span class="inlinecode">~ <span class="id" type="keyword">forall</span> <span class="id" type="var">x</span>:<span class="id" type="var">A</span>, ~ <span class="id" type="var">P</span> <span class="id" type="var">x</span></span>. 
+
+<br/> <br/>
+    Instead of using <span class="inlinecode"><span class="id" type="var">classic</span></span> directly we use the derivable principle
+    <span class="inlinecode"><span class="id" type="var">NNPP</span> : ~ ~ <span class="id" type="var">P</span> -&gt; <span class="id" type="var">P</span></span> which is also defined in <span class="inlinecode"><span class="id" type="var">Coq.Logic.Classical</span></span>.
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" type="keyword">Require</span> <span class="id" type="keyword">Import</span> <span class="id" type="var">Coq.Logic.Classical</span>.<br/>
+
+<br/>
+<span class="id" type="keyword">Lemma</span> <span class="id" type="var">ex_from_forall</span> : (<span class="id" type="var">exists</span> <span class="id" type="var">x</span>:<span class="id" type="var">A</span>, <span class="id" type="var">P</span> <span class="id" type="var">x</span>) &lt;-&gt; ~ <span class="id" type="keyword">forall</span> <span class="id" type="var">x</span>:<span class="id" type="var">A</span>, ~ <span class="id" type="var">P</span> <span class="id" type="var">x</span>.<br/>
+<span class="id" type="tactic">split</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+proving <span class="inlinecode">-&gt;</span> 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" type="tactic">intro</span> <span class="id" type="var">ex</span>.<br/>
+<span class="id" type="tactic">intro</span> <span class="id" type="var">H</span>.<br/>
+<span class="id" type="tactic">destruct</span> <span class="id" type="var">ex</span> <span class="id" type="keyword">as</span> [<span class="id" type="var">a</span> <span class="id" type="var">p</span>].<br/>
+<span class="id" type="tactic">assert</span> (<span class="id" type="var">npa</span> : ~ (<span class="id" type="var">P</span> <span class="id" type="var">a</span>)).<br/>
+<span class="id" type="tactic">apply</span> <span class="id" type="var">H</span>.<br/>
+<span class="id" type="tactic">apply</span> <span class="id" type="var">npa</span>.<br/>
+<span class="id" type="tactic">exact</span> <span class="id" type="var">p</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+proving <span class="inlinecode">&lt;-</span> 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" type="tactic">intro</span> <span class="id" type="var">H</span>.<br/>
+<span class="id" type="tactic">apply</span> <span class="id" type="var">NNPP</span>.<br/>
+</div>
+
+<div class="doc">
+Instead of proving <span class="inlinecode"><span class="id" type="var">exists</span> <span class="id" type="var">x</span>:<span class="id" type="var">A</span>,<span class="id" type="var">P</span> <span class="id" type="var">x</span></span> which is hard,
+    we show <span class="inlinecode">~~ <span class="id" type="var">exists</span> <span class="id" type="var">x</span>:<span class="id" type="var">A</span>,<span class="id" type="var">P</span> <span class="id" type="var">x</span></span> which is easier. 
+</div>
+<div class="code">
+<span class="id" type="tactic">intro</span> <span class="id" type="var">nex</span>.<br/>
+<span class="id" type="tactic">apply</span> <span class="id" type="var">H</span>.<br/>
+<span class="id" type="tactic">intros</span> <span class="id" type="var">a</span> <span class="id" type="var">p</span>.<br/>
+<span class="id" type="tactic">apply</span> <span class="id" type="var">nex</span>.<br/>
+<span class="id" type="var">exists</span> <span class="id" type="var">a</span>.<br/>
+<span class="id" type="tactic">exact</span> <span class="id" type="var">p</span>.<br/>
+<span class="id" type="keyword">Qed</span>.<br/>
+
+<br/>
+</div>
+</div>
+
+<div id="footer">
+<hr/><a href="index.html">Index</a><hr/>This page has been generated by <a href="http://coq.inria.fr/">coqdoc</a>
+</div>
+
+</div>
+
+</body>
+</html>

@@ -1,0 +1,706 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1"/>
+<link href="coqdoc.css" rel="stylesheet" type="text/css"/>
+<title>Sets</title>
+</head>
+
+<body>
+
+<div id="page">
+
+<div id="header">
+</div>
+
+<div id="main">
+
+<h1 class="libtitle">Library Sets</h1>
+
+<div class="code">
+
+<br/>
+</div>
+
+<div class="doc">
+<H0>How to make sets</H0> 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" type="keyword">Section</span> <span class="id" type="var">Sets</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Some magic incantations... 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" type="keyword">Open</span> <span class="id" type="keyword">Scope</span> <span class="id" type="var">type_scope</span>.<br/>
+<span class="id" type="keyword">Set Implicit Arguments</span>.<br/>
+<span class="id" type="keyword">Implicit Arguments</span> <span class="id" type="var">inl</span> [<span class="id" type="var">A</span> <span class="id" type="var">B</span>].<br/>
+<span class="id" type="keyword">Implicit Arguments</span> <span class="id" type="var">inr</span> [<span class="id" type="var">A</span> <span class="id" type="var">B</span>].<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab26"></a><h1 class="section">Finite Sets</h1>
+
+<div class="paragraph"> </div>
+
+ As we have defined <span class="inlinecode"><span class="id" type="var">bool</span></span> we can define other finite sets 
+    just by enumerating the elements.
+
+<div class="paragraph"> </div>
+
+    Im Mathematics (and conventional Set Theory), we just write
+    C = { c1, c2 , .. , cn } for a finite set.
+
+<div class="paragraph"> </div>
+
+    In Coq we write
+
+<div class="paragraph"> </div>
+
+    <span class="inlinecode"><span class="id" type="keyword">Inductive</span></span> <span class="inlinecode"><span class="id" type="var">C</span></span> <span class="inlinecode">:</span> <span class="inlinecode"><span class="id" type="keyword">Set</span></span> <span class="inlinecode">:=</span> 
+    <span class="inlinecode">|</span> <span class="inlinecode"><span class="id" type="var">c1</span></span> <span class="inlinecode">:</span> <span class="inlinecode"><span class="id" type="var">C</span></span>
+    <span class="inlinecode">|</span> <span class="inlinecode"><span class="id" type="var">c2</span></span> <span class="inlinecode">:</span> <span class="inlinecode"><span class="id" type="var">C</span></span>
+    <span class="inlinecode">...</span>
+    <span class="inlinecode">|</span> <span class="inlinecode"><span class="id" type="var">cn</span></span> <span class="inlinecode">:</span> <span class="inlinecode"><span class="id" type="var">C</span>.</span> <span class="inlinecode"></span>
+
+<div class="paragraph"> </div>
+
+    As a special example we define the empty set:
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" type="keyword">Inductive</span> <span class="id" type="var">empty_set</span> : <span class="id" type="keyword">Set</span> := .<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+As an example for finite sets, we consider the game of chess.
+    We need to define the colours, the different type of pieces,
+    and the coordinates. 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" type="keyword">Inductive</span> <span class="id" type="var">Colour</span> : <span class="id" type="keyword">Set</span> :=<br/>
+&nbsp;&nbsp;| <span class="id" type="var">white</span>: <span class="id" type="var">Colour</span><br/>
+&nbsp;&nbsp;| <span class="id" type="var">black</span> : <span class="id" type="var">Colour</span>.<br/>
+
+<br/>
+<span class="id" type="keyword">Inductive</span> <span class="id" type="var">Rank</span> : <span class="id" type="keyword">Set</span> :=<br/>
+&nbsp;&nbsp;| <span class="id" type="var">pawn</span> : <span class="id" type="var">Rank</span><br/>
+&nbsp;&nbsp;| <span class="id" type="var">rook</span> : <span class="id" type="var">Rank</span><br/>
+&nbsp;&nbsp;| <span class="id" type="var">knight</span> : <span class="id" type="var">Rank</span><br/>
+&nbsp;&nbsp;| <span class="id" type="var">bishop</span> : <span class="id" type="var">Rank</span><br/>
+&nbsp;&nbsp;| <span class="id" type="var">queen</span> : <span class="id" type="var">Rank</span><br/>
+&nbsp;&nbsp;| <span class="id" type="var">king</span> : <span class="id" type="var">Rank</span>.<br/>
+
+<br/>
+<span class="id" type="keyword">Inductive</span> <span class="id" type="var">XCoord</span> : <span class="id" type="keyword">Set</span> :=<br/>
+&nbsp;&nbsp;| <span class="id" type="var">xa</span> : <span class="id" type="var">XCoord</span><br/>
+&nbsp;&nbsp;| <span class="id" type="var">xb</span> : <span class="id" type="var">XCoord</span><br/>
+&nbsp;&nbsp;| <span class="id" type="var">xc</span> : <span class="id" type="var">XCoord</span><br/>
+&nbsp;&nbsp;| <span class="id" type="var">xd</span> : <span class="id" type="var">XCoord</span><br/>
+&nbsp;&nbsp;| <span class="id" type="var">xe</span> : <span class="id" type="var">XCoord</span><br/>
+&nbsp;&nbsp;| <span class="id" type="var">xf</span> : <span class="id" type="var">XCoord</span><br/>
+&nbsp;&nbsp;| <span class="id" type="var">xg</span> : <span class="id" type="var">XCoord</span><br/>
+&nbsp;&nbsp;| <span class="id" type="var">xh</span> : <span class="id" type="var">XCoord</span>.<br/>
+
+<br/>
+<span class="id" type="keyword">Inductive</span> <span class="id" type="var">YCoord</span> : <span class="id" type="keyword">Set</span> :=<br/>
+&nbsp;&nbsp;| <span class="id" type="var">y1</span> : <span class="id" type="var">YCoord</span><br/>
+&nbsp;&nbsp;| <span class="id" type="var">y2</span> : <span class="id" type="var">YCoord</span><br/>
+&nbsp;&nbsp;| <span class="id" type="var">y3</span> : <span class="id" type="var">YCoord</span><br/>
+&nbsp;&nbsp;| <span class="id" type="var">y4</span> : <span class="id" type="var">YCoord</span><br/>
+&nbsp;&nbsp;| <span class="id" type="var">y5</span> : <span class="id" type="var">YCoord</span><br/>
+&nbsp;&nbsp;| <span class="id" type="var">y6</span> : <span class="id" type="var">YCoord</span><br/>
+&nbsp;&nbsp;| <span class="id" type="var">y7</span> : <span class="id" type="var">YCoord</span><br/>
+&nbsp;&nbsp;| <span class="id" type="var">y8</span> : <span class="id" type="var">YCoord</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+In practice it is not such a good idea to use different
+    sets for the x and y coordinates. We use this here for 
+    illustration and it does reflect the chess notation
+    like e2 - e4 for moving the pawn in front of the king.
+
+<div class="paragraph"> </div>
+
+ We can define operations on finite sets using the <span class="inlinecode"><span class="id" type="keyword">match</span></span>
+    construct we have already seen for book. As an example
+    we define the operation 
+    <span class="inlinecode"><span class="id" type="var">oneUp</span></span> <span class="inlinecode">:</span> <span class="inlinecode"><span class="id" type="var">YCoord</span></span> <span class="inlinecode">-&gt;</span> <span class="inlinecode"><span class="id" type="var">YCoord</span></span>
+    which increases the y coordinates by 1. We have to decide
+    what to do when we reach the 8th row. Here we just get
+    stuck. 
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" type="keyword">Definition</span> <span class="id" type="var">oneUp</span> (<span class="id" type="var">y</span> : <span class="id" type="var">YCoord</span>) : <span class="id" type="var">YCoord</span> :=<br/>
+&nbsp;&nbsp;<span class="id" type="keyword">match</span> <span class="id" type="var">y</span> <span class="id" type="keyword">with</span><br/>
+&nbsp;&nbsp;| <span class="id" type="var">y1</span> =&gt; <span class="id" type="var">y2</span><br/>
+&nbsp;&nbsp;| <span class="id" type="var">y2</span> =&gt; <span class="id" type="var">y3</span><br/>
+&nbsp;&nbsp;| <span class="id" type="var">y3</span> =&gt; <span class="id" type="var">y4</span><br/>
+&nbsp;&nbsp;| <span class="id" type="var">y4</span> =&gt; <span class="id" type="var">y5</span><br/>
+&nbsp;&nbsp;| <span class="id" type="var">y5</span> =&gt; <span class="id" type="var">y6</span><br/>
+&nbsp;&nbsp;| <span class="id" type="var">y6</span> =&gt; <span class="id" type="var">y7</span><br/>
+&nbsp;&nbsp;| <span class="id" type="var">y7</span> =&gt; <span class="id" type="var">y8</span><br/>
+&nbsp;&nbsp;| <span class="id" type="var">y8</span> =&gt; <span class="id" type="var">y8</span><br/>
+&nbsp;&nbsp;<span class="id" type="keyword">end</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab27"></a><h1 class="section">Products</h1>
+
+<div class="paragraph"> </div>
+
+ Given two sets <span class="inlinecode"><span class="id" type="var">A</span></span> <span class="inlinecode"><span class="id" type="var">B</span></span> <span class="inlinecode">:</span> <span class="inlinecode"><span class="id" type="keyword">Set</span></span> we define a new set 
+    <span class="inlinecode"><span class="id" type="var">A</span></span> <span class="inlinecode">*</span> <span class="inlinecode"><span class="id" type="var">B</span></span> <span class="inlinecode">:</span> <span class="inlinecode"><span class="id" type="keyword">Set</span></span> which is called the <i>product</i> of 
+    <span class="inlinecode"><span class="id" type="var">A</span></span> and <span class="inlinecode"><span class="id" type="var">B</span></span>. It is the set of pairs <span class="inlinecode">(<span class="id" type="var">a</span>,<span class="id" type="var">b</span>)</span> where
+    <span class="inlinecode"><span class="id" type="var">a</span></span> <span class="inlinecode">:</span> <span class="inlinecode"><span class="id" type="var">A</span></span> and <span class="inlinecode"><span class="id" type="var">b</span></span> <span class="inlinecode">:</span> <span class="inlinecode"><span class="id" type="var">B</span></span>.
+
+<div class="paragraph"> </div>
+
+ As an example we define the set of chess pieces
+    and coordinates: 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" type="keyword">Definition</span> <span class="id" type="var">Piece</span> : <span class="id" type="keyword">Set</span> := <span class="id" type="var">Colour</span> * <span class="id" type="var">Rank</span>.<br/>
+
+<br/>
+<span class="id" type="keyword">Definition</span> <span class="id" type="var">Coord</span> : <span class="id" type="keyword">Set</span> := <span class="id" type="var">XCoord</span> * <span class="id" type="var">YCoord</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+And for illustration construct some elements: 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" type="keyword">Definition</span> <span class="id" type="var">blackKnight</span> : <span class="id" type="var">Piece</span> := (<span class="id" type="var">black</span> , <span class="id" type="var">knight</span>).<br/>
+
+<br/>
+<span class="id" type="keyword">Definition</span> <span class="id" type="var">e2</span> : <span class="id" type="var">Coord</span> := (<span class="id" type="var">xe</span> , <span class="id" type="var">y2</span>).<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+On Products we have some generic operations called
+    <i>projections</i> which extract the components of a product.
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" type="keyword">Definition</span> <span class="id" type="var">fst</span>(<span class="id" type="var">A</span> <span class="id" type="var">B</span> : <span class="id" type="keyword">Set</span>)(<span class="id" type="var">p</span> : <span class="id" type="var">A</span> * <span class="id" type="var">B</span>) : <span class="id" type="var">A</span> :=<br/>
+&nbsp;&nbsp;&nbsp;<span class="id" type="keyword">match</span> <span class="id" type="var">p</span> <span class="id" type="keyword">with</span><br/>
+&nbsp;&nbsp;&nbsp;| (<span class="id" type="var">a</span> , <span class="id" type="var">b</span>) =&gt; <span class="id" type="var">a</span><br/>
+&nbsp;&nbsp;&nbsp;<span class="id" type="keyword">end</span>.<br/>
+
+<br/>
+<span class="id" type="keyword">Definition</span> <span class="id" type="var">snd</span>(<span class="id" type="var">A</span> <span class="id" type="var">B</span> : <span class="id" type="keyword">Set</span>)(<span class="id" type="var">p</span> : <span class="id" type="var">A</span> * <span class="id" type="var">B</span>) : <span class="id" type="var">B</span> :=<br/>
+&nbsp;&nbsp;&nbsp;<span class="id" type="keyword">match</span> <span class="id" type="var">p</span> <span class="id" type="keyword">with</span><br/>
+&nbsp;&nbsp;&nbsp;| (<span class="id" type="var">a</span> , <span class="id" type="var">b</span>) =&gt; <span class="id" type="var">b</span><br/>
+&nbsp;&nbsp;&nbsp;<span class="id" type="keyword">end</span>.<br/>
+
+<br/>
+<span class="id" type="keyword">Eval</span> <span class="id" type="tactic">compute</span> <span class="id" type="keyword">in</span> <span class="id" type="var">fst</span> <span class="id" type="var">blackKnight</span>.<br/>
+<span class="id" type="keyword">Eval</span> <span class="id" type="tactic">compute</span> <span class="id" type="keyword">in</span> <span class="id" type="var">snd</span> <span class="id" type="var">blackKnight</span>.<br/>
+
+<br/>
+<span class="id" type="keyword">Eval</span> <span class="id" type="tactic">compute</span> <span class="id" type="keyword">in</span> (<span class="id" type="var">fst</span> <span class="id" type="var">blackKnight</span>,<span class="id" type="var">snd</span> <span class="id" type="var">blackKnight</span>).<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+A general theorem about products is that if we take
+    apart an element using projections and then put it 
+    back together again we get the same element. In predicate
+    logic this is:
+
+<div class="paragraph"> </div>
+
+    <span class="inlinecode"><span class="id" type="keyword">forall</span></span> <span class="inlinecode"><span class="id" type="var">p</span></span> <span class="inlinecode">:</span> <span class="inlinecode"><span class="id" type="var">A</span></span> <span class="inlinecode">*</span> <span class="inlinecode"><span class="id" type="var">B</span>,</span> <span class="inlinecode">(<span class="id" type="var">fst</span></span> <span class="inlinecode"><span class="id" type="var">p</span></span> <span class="inlinecode">,</span> <span class="inlinecode"><span class="id" type="var">snd</span></span> <span class="inlinecode"><span class="id" type="var">p</span>)</span> <span class="inlinecode">=</span> <span class="inlinecode"><span class="id" type="var">p</span></span>
+
+<div class="paragraph"> </div>
+
+    This is called <i>surjective pairing</i>. In the actual
+    statement in Coq we also have to quantify over the 
+    sets involved (which technically gets us into the realm
+    of higher order logic - but we shall ignore this).
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" type="keyword">Lemma</span> <span class="id" type="var">surjective_pairing</span> : <span class="id" type="keyword">forall</span> <span class="id" type="var">A</span> <span class="id" type="var">B</span> : <span class="id" type="keyword">Set</span>, <br/>
+&nbsp;&nbsp;<span class="id" type="keyword">forall</span> <span class="id" type="var">p</span> : <span class="id" type="var">prod</span> <span class="id" type="var">A</span> <span class="id" type="var">B</span>, (<span class="id" type="var">fst</span> <span class="id" type="var">p</span> , <span class="id" type="var">snd</span> <span class="id" type="var">p</span>) = <span class="id" type="var">p</span>.<br/>
+<span class="id" type="tactic">intros</span> <span class="id" type="var">A</span> <span class="id" type="var">B</span> <span class="id" type="var">p</span>.<br/>
+</div>
+
+<div class="doc">
+The actual proof is rather easy.
+    All that we need to know is that we can take apart 
+    a product the same way as we have taken apart conjunctions.
+
+</div>
+<div class="code">
+<span class="id" type="tactic">destruct</span> <span class="id" type="var">p</span> <span class="id" type="keyword">as</span> [<span class="id" type="var">a</span> <span class="id" type="var">b</span>].<br/>
+<span class="id" type="tactic">simpl</span>.<br/>
+</div>
+
+<div class="doc">
+Can you simplify this goal in your head?
+    Yes simpl will do the job but why?
+
+</div>
+<div class="code">
+<span class="id" type="tactic">reflexivity</span>.<br/>
+<span class="id" type="keyword">Qed</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Question: If |A| and |B| are finite sets with |m| and
+   |n| elements respectively, how many elements are in 
+   |A * B|?
+
+<div class="paragraph"> </div>
+
+<a name="lab28"></a><h1 class="section">Disjoint union</h1>
+
+<div class="paragraph"> </div>
+
+ Given two sets <span class="inlinecode"><span class="id" type="var">A</span></span> <span class="inlinecode"><span class="id" type="var">B</span></span> <span class="inlinecode">:</span> <span class="inlinecode"><span class="id" type="keyword">Set</span></span> we define a new set 
+    <span class="inlinecode"><span class="id" type="var">A</span></span> <span class="inlinecode">+</span> <span class="inlinecode"><span class="id" type="var">B</span></span> <span class="inlinecode">:</span> <span class="inlinecode"><span class="id" type="keyword">Set</span></span> which is called the <i>disjoint union</i> of 
+    <span class="inlinecode"><span class="id" type="var">A</span></span> and <span class="inlinecode"><span class="id" type="var">B</span></span>. Elements of <span class="inlinecode"><span class="id" type="var">A</span></span> <span class="inlinecode">+</span> <span class="inlinecode"><span class="id" type="var">B</span></span> are either <span class="inlinecode"><span class="id" type="var">inl</span></span> <span class="inlinecode"><span class="id" type="var">a</span></span>
+    where <span class="inlinecode"><span class="id" type="var">a</span></span> <span class="inlinecode">:</span> <span class="inlinecode"><span class="id" type="var">A</span></span> or <span class="inlinecode"><span class="id" type="var">inr</span></span> <span class="inlinecode"><span class="id" type="var">b</span></span> where <span class="inlinecode"><span class="id" type="var">b</span></span> <span class="inlinecode">:</span> <span class="inlinecode"><span class="id" type="var">B</span></span>. Here <span class="inlinecode"><span class="id" type="var">inl</span></span>
+    stands for "inject left" and <span class="inlinecode"><span class="id" type="var">inr</span></span> stands for 
+    "inject right".
+
+<div class="paragraph"> </div>
+
+    It is important not to confuse <span class="inlinecode">+</span> with the union of 
+    sets. The disjoint union of <span class="inlinecode"><span class="id" type="var">bool</span></span> with <span class="inlinecode"><span class="id" type="var">bool</span></span> has 4 elements
+    because <span class="inlinecode"><span class="id" type="var">inl</span></span> <span class="inlinecode"><span class="id" type="var">true</span></span> is different from <span class="inlinecode"><span class="id" type="var">inr</span></span> <span class="inlinecode"><span class="id" type="var">true</span></span> while 
+    in the union of bool with bool there are only 2 elements since
+    there is only one copy of <span class="inlinecode"><span class="id" type="var">true</span></span>. Actually, the union of
+    sets does not exist in Coq. 
+<div class="paragraph"> </div>
+
+ As an example we use disjoint union to define the set
+    field which can either be a piece or empty. The second
+    case is represented by a set with just one element called
+    <span class="inlinecode"><span class="id" type="var">Empty</span></span> which has just one element <span class="inlinecode"><span class="id" type="var">empty</span></span>.
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" type="keyword">Inductive</span> <span class="id" type="var">Empty</span> : <span class="id" type="keyword">Set</span> :=<br/>
+&nbsp;&nbsp;| <span class="id" type="var">empty</span> : <span class="id" type="var">Empty</span>.<br/>
+
+<br/>
+<span class="id" type="keyword">Definition</span> <span class="id" type="var">Field</span> : <span class="id" type="keyword">Set</span> := <span class="id" type="var">Piece</span> + <span class="id" type="var">Empty</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+some examples 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" type="keyword">Definition</span> <span class="id" type="var">blackKnightHere</span> : <span class="id" type="var">Field</span> := <span class="id" type="var">inl</span> <span class="id" type="var">blackKnight</span>.<br/>
+
+<br/>
+<span class="id" type="keyword">Definition</span> <span class="id" type="var">emptyField</span> : <span class="id" type="var">Field</span> := <span class="id" type="var">inr</span> <span class="id" type="var">empty</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+As an example of a defined operation we define <span class="inlinecode"><span class="id" type="var">swap</span></span>
+    which maps elements of <span class="inlinecode"><span class="id" type="var">A</span></span> <span class="inlinecode">+</span> <span class="inlinecode"><span class="id" type="var">B</span></span> to <span class="inlinecode"><span class="id" type="var">B</span></span> <span class="inlinecode">+</span> <span class="inlinecode"><span class="id" type="var">A</span></span> by mapping
+    <span class="inlinecode"><span class="id" type="var">inl</span></span> to <span class="inlinecode"><span class="id" type="var">inr</span></span> and vice versa. 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" type="keyword">Definition</span> <span class="id" type="var">swap</span>(<span class="id" type="var">A</span> <span class="id" type="var">B</span> : <span class="id" type="keyword">Set</span>)(<span class="id" type="var">x</span> : <span class="id" type="var">A</span> + <span class="id" type="var">B</span>) : <span class="id" type="var">B</span> + <span class="id" type="var">A</span> :=<br/>
+&nbsp;&nbsp;<span class="id" type="keyword">match</span> <span class="id" type="var">x</span> <span class="id" type="keyword">with</span> <br/>
+&nbsp;&nbsp;| <span class="id" type="var">inl</span> <span class="id" type="var">a</span> =&gt; <span class="id" type="var">inr</span> <span class="id" type="var">a</span><br/>
+&nbsp;&nbsp;| <span class="id" type="var">inr</span> <span class="id" type="var">b</span> =&gt; <span class="id" type="var">inl</span> <span class="id" type="var">b</span><br/>
+&nbsp;&nbsp;<span class="id" type="keyword">end</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+The same question as for products: If <span class="inlinecode"><span class="id" type="var">A</span></span> has 
+   <span class="inlinecode"><span class="id" type="var">m</span></span> elements and <span class="inlinecode"><span class="id" type="var">B</span></span> has <span class="inlinecode"><span class="id" type="var">n</span></span> elements, how many 
+   elements are in <span class="inlinecode"><span class="id" type="var">A</span></span> <span class="inlinecode">+</span> <span class="inlinecode"><span class="id" type="var">B</span></span>? 
+
+<div class="paragraph"> </div>
+
+ Disjoint unions are sometimes called <i>coproducts</i>
+    because there are in a sense the mirror image 
+    of products. To make this precise we need the language
+    of category theory, which is beyond this course.
+    However, if you are curious look up Category Theory
+    on wikipedia.
+
+<div class="paragraph"> </div>
+
+<a name="lab29"></a><h1 class="section">Function sets</h1>
+
+<div class="paragraph"> </div>
+
+ Given two sets <span class="inlinecode"><span class="id" type="var">A</span></span> <span class="inlinecode"><span class="id" type="var">B</span></span> <span class="inlinecode">:</span> <span class="inlinecode"><span class="id" type="keyword">Set</span></span> we define a new set 
+    <span class="inlinecode"><span class="id" type="var">A</span></span> <span class="inlinecode">-&gt;</span> <span class="inlinecode"><span class="id" type="var">B</span></span> <span class="inlinecode">:</span> <span class="inlinecode"><span class="id" type="keyword">Set</span></span>, the set of functions form <span class="inlinecode"><span class="id" type="var">A</span></span> 
+    to <span class="inlinecode"><span class="id" type="var">B</span></span>. We have already seen one way to define
+    functions, whenever we have defined an operation
+    we have actually defined a function. However, as
+    you have already seen in Haskell, we can define
+    functions directly using lambda abstraction. The
+    syntax is <span class="inlinecode"><span class="id" type="keyword">fun</span></span> <span class="inlinecode"><span class="id" type="var">x</span></span> <span class="inlinecode">=&gt;</span> <span class="inlinecode"><span class="id" type="var">b</span></span> where <span class="inlinecode"><span class="id" type="var">b</span></span> is an expression
+    in <span class="inlinecode"><span class="id" type="var">B</span></span> which may refer to <span class="inlinecode"><span class="id" type="var">x</span></span> <span class="inlinecode">:</span> <span class="inlinecode"><span class="id" type="var">A</span></span>.
+<div class="paragraph"> </div>
+
+ In the case of our chess example we can use functions to define
+   a chess board as a function form <span class="inlinecode"><span class="id" type="var">Coord</span></span> to <span class="inlinecode"><span class="id" type="var">Field</span></span>, 
+   this function would give us the content of a field for 
+   any coordinate. 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" type="keyword">Definition</span> <span class="id" type="var">Board</span> : <span class="id" type="keyword">Set</span> := <span class="id" type="var">Coord</span> -&gt; <span class="id" type="var">Field</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+A particular simple example is the empty board: 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" type="keyword">Definition</span> <span class="id" type="var">EmptyBoard</span> : <span class="id" type="var">Board</span> := <span class="id" type="keyword">fun</span> <span class="id" type="var">x</span> =&gt; <span class="id" type="var">emptyField</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+I leave it as an exercise to construct the initial board for a
+chess game. 
+<div class="paragraph"> </div>
+
+
+<div class="paragraph"> </div>
+
+    As another example instead of defining <span class="inlinecode"><span class="id" type="var">negb</span></span> as an
+    operation we could also have used <span class="inlinecode"><span class="id" type="keyword">fun</span></span>:
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" type="keyword">Definition</span> <span class="id" type="var">negb'</span> : <span class="id" type="var">bool</span> -&gt; <span class="id" type="var">bool</span><br/>
+&nbsp;&nbsp;:= <span class="id" type="keyword">fun</span> (<span class="id" type="var">b</span> : <span class="id" type="var">bool</span>) =&gt; <span class="id" type="keyword">match</span> <span class="id" type="var">b</span> <span class="id" type="keyword">with</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| <span class="id" type="var">true</span> =&gt; <span class="id" type="var">false</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| <span class="id" type="var">false</span> =&gt; <span class="id" type="var">true</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" type="keyword">end</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Using <span class="inlinecode"><span class="id" type="keyword">fun</span></span> is especially useful when we are dealing with <i>higher
+   order functions</i>, i.e. function which take functions as
+   arguments. As an example let us define the function <span class="inlinecode"><span class="id" type="var">isConst</span></span> which
+   determines wether a given function <span class="inlinecode"><span class="id" type="var">f</span></span> <span class="inlinecode">:</span> <span class="inlinecode"><span class="id" type="var">bool</span></span> <span class="inlinecode">-&gt;</span> <span class="inlinecode"><span class="id" type="var">bool</span></span> is
+   constant. 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" type="keyword">Open</span> <span class="id" type="keyword">Scope</span> <span class="id" type="var">bool_scope</span>.<br/>
+
+<br/>
+<span class="id" type="keyword">Definition</span> <span class="id" type="var">isConst</span> (<span class="id" type="var">f</span> : <span class="id" type="var">bool</span> -&gt; <span class="id" type="var">bool</span>) : <span class="id" type="var">bool</span> :=<br/>
+&nbsp;&nbsp;(<span class="id" type="var">f</span> <span class="id" type="var">true</span>) &amp;&amp; (<span class="id" type="var">f</span> <span class="id" type="var">false</span>) || <span class="id" type="var">negb</span> (<span class="id" type="var">f</span> <span class="id" type="var">true</span>) &amp;&amp; <span class="id" type="var">negb</span> (<span class="id" type="var">f</span> <span class="id" type="var">false</span>).<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+What will Coq answer when asked to evaluate the terms below. 
+    In three cases we are using <span class="inlinecode"><span class="id" type="keyword">fun</span></span> to construct the argument.
+    Could we have done this in the 1st case as well?
+ 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" type="keyword">Eval</span> <span class="id" type="tactic">compute</span> <span class="id" type="keyword">in</span> <span class="id" type="var">isConst</span> <span class="id" type="var">negb</span>.<br/>
+<span class="id" type="keyword">Eval</span> <span class="id" type="tactic">compute</span> <span class="id" type="keyword">in</span> <span class="id" type="var">isConst</span> (<span class="id" type="keyword">fun</span> <span class="id" type="var">x</span> =&gt; <span class="id" type="var">false</span>).<br/>
+<span class="id" type="keyword">Eval</span> <span class="id" type="tactic">compute</span> <span class="id" type="keyword">in</span> <span class="id" type="var">isConst</span> (<span class="id" type="keyword">fun</span> <span class="id" type="var">x</span> =&gt; <span class="id" type="var">true</span>).<br/>
+<span class="id" type="keyword">Eval</span> <span class="id" type="tactic">compute</span> <span class="id" type="keyword">in</span> <span class="id" type="var">isConst</span> (<span class="id" type="keyword">fun</span> <span class="id" type="var">x</span> =&gt; <span class="id" type="var">x</span>).<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Are there any other cases to consider ? 
+<div class="paragraph"> </div>
+
+ In general, if <span class="inlinecode"><span class="id" type="var">A</span></span>,<span class="inlinecode"><span class="id" type="var">B</span></span> are finite sets with <span class="inlinecode"><span class="id" type="var">m</span></span> and <span class="inlinecode"><span class="id" type="var">n</span></span> elements,
+   how many elements are in <span class="inlinecode"><span class="id" type="var">A</span></span> <span class="inlinecode">-&gt;</span> <span class="inlinecode"><span class="id" type="var">B</span></span>? Actually we need to assume the
+   axiom of extensionality to get the right answer. This axiom states that any 
+   two functions which are equal for all arguments are equal.
+   
+</div>
+<div class="code">
+
+<br/>
+<span class="id" type="keyword">Axiom</span> <span class="id" type="var">ext</span> : <span class="id" type="keyword">forall</span> (<span class="id" type="var">A</span> <span class="id" type="var">B</span> : <span class="id" type="keyword">Set</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" type="var">f</span> <span class="id" type="var">g</span> : <span class="id" type="var">A</span> -&gt; <span class="id" type="var">B</span>), <br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" type="keyword">forall</span> <span class="id" type="var">x</span>:<span class="id" type="var">A</span>,<span class="id" type="var">f</span> <span class="id" type="var">x</span> = <span class="id" type="var">g</span> <span class="id" type="var">x</span>) -&gt; <span class="id" type="var">f</span> = <span class="id" type="var">g</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+As an example we show that the 2 possible definitions
+    of andb are extensionally equal. 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" type="keyword">Definition</span> <span class="id" type="var">andb</span> (<span class="id" type="var">a</span> <span class="id" type="var">b</span> : <span class="id" type="var">bool</span>) : <span class="id" type="var">bool</span> :=<br/>
+&nbsp;&nbsp;<span class="id" type="keyword">if</span> <span class="id" type="var">a</span> <span class="id" type="keyword">then</span> <span class="id" type="var">b</span> <span class="id" type="keyword">else</span> <span class="id" type="var">false</span>.<br/>
+
+<br/>
+<span class="id" type="keyword">Definition</span> <span class="id" type="var">andb'</span> (<span class="id" type="var">a</span> <span class="id" type="var">b</span> : <span class="id" type="var">bool</span>) : <span class="id" type="var">bool</span> :=<br/>
+&nbsp;&nbsp;<span class="id" type="keyword">if</span> <span class="id" type="var">b</span> <span class="id" type="keyword">then</span> <span class="id" type="var">a</span> <span class="id" type="keyword">else</span> <span class="id" type="var">false</span>.<br/>
+
+<br/>
+<span class="id" type="keyword">Lemma</span> <span class="id" type="var">andbEq</span> : <span class="id" type="var">andb</span> = <span class="id" type="var">andb'</span>.<br/>
+</div>
+
+<div class="doc">
+To show equality of functions we use <span class="inlinecode"><span class="id" type="var">ext</span></span>. 
+</div>
+<div class="code">
+<span class="id" type="tactic">apply</span> <span class="id" type="var">ext</span>.<br/>
+<span class="id" type="tactic">intro</span> <span class="id" type="var">a</span>.<br/>
+</div>
+
+<div class="doc">
+<span class="inlinecode"><span class="id" type="var">andb</span></span> <span class="inlinecode"><span class="id" type="var">a</span></span> is still a function. More <span class="inlinecode"><span class="id" type="var">ext</span></span> is needed. 
+</div>
+<div class="code">
+<span class="id" type="tactic">apply</span> <span class="id" type="var">ext</span>.<br/>
+<span class="id" type="tactic">intro</span> <span class="id" type="var">b</span>.<br/>
+</div>
+
+<div class="doc">
+Now all is left is reasoning with <span class="inlinecode"><span class="id" type="var">bool</span></span> 
+</div>
+<div class="code">
+<span class="id" type="tactic">destruct</span> <span class="id" type="var">a</span>; (<span class="id" type="tactic">destruct</span> <span class="id" type="var">b</span>; <span class="id" type="tactic">reflexivity</span>).<br/>
+<span class="id" type="keyword">Qed</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab30"></a><h1 class="section">The Curry Howard Correspondence</h1>
+
+<div class="paragraph"> </div>
+
+ There is a close correspondence between sets and propositions.  We
+   may translate a proposition by the set of its proofs. The question
+   wether a proposition holds corresponds then to finding an element
+   which lives in the corresponding set. Indeed, this is what Coq's proof objects 
+   are based upon. For propositional logic the translation works as follows:
+
+<div class="paragraph"> </div>
+
+<ul class="doclist">
+<li> conjunction (<span class="inlinecode">/\</span>) is translated as product (<span class="inlinecode">*</span>),
+
+</li>
+<li> disjunction (<span class="inlinecode">\/</span>) is translated as disjoint union (<span class="inlinecode">+</span>),
+
+</li>
+<li> implication (<span class="inlinecode">-&gt;</span>) is translated as function set (<span class="inlinecode">-&gt;</span>).
+
+</li>
+</ul>
+   I leave it to you to figure out what to translate <span class="inlinecode"><span class="id" type="var">True</span></span> and <span class="inlinecode"><span class="id" type="var">False</span></span> with.
+
+<div class="paragraph"> </div>
+
+   As an example we consider the currying theorem for propositional logic. 
+   Applying the translation we obtain:
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" type="keyword">Definition</span> <span class="id" type="var">curry</span> (<span class="id" type="var">A</span> <span class="id" type="var">B</span> <span class="id" type="var">C</span> : <span class="id" type="keyword">Set</span>) : <br/>
+&nbsp;&nbsp;&nbsp;&nbsp;((<span class="id" type="var">A</span> * <span class="id" type="var">B</span> -&gt; <span class="id" type="var">C</span>) -&gt; (<span class="id" type="var">A</span> -&gt; <span class="id" type="var">B</span> -&gt; <span class="id" type="var">C</span>)) :=<br/>
+&nbsp;&nbsp;<span class="id" type="keyword">fun</span> <span class="id" type="var">f</span> =&gt; <span class="id" type="keyword">fun</span> <span class="id" type="var">a</span> =&gt; <span class="id" type="keyword">fun</span> <span class="id" type="var">b</span> =&gt; <span class="id" type="var">f</span> (<span class="id" type="var">a</span> , <span class="id" type="var">b</span>).<br/>
+
+<br/>
+<span class="id" type="keyword">Definition</span> <span class="id" type="var">curry'</span> (<span class="id" type="var">A</span> <span class="id" type="var">B</span> <span class="id" type="var">C</span> : <span class="id" type="keyword">Set</span>) : <br/>
+&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" type="var">A</span> -&gt; <span class="id" type="var">B</span> -&gt; <span class="id" type="var">C</span>) -&gt; (<span class="id" type="var">A</span> * <span class="id" type="var">B</span> -&gt; <span class="id" type="var">C</span>) :=<br/>
+&nbsp;&nbsp;<span class="id" type="keyword">fun</span> <span class="id" type="var">g</span> =&gt; <span class="id" type="keyword">fun</span> <span class="id" type="var">p</span> =&gt; <span class="id" type="var">g</span> (<span class="id" type="var">fst</span> <span class="id" type="var">p</span>) (<span class="id" type="var">snd</span> <span class="id" type="var">p</span>).<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Indeed, <span class="inlinecode"><span class="id" type="var">curry</span></span> and <span class="inlinecode"><span class="id" type="var">curry'</span></span> do not just witness a logical equivalence
+   but they constitute an <i>isomorphism</i>. That is if we go back and forth we end up 
+   with the element we started. We will need the axiom of extensionality.
+   To make this precise we get: 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" type="keyword">Lemma</span> <span class="id" type="var">curryIso1</span> : <br/>
+&nbsp;&nbsp;<span class="id" type="keyword">forall</span> <span class="id" type="var">A</span> <span class="id" type="var">B</span> <span class="id" type="var">C</span> : <span class="id" type="keyword">Set</span>, <br/>
+&nbsp;&nbsp;<span class="id" type="keyword">forall</span> <span class="id" type="var">f</span> : <span class="id" type="var">A</span> * <span class="id" type="var">B</span> -&gt; <span class="id" type="var">C</span>,<br/>
+&nbsp;&nbsp;<span class="id" type="var">f</span> = <span class="id" type="var">curry'</span> (<span class="id" type="var">curry</span> <span class="id" type="var">f</span>).<br/>
+<span class="id" type="tactic">intros</span> <span class="id" type="var">A</span> <span class="id" type="var">B</span> <span class="id" type="var">C</span> <span class="id" type="var">f</span>.<br/>
+</div>
+
+<div class="doc">
+Here we need to prove that two functions are equal.
+    This is the the time to apply ext.
+
+</div>
+<div class="code">
+<span class="id" type="tactic">apply</span> <span class="id" type="var">ext</span>.<br/>
+<span class="id" type="tactic">intro</span> <span class="id" type="var">p</span>.<br/>
+</div>
+
+<div class="doc">
+To make the left hand side reduce we need to replace
+    <span class="inlinecode"><span class="id" type="var">p</span></span> by an actual pair.
+
+</div>
+<div class="code">
+<span class="id" type="tactic">destruct</span> <span class="id" type="var">p</span>.<br/>
+</div>
+
+<div class="doc">
+Let's see what happens if we first unfold <span class="inlinecode"><span class="id" type="var">curry'</span></span>. 
+</div>
+<div class="code">
+<span class="id" type="tactic">unfold</span> <span class="id" type="var">curry'</span>.<br/>
+</div>
+
+<div class="doc">
+and then <span class="inlinecode"><span class="id" type="var">curry</span></span> 
+</div>
+<div class="code">
+<span class="id" type="tactic">unfold</span> <span class="id" type="var">curry</span>.<br/>
+</div>
+
+<div class="doc">
+ok we just need to compute <span class="inlinecode"><span class="id" type="var">fst</span></span> and <span class="inlinecode"><span class="id" type="var">snd</span></span> 
+</div>
+<div class="code">
+<span class="id" type="tactic">simpl</span>.<br/>
+<span class="id" type="tactic">reflexivity</span>.<br/>
+<span class="id" type="keyword">Qed</span>.<br/>
+
+<br/>
+<span class="id" type="keyword">Lemma</span> <span class="id" type="var">curryIso2</span> :  <span class="id" type="keyword">forall</span> <span class="id" type="var">A</span> <span class="id" type="var">B</span> <span class="id" type="var">C</span> : <span class="id" type="keyword">Set</span>, <span class="id" type="keyword">forall</span> <span class="id" type="var">g</span> : <span class="id" type="var">A</span> -&gt; <span class="id" type="var">B</span> -&gt; <span class="id" type="var">C</span>,<br/>
+&nbsp;&nbsp;<span class="id" type="var">g</span> = <span class="id" type="var">curry</span> (<span class="id" type="var">curry'</span> <span class="id" type="var">g</span>).<br/>
+<span class="id" type="tactic">intros</span> <span class="id" type="var">A</span> <span class="id" type="var">B</span> <span class="id" type="var">C</span> <span class="id" type="var">g</span>.<br/>
+</div>
+
+<div class="doc">
+again we need to show an equality of functions - 
+    we need to use <span class="inlinecode"><span class="id" type="var">ext</span></span>. 
+</div>
+<div class="code">
+<span class="id" type="tactic">apply</span> <span class="id" type="var">ext</span>.<br/>
+<span class="id" type="tactic">intro</span> <span class="id" type="var">a</span>.<br/>
+</div>
+
+<div class="doc">
+We are not done yet with functions, since <span class="inlinecode"><span class="id" type="var">g</span></span> <span class="inlinecode"><span class="id" type="var">a</span></span> is still
+    a function. 
+</div>
+<div class="code">
+<span class="id" type="tactic">apply</span> <span class="id" type="var">ext</span>.<br/>
+<span class="id" type="tactic">intro</span> <span class="id" type="var">b</span>.<br/>
+</div>
+
+<div class="doc">
+Let's first unfold <span class="inlinecode"><span class="id" type="var">curry</span></span>. 
+</div>
+<div class="code">
+<span class="id" type="tactic">unfold</span> <span class="id" type="var">curry</span>.<br/>
+</div>
+
+<div class="doc">
+and then <span class="inlinecode"><span class="id" type="var">curry'</span></span>. 
+</div>
+<div class="code">
+<span class="id" type="tactic">unfold</span> <span class="id" type="var">curry'</span>.<br/>
+</div>
+
+<div class="doc">
+again the rest is just computing with <span class="inlinecode"><span class="id" type="var">fst</span></span> and <span class="inlinecode"><span class="id" type="var">snd</span></span>.
+</div>
+<div class="code">
+<span class="id" type="tactic">simpl</span>.<br/>
+<span class="id" type="tactic">reflexivity</span>.<br/>
+<span class="id" type="keyword">Qed</span>.<br/>
+
+<br/>
+<span class="id" type="keyword">End</span> <span class="id" type="var">Sets</span>.<br/>
+</div>
+</div>
+
+<div id="footer">
+<hr/><a href="index.html">Index</a><hr/>This page has been generated by <a href="http://coq.inria.fr/">coqdoc</a>
+</div>
+
+</div>
+
+</body>
+</html>

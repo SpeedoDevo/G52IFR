@@ -1,0 +1,962 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1"/>
+<link href="coqdoc.css" rel="stylesheet" type="text/css"/>
+<title>Prop</title>
+</head>
+
+<body>
+
+<div id="page">
+
+<div id="header">
+</div>
+
+<div id="main">
+
+<h1 class="libtitle">Library Prop</h1>
+
+<div class="code">
+
+<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<H0>Propositional Logic</H0> 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" type="keyword">Section</span> <span class="id" type="var">prop</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+
+<br/> <br/>
+A proposition is a definitive statement which we may be able to
+prove. In Coq we write <span class="inlinecode"><span class="id" type="var">P</span> : <span class="id" type="keyword">Prop</span></span> to express that <span class="inlinecode"><span class="id" type="var">P</span></span> is a
+proposition. 
+
+<br/> <br/>
+We will later introduce ways to construct interesting propositions, but in the moment
+we will use propositional variables instead. We declare in Coq:
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" type="keyword">Variables</span> <span class="id" type="var">P</span> <span class="id" type="var">Q</span> <span class="id" type="var">R</span> : <span class="id" type="keyword">Prop</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+ This means that the <span class="inlinecode"><span class="id" type="var">P</span></span>,<span class="inlinecode"><span class="id" type="var">Q</span></span>,<span class="inlinecode"><span class="id" type="var">R</span></span> are atomic propositions which may
+be substituted by any concrete propositions. In the moment it is helpful to think of them as statements 
+like "The sun is shining" or "We go to the zoo." 
+</div>
+<div class="code">
+
+<br/>
+</div>
+
+<div class="doc">
+We are going to introduce a number of connectives and logical constants to construct propositions:
+<ul>
+<li> Implication <span class="inlinecode">-&gt;</span>, read <span class="inlinecode"><span class="id" type="var">P</span> -&gt; <span class="id" type="var">Q</span></span> as if <span class="inlinecode"><span class="id" type="var">P</span></span> then <span class="inlinecode"><span class="id" type="var">Q</span></span>.
+
+</li>
+<li> Conjunction <span class="inlinecode">/\</span>, read <span class="inlinecode"><span class="id" type="var">P</span> /\ <span class="id" type="var">Q</span></span> as <span class="inlinecode"><span class="id" type="var">P</span></span> and <span class="inlinecode"><span class="id" type="var">Q</span></span>.
+
+</li>
+<li> Disjunction <span class="inlinecode">\/</span>, read <span class="inlinecode"><span class="id" type="var">P</span> \/ <span class="id" type="var">Q</span></span> as <span class="inlinecode"><span class="id" type="var">P</span></span> or <span class="inlinecode"><span class="id" type="var">Q</span></span>.
+
+</li>
+<li> <span class="inlinecode"><span class="id" type="var">False</span></span>, read <span class="inlinecode"><span class="id" type="var">False</span></span> as "Pigs can fly".
+
+</li>
+<li> <span class="inlinecode"><span class="id" type="var">True</span></span>, read <span class="inlinecode"><span class="id" type="var">True</span></span> as "It sometimes rains in England."
+
+</li>
+<li> Negation <span class="inlinecode">~</span>, read <span class="inlinecode">~ <span class="id" type="var">P</span></span> as not <span class="inlinecode"><span class="id" type="var">P</span></span>. We define <span class="inlinecode">~ <span class="id" type="var">P</span></span> as <span class="inlinecode"><span class="id" type="var">P</span> -&gt; <span class="id" type="var">False</span></span>.
+
+</li>
+<li> Equivalence, <span class="inlinecode">&lt;-&gt;</span>, read <span class="inlinecode"><span class="id" type="var">P</span> &lt;-&gt; <span class="id" type="var">Q</span></span> as <span class="inlinecode"><span class="id" type="var">P</span></span> is equivalent to <span class="inlinecode"><span class="id" type="var">Q</span></span>. We define <span class="inlinecode"><span class="id" type="var">P</span> &lt;-&gt; <span class="id" type="var">Q</span></span> as <span class="inlinecode">(<span class="id" type="var">P</span> -&gt; <span class="id" type="var">Q</span>) /\ (<span class="id" type="var">Q</span> -&gt; <span class="id" type="var">P</span>)</span>.
+
+</li>
+</ul>
+As in algebra we use parentheses to group logical expressions. To save parentheses there are a number of conventions:
+<ul>
+<li> Implication is right associative, i.e. we read <span class="inlinecode"><span class="id" type="var">P</span> -&gt; <span class="id" type="var">Q</span> -&gt; <span class="id" type="var">R</span></span> as <span class="inlinecode"><span class="id" type="var">P</span> -&gt; (<span class="id" type="var">Q</span> -&gt; <span class="id" type="var">R</span>)</span>.
+
+</li>
+<li> Implication and equivalence bind weaker than conjunction and disjunction. E.g. we read <span class="inlinecode"><span class="id" type="var">P</span> \/ <span class="id" type="var">Q</span> -&gt; <span class="id" type="var">R</span></span> as <span class="inlinecode">(<span class="id" type="var">P</span> \/ <span class="id" type="var">Q</span>) -&gt; <span class="id" type="var">R</span></span>. 
+
+</li>
+<li> Conjunction binds stronger than disjunction. E.g. we read <span class="inlinecode"><span class="id" type="var">P</span> /\ <span class="id" type="var">Q</span> \/ <span class="id" type="var">R</span></span> as <span class="inlinecode">(<span class="id" type="var">P</span> /\ <span class="id" type="var">Q</span>) \/ <span class="id" type="var">R</span></span>.
+
+</li>
+<li> Negation binds stronger than all the other connectives, e.g. we read <span class="inlinecode">~ <span class="id" type="var">P</span> /\ <span class="id" type="var">Q</span></span> as <span class="inlinecode">(~ <span class="id" type="var">P</span>) /\ <span class="id" type="var">Q</span></span>.
+
+</li>
+</ul>
+This is not a complete specification. If in doubt use parentheses.
+
+</div>
+<div class="code">
+
+<br/>
+</div>
+
+<div class="doc">
+We will now discuss how to prove propositions in Coq. If we are
+proving a statement containing propositional variables then this means
+that the statement is true for all replacements of the variables with
+actual propositions. We say it is a tautology. 
+
+</div>
+<div class="code">
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab7"></a><h1 class="section">Our first proof</h1>
+
+</div>
+<div class="code">
+
+<br/>
+</div>
+
+<div class="doc">
+We start with a very simple tautology <span class="inlinecode"><span class="id" type="var">P</span> -&gt; <span class="id" type="var">P</span></span>, i.e. if <span class="inlinecode"><span class="id" type="var">P</span></span> then <span class="inlinecode"><span class="id" type="var">P</span></span>. 
+To start a proof we write:
+</div>
+<div class="code">
+
+<br/>
+<span class="id" type="keyword">Lemma</span> <span class="id" type="var">I</span> : <span class="id" type="var">P</span> -&gt; <span class="id" type="var">P</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+It is useful to run the source of this document in Coq to see what
+happens.  Coq enters a proof state and shows what we are going to prove
+under what assumptions. In the moment our assumptions are that
+<span class="inlinecode"><span class="id" type="var">P</span></span>,<span class="inlinecode"><span class="id" type="var">Q</span></span>,<span class="inlinecode"><span class="id" type="var">R</span></span> are propositions and our goal is <span class="inlinecode"><span class="id" type="var">P</span> -&gt; <span class="id" type="var">P</span></span>.  To
+prove an implication we add the left hand side to the assumptions and
+continue to prove the right hand side - this is done using the <span class="inlinecode"><span class="id" type="tactic">intro</span></span>
+tactic. We also choose a name for the assumption, let's call it <span class="inlinecode"><span class="id" type="var">p</span></span>.
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" type="tactic">intro</span> <span class="id" type="var">p</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+This changes the proof state: we now have to prove <span class="inlinecode"><span class="id" type="var">P</span></span> but we also
+have a new assumption <span class="inlinecode"><span class="id" type="var">p</span> : <span class="id" type="var">P</span></span>. We can finish the proof by using this
+assumption. In Coq this can done by using the <span class="inlinecode"><span class="id" type="tactic">exact</span></span> tactic. 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" type="tactic">exact</span> <span class="id" type="var">p</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+This finishes the proof. We only have to instruct Coq to save the 
+proof under the name we have indicated in the beginning, in this case <span class="inlinecode"><span class="id" type="var">I</span></span>.
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" type="keyword">Qed</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Qed stands for "Quod erat demonstrandum". This is Latin for "What was to be shown." 
+</div>
+<div class="code">
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab8"></a><h1 class="section">Using assumptions.</h1>
+
+</div>
+<div class="code">
+
+<br/>
+</div>
+
+<div class="doc">
+Next we will prove another tautology, namely 
+<span class="inlinecode">(<span class="id" type="var">P</span> -&gt; <span class="id" type="var">Q</span>) -&gt; (<span class="id" type="var">Q</span> -&gt; <span class="id" type="var">R</span>) -&gt; <span class="id" type="var">P</span> -&gt; <span class="id" type="var">R</span></span>.
+Try to understand why this is intuitively true for any propositions <span class="inlinecode"><span class="id" type="var">P</span></span>,<span class="inlinecode"><span class="id" type="var">Q</span></span> and <span class="inlinecode"><span class="id" type="var">R</span></span>.
+
+<br/> <br/>
+To prove this in Coq we need to know how to use an implication which we have assumed.
+This can be done using the <span class="inlinecode"><span class="id" type="tactic">apply</span></span> tactic: if we have assumed <span class="inlinecode"><span class="id" type="var">P</span> -&gt; <span class="id" type="var">Q</span></span> and we want to 
+prove <span class="inlinecode"><span class="id" type="var">Q</span></span> then we can use the assumption to reduce (hopefully) the problem to proving
+<span class="inlinecode"><span class="id" type="var">P</span></span>. Clearly, using this step is only sensible if <span class="inlinecode"><span class="id" type="var">P</span></span> is actually easier to prove
+than <span class="inlinecode"><span class="id" type="var">Q</span></span>. Step through the next proof to see how this works in practice!
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" type="keyword">Lemma</span> <span class="id" type="var">C</span> : (<span class="id" type="var">P</span> -&gt; <span class="id" type="var">Q</span>) -&gt; (<span class="id" type="var">Q</span> -&gt; <span class="id" type="var">R</span>) -&gt; <span class="id" type="var">P</span> -&gt; <span class="id" type="var">R</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+We have to prove an implication, hence we will be using <span class="inlinecode"><span class="id" type="tactic">intro</span></span>.
+Because <span class="inlinecode">-&gt;</span> is right associative the proposition can be written as
+<span class="inlinecode">(<span class="id" type="var">P</span> -&gt; <span class="id" type="var">Q</span>) -&gt; ((<span class="id" type="var">Q</span> -&gt; <span class="id" type="var">R</span>) -&gt; <span class="id" type="var">P</span> -&gt; <span class="id" type="var">R</span>)</span>. Hence we are going to assume <span class="inlinecode"><span class="id" type="var">P</span> -&gt; <span class="id" type="var">Q</span></span>.
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" type="tactic">intro</span> <span class="id" type="var">pq</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+we continue assuming... 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" type="tactic">intro</span> <span class="id" type="var">qr</span>.<br/>
+<span class="id" type="tactic">intro</span> <span class="id" type="var">p</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Now we have three assumptions <span class="inlinecode"><span class="id" type="var">P</span> -&gt; <span class="id" type="var">Q</span></span>, <span class="inlinecode"><span class="id" type="var">Q</span> -&gt; <span class="id" type="var">R</span></span> and <span class="inlinecode"><span class="id" type="var">P</span></span>. 
+It remains to prove <span class="inlinecode"><span class="id" type="var">R</span></span>. We cannot use <span class="inlinecode"><span class="id" type="tactic">intro</span></span> any more because our goal is not 
+an implication. Instead we need to use our assumptions. The only assumption which 
+could help us to prove <span class="inlinecode"><span class="id" type="var">R</span></span> is <span class="inlinecode"><span class="id" type="var">Q</span> -&gt; <span class="id" type="var">R</span></span>. We use the <span class="inlinecode"><span class="id" type="tactic">apply</span></span> tactic. 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" type="tactic">apply</span> <span class="id" type="var">qr</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Apply uses <span class="inlinecode"><span class="id" type="var">Q</span> -&gt; <span class="id" type="var">R</span></span> to reduce the problem to prove <span class="inlinecode"><span class="id" type="var">R</span></span> to the problem to prove <span class="inlinecode"><span class="id" type="var">Q</span></span>.
+Which in turn can be further reduced to proving <span class="inlinecode"><span class="id" type="var">P</span></span> using <span class="inlinecode"><span class="id" type="var">P</span> -&gt; <span class="id" type="var">Q</span></span>.
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" type="tactic">apply</span> <span class="id" type="var">pq</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+And now it only remains to prove <span class="inlinecode"><span class="id" type="var">P</span></span> which is one of our assumptions - hence we can use <span class="inlinecode"><span class="id" type="tactic">exact</span></span> again. 
+
+</div>
+<div class="code">
+<span class="id" type="tactic">exact</span> <span class="id" type="var">p</span>.<br/>
+<span class="id" type="keyword">Qed</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab9"></a><h1 class="section">Introduction and Elimination</h1>
+
+</div>
+<div class="code">
+
+<br/>
+</div>
+
+<div class="doc">
+We observe that there are two types of proof steps (tactics):
+<ul>
+<li> introduction: How can we prove a proposition? In the case of an implication this is <span class="inlinecode"><span class="id" type="tactic">intro</span></span>. To prove <span class="inlinecode"><span class="id" type="var">P</span> -&gt; <span class="id" type="var">Q</span></span>, we assume <span class="inlinecode"><span class="id" type="var">P</span></span> and prove <span class="inlinecode"><span class="id" type="var">Q</span></span>.
+
+</li>
+<li> elimination: How can we use an assumption? In the case of implication this is <span class="inlinecode"><span class="id" type="tactic">apply</span></span>. If we know <span class="inlinecode"><span class="id" type="var">P</span> -&gt; <span class="id" type="var">Q</span></span> and we want to prove <span class="inlinecode"><span class="id" type="var">Q</span></span> it is sufficient to prove <span class="inlinecode"><span class="id" type="var">P</span></span>.
+
+</li>
+</ul>
+Actually <span class="inlinecode"><span class="id" type="tactic">apply</span></span> is a bit more general: if we know <span class="inlinecode"><span class="id" type="var">P1</span> -&gt; <span class="id" type="var">P2</span> -&gt; ... -&gt; <span class="id" type="var">Pn</span> -&gt; <span class="id" type="var">Q</span></span> and we want to prove <span class="inlinecode"><span class="id" type="var">Q</span></span> then it is sufficient to prove <span class="inlinecode"><span class="id" type="var">P1</span></span>,<span class="inlinecode"><span class="id" type="var">P2</span></span>,...,<span class="inlinecode"><span class="id" type="var">Pn</span></span>.
+Indeed the distinction of introduction and elimination
+steps is applicable to all the connectives we are going to
+encounter. This is a fundamental symmetry in reasoning.
+
+</div>
+<div class="code">
+
+<br/>
+</div>
+
+<div class="doc">
+There is also a 3rd kind of steps: structural steps.
+    An example is <span class="inlinecode"><span class="id" type="tactic">exact</span></span> which we can use when we want to refer to an assumption.
+    We can also use <span class="inlinecode"><span class="id" type="tactic">assumption</span></span> then we don't even have to give the name of the assumption. 
+</div>
+<div class="code">
+
+<br/>
+</div>
+
+<div class="doc">
+If we want to combine several <span class="inlinecode"><span class="id" type="tactic">intro</span></span> steps we can use <span class="inlinecode"><span class="id" type="tactic">intros</span></span>. We can also use <span class="inlinecode"><span class="id" type="tactic">intros</span></span> without parameters in which case Coq does
+    as many <span class="inlinecode"><span class="id" type="tactic">intro</span></span> as possible and invents the names itself.
+</div>
+<div class="code">
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab10"></a><h1 class="section">Conjunction</h1>
+
+</div>
+<div class="code">
+
+<br/>
+</div>
+
+<div class="doc">
+How to prove a conjunction? To prove <span class="inlinecode"><span class="id" type="var">P</span> /\ <span class="id" type="var">Q</span></span> we need to prove <span class="inlinecode"><span class="id" type="var">P</span></span> and <span class="inlinecode"><span class="id" type="var">Q</span></span>. This is achieved using the <span class="inlinecode"><span class="id" type="tactic">split</span></span> tactic. We look at a simple example. 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" type="keyword">Lemma</span> <span class="id" type="var">pair</span> : <span class="id" type="var">P</span> -&gt; <span class="id" type="var">Q</span> -&gt; <span class="id" type="var">P</span> /\ <span class="id" type="var">Q</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+On the top level we have to prove an implication. 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" type="tactic">intros</span> <span class="id" type="var">p</span> <span class="id" type="var">q</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+now to prove <span class="inlinecode"><span class="id" type="var">P</span> /\ <span class="id" type="var">Q</span></span> we use <span class="inlinecode"><span class="id" type="tactic">split</span></span>. 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" type="tactic">split</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+This creates two subgoals. We do the first 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" type="tactic">exact</span> <span class="id" type="var">p</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+And then the 2nd 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" type="tactic">exact</span> <span class="id" type="var">q</span>.<br/>
+<span class="id" type="keyword">Qed</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+How do we use an assumption <span class="inlinecode"><span class="id" type="var">P</span> /\ <span class="id" type="var">Q</span></span>. We use <span class="inlinecode"><span class="id" type="tactic">destruct</span></span> to split it into two assumptions. 
+    As an example we prove that <span class="inlinecode"><span class="id" type="var">P</span> /\ <span class="id" type="var">Q</span> -&gt; <span class="id" type="var">Q</span> /\ <span class="id" type="var">P</span></span>.
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" type="keyword">Lemma</span> <span class="id" type="var">andCom</span> : <span class="id" type="var">P</span> /\ <span class="id" type="var">Q</span> -&gt; <span class="id" type="var">Q</span> /\ <span class="id" type="var">P</span>.<br/>
+<span class="id" type="tactic">intro</span> <span class="id" type="var">pq</span>.<br/>
+<span class="id" type="tactic">destruct</span> <span class="id" type="var">pq</span> <span class="id" type="keyword">as</span> [<span class="id" type="var">p</span> <span class="id" type="var">q</span>].<br/>
+<span class="id" type="tactic">split</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Now we need to use the assumption <span class="inlinecode"><span class="id" type="var">P</span> /\ <span class="id" type="var">Q</span></span>. We destruct it into two assumptions: <span class="inlinecode"><span class="id" type="var">P</span></span> and <span class="inlinecode"><span class="id" type="var">Q</span></span>.
+<span class="inlinecode"><span class="id" type="tactic">destruct</span></span> allows us to name the new assumptions. 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" type="tactic">exact</span> <span class="id" type="var">q</span>.<br/>
+<span class="id" type="tactic">exact</span> <span class="id" type="var">p</span>.<br/>
+<span class="id" type="keyword">Qed</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Can you see a shorter proof of the same theorem ? 
+</div>
+<div class="code">
+
+<br/>
+</div>
+
+<div class="doc">
+To summarize for conjunction we have:
+<ul>
+<li> introduction: <span class="inlinecode"><span class="id" type="tactic">split</span></span>: to prove <span class="inlinecode"><span class="id" type="var">P</span> /\ <span class="id" type="var">Q</span></span> we prove both <span class="inlinecode"><span class="id" type="var">P</span></span> and <span class="inlinecode"><span class="id" type="var">Q</span></span>.
+
+</li>
+<li> elimination: <span class="inlinecode"><span class="id" type="tactic">destruct</span></span>: to prove something from <span class="inlinecode"><span class="id" type="var">P</span> /\ <span class="id" type="var">Q</span></span> we prove it from assuming both <span class="inlinecode"><span class="id" type="var">P</span></span> and <span class="inlinecode"><span class="id" type="var">Q</span></span>.
+
+</li>
+</ul>
+
+</div>
+<div class="code">
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab11"></a><h1 class="section">The currying theorem</h1>
+
+</div>
+<div class="code">
+
+<br/>
+</div>
+
+<div class="doc">
+Maybe you have already noticed that a statement like <span class="inlinecode"><span class="id" type="var">P</span> -&gt; <span class="id" type="var">Q</span> -&gt; <span class="id" type="var">R</span></span>
+basically means that <span class="inlinecode"><span class="id" type="var">R</span></span> can be proved from assuming both <span class="inlinecode"><span class="id" type="var">P</span></span> and <span class="inlinecode"><span class="id" type="var">Q</span></span>.
+Indeed, it is equivalent to <span class="inlinecode"><span class="id" type="var">P</span> /\ <span class="id" type="var">Q</span> -&gt; <span class="id" type="var">R</span></span>. We can show this formally by using 
+<span class="inlinecode">&lt;-&gt;</span> for the first time.
+
+<br/> <br/>
+All the steps we have already explained so I won't comment. It is a good idea to step through the proof using Coq.
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" type="keyword">Lemma</span> <span class="id" type="var">curry</span> : (<span class="id" type="var">P</span> /\ <span class="id" type="var">Q</span> -&gt; <span class="id" type="var">R</span>) &lt;-&gt; (<span class="id" type="var">P</span> -&gt; <span class="id" type="var">Q</span> -&gt; <span class="id" type="var">R</span>).<br/>
+<span class="id" type="tactic">unfold</span> <span class="id" type="var">iff</span>.<br/>
+<span class="id" type="tactic">split</span>.<br/>
+<span class="id" type="tactic">intros</span> <span class="id" type="var">H</span> <span class="id" type="var">p</span> <span class="id" type="var">q</span>.<br/>
+<span class="id" type="tactic">apply</span> <span class="id" type="var">H</span>.<br/>
+<span class="id" type="tactic">split</span>.<br/>
+<span class="id" type="tactic">exact</span> <span class="id" type="var">p</span>.<br/>
+<span class="id" type="tactic">exact</span> <span class="id" type="var">q</span>.<br/>
+<span class="id" type="tactic">intros</span> <span class="id" type="var">pqr</span> <span class="id" type="var">pq</span>.<br/>
+<span class="id" type="tactic">apply</span> <span class="id" type="var">pqr</span>.<br/>
+<span class="id" type="tactic">destruct</span> <span class="id" type="var">pq</span> <span class="id" type="keyword">as</span> [<span class="id" type="var">p</span> <span class="id" type="var">q</span>].<br/>
+<span class="id" type="tactic">exact</span> <span class="id" type="var">p</span>.<br/>
+<span class="id" type="tactic">destruct</span> <span class="id" type="var">pq</span> <span class="id" type="keyword">as</span> [<span class="id" type="var">p</span> <span class="id" type="var">q</span>].<br/>
+<span class="id" type="tactic">exact</span> <span class="id" type="var">q</span>.<br/>
+<span class="id" type="keyword">Qed</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+I call this the currying theorem, because this is the logical counterpart of currying in functional programming: i.e. that a function with several parameters can be reduced to a function which returns a function. So in Haskell addition has the type <span class="inlinecode"><span class="id" type="var">Int</span> -&gt; <span class="id" type="var">Int</span> -&gt; <span class="id" type="var">Int</span></span>. 
+</div>
+<div class="code">
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab12"></a><h1 class="section">Disjunction</h1>
+
+</div>
+<div class="code">
+
+<br/>
+</div>
+
+<div class="doc">
+To prove a disjunction like <span class="inlinecode"><span class="id" type="var">P</span> \/ <span class="id" type="var">Q</span></span> we can either prove <span class="inlinecode"><span class="id" type="var">P</span></span> or <span class="inlinecode"><span class="id" type="var">Q</span></span>. This is done via the tactics <span class="inlinecode"><span class="id" type="var">left</span></span> and <span class="inlinecode"><span class="id" type="var">right</span></span>. As an example we prove <span class="inlinecode"><span class="id" type="var">P</span> -&gt; <span class="id" type="var">P</span> \/ <span class="id" type="var">Q</span></span>. 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" type="keyword">Lemma</span> <span class="id" type="var">inl</span> : <span class="id" type="var">P</span> -&gt; <span class="id" type="var">P</span> \/ <span class="id" type="var">Q</span>.<br/>
+<span class="id" type="tactic">intros</span> <span class="id" type="var">p</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Clearly, here we have to use <span class="inlinecode"><span class="id" type="var">left</span></span>. 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" type="var">left</span>.<br/>
+<span class="id" type="tactic">exact</span> <span class="id" type="var">p</span>.<br/>
+<span class="id" type="keyword">Qed</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+To use a disjunction <span class="inlinecode"><span class="id" type="var">P</span> \/ <span class="id" type="var">Q</span></span> to prove something we have to prove it from both <span class="inlinecode"><span class="id" type="var">P</span></span> and <span class="inlinecode"><span class="id" type="var">Q</span></span>. The tactic we use is also called <span class="inlinecode"><span class="id" type="tactic">destruct</span></span> but in this case <span class="inlinecode"><span class="id" type="tactic">destruct</span></span> creates two subgoals. This can be compared to case analysis in functional programming. Indeed we can prove the following theorem. 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" type="keyword">Lemma</span> <span class="id" type="tactic">case</span> : <span class="id" type="var">P</span> \/ <span class="id" type="var">Q</span> -&gt; (<span class="id" type="var">P</span> -&gt; <span class="id" type="var">R</span>) -&gt; (<span class="id" type="var">Q</span> -&gt; <span class="id" type="var">R</span>) -&gt; <span class="id" type="var">R</span>.<br/>
+<span class="id" type="tactic">intros</span> <span class="id" type="var">pq</span> <span class="id" type="var">pr</span> <span class="id" type="var">qr</span>.<br/>
+<span class="id" type="tactic">destruct</span> <span class="id" type="var">pq</span> <span class="id" type="keyword">as</span> [<span class="id" type="var">p</span> | <span class="id" type="var">q</span>].<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+The syntax for <span class="inlinecode"><span class="id" type="tactic">destruct</span></span> for disjunction is different if we want to name the assumption we have to separate them with <span class="inlinecode">|</span>. Indeed each of them will be visible in a different part of the proof. 
+First we assume <span class="inlinecode"><span class="id" type="var">P</span></span>.
+</div>
+<div class="code">
+
+<br/>
+<span class="id" type="tactic">apply</span> <span class="id" type="var">pr</span>.<br/>
+<span class="id" type="tactic">exact</span> <span class="id" type="var">p</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+And then we assume <span class="inlinecode"><span class="id" type="var">Q</span></span> 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" type="tactic">apply</span> <span class="id" type="var">qr</span>.<br/>
+<span class="id" type="tactic">exact</span> <span class="id" type="var">q</span>.<br/>
+<span class="id" type="keyword">Qed</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+So again to summarize: For disjunction we have:
+<ul>
+<li> introduction: there are two ways to prove a disjunction <span class="inlinecode"><span class="id" type="var">P</span> \/ <span class="id" type="var">Q</span></span>. We use <span class="inlinecode"><span class="id" type="var">left</span></span> to prove it from <span class="inlinecode"><span class="id" type="var">P</span></span> and <span class="inlinecode"><span class="id" type="var">right</span></span> to prove it from <span class="inlinecode"><span class="id" type="var">Q</span></span>. 
+
+</li>
+<li> elimination: If we have assumed <span class="inlinecode"><span class="id" type="var">P</span> \/ <span class="id" type="var">Q</span></span> then we can use <span class="inlinecode"><span class="id" type="tactic">destruct</span></span> to prove our current goal from assuming <span class="inlinecode"><span class="id" type="var">P</span></span> and from assuming <span class="inlinecode"><span class="id" type="var">Q</span></span>.
+
+</li>
+</ul>
+
+</div>
+<div class="code">
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab13"></a><h1 class="section">Distributivity</h1>
+
+</div>
+<div class="code">
+
+<br/>
+</div>
+
+<div class="doc">
+As an example of how to combine the proof steps for conjunction
+and disjunction we show that distributivity holds, i.e. <span class="inlinecode"><span class="id" type="var">P</span> /\ (<span class="id" type="var">Q</span> \/
+<span class="id" type="var">R</span>)</span> is logically equivalent to <span class="inlinecode">(<span class="id" type="var">P</span> /\ <span class="id" type="var">Q</span>) \/ (<span class="id" type="var">P</span> /\ <span class="id" type="var">R</span>)</span>. This is
+reminiscent of the principle in algebra that <span class="inlinecode"><span class="id" type="var">x</span> * (<span class="id" type="var">y</span> + <span class="id" type="var">z</span>) = <span class="id" type="var">x</span> * <span class="id" type="var">y</span> + <span class="id" type="var">x</span> * <span class="id" type="var">z</span></span>. 
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" type="keyword">Lemma</span> <span class="id" type="var">andOrDistr</span> : <span class="id" type="var">P</span> /\ (<span class="id" type="var">Q</span> \/ <span class="id" type="var">R</span>) <br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;-&gt; (<span class="id" type="var">P</span> /\ <span class="id" type="var">Q</span>) \/ (<span class="id" type="var">P</span> /\ <span class="id" type="var">R</span>).<br/>
+<span class="id" type="tactic">split</span>.<br/>
+<span class="id" type="tactic">intro</span> <span class="id" type="var">pqr</span>.<br/>
+<span class="id" type="tactic">destruct</span> <span class="id" type="var">pqr</span> <span class="id" type="keyword">as</span> [<span class="id" type="var">p</span> <span class="id" type="var">qr</span>].<br/>
+<span class="id" type="tactic">destruct</span> <span class="id" type="var">qr</span> <span class="id" type="keyword">as</span> [<span class="id" type="var">q</span> | <span class="id" type="var">r</span>].<br/>
+<span class="id" type="var">left</span>.<br/>
+<span class="id" type="tactic">split</span>.<br/>
+<span class="id" type="tactic">exact</span> <span class="id" type="var">p</span>.<br/>
+<span class="id" type="tactic">exact</span> <span class="id" type="var">q</span>.<br/>
+<span class="id" type="var">right</span>.<br/>
+<span class="id" type="tactic">split</span>.<br/>
+<span class="id" type="tactic">exact</span> <span class="id" type="var">p</span>.<br/>
+<span class="id" type="tactic">exact</span> <span class="id" type="var">r</span>.<br/>
+<span class="id" type="tactic">intro</span> <span class="id" type="var">pqpr</span>.<br/>
+<span class="id" type="tactic">destruct</span> <span class="id" type="var">pqpr</span> <span class="id" type="keyword">as</span> [<span class="id" type="var">pq</span> | <span class="id" type="var">pr</span>].<br/>
+<span class="id" type="tactic">split</span>.<br/>
+<span class="id" type="tactic">destruct</span> <span class="id" type="var">pq</span> <span class="id" type="keyword">as</span> [<span class="id" type="var">p</span> <span class="id" type="var">q</span>].<br/>
+<span class="id" type="tactic">exact</span> <span class="id" type="var">p</span>.<br/>
+<span class="id" type="var">left</span>.<br/>
+<span class="id" type="tactic">destruct</span> <span class="id" type="var">pq</span> <span class="id" type="keyword">as</span> [<span class="id" type="var">p</span> <span class="id" type="var">q</span>].<br/>
+<span class="id" type="tactic">exact</span> <span class="id" type="var">q</span>.<br/>
+<span class="id" type="tactic">destruct</span> <span class="id" type="var">pr</span> <span class="id" type="keyword">as</span> [<span class="id" type="var">p</span> <span class="id" type="var">r</span>].<br/>
+<span class="id" type="tactic">split</span>.<br/>
+<span class="id" type="tactic">exact</span> <span class="id" type="var">p</span>.<br/>
+<span class="id" type="var">right</span>.<br/>
+<span class="id" type="tactic">exact</span> <span class="id" type="var">r</span>.<br/>
+<span class="id" type="keyword">Qed</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+As before: to understand the working of this script it is advisable to step through it using Coq. 
+</div>
+<div class="code">
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab14"></a><h1 class="section">True and False</h1>
+
+</div>
+<div class="code">
+
+<br/>
+</div>
+
+<div class="doc">
+<span class="inlinecode"><span class="id" type="var">True</span></span> is just a conjunction with no arguments as opposed to <span class="inlinecode">/\</span> which has two. Similarity <span class="inlinecode"><span class="id" type="var">False</span></span> is a disjunction with no arguments. As a consequence we already know the proof rules for <span class="inlinecode"><span class="id" type="var">True</span></span> and <span class="inlinecode"><span class="id" type="var">False</span></span>.
+
+<br/> <br/>
+We can prove <span class="inlinecode"><span class="id" type="var">True</span></span> without any assumptions.
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" type="keyword">Lemma</span> <span class="id" type="var">triv</span> : <span class="id" type="var">True</span>.<br/>
+<span class="id" type="tactic">split</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Here we split but instead of two subgoals we get none. 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" type="keyword">Qed</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+On the other had we can prove anything from <span class="inlinecode"><span class="id" type="var">False</span></span>. This is called "ex falso quod libet" in Latin.
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" type="keyword">Lemma</span> <span class="id" type="var">exFalso</span> : <span class="id" type="var">False</span> -&gt; <span class="id" type="var">P</span>.<br/>
+<span class="id" type="tactic">intro</span> <span class="id" type="var">f</span>.<br/>
+<span class="id" type="tactic">destruct</span> <span class="id" type="var">f</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Here instead of two subgoals we get none. 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" type="keyword">Qed</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+In terms of introduction and elimination steps we may summarize:
+<ul>
+<li> True: There is one introduction rule but no elimination.
+
+</li>
+<li> False: There is one elimination rule but no introduction.
+
+</li>
+</ul>
+
+</div>
+<div class="code">
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab15"></a><h1 class="section">Negation</h1>
+
+</div>
+<div class="code">
+
+<br/>
+</div>
+
+<div class="doc">
+<span class="inlinecode">~ <span class="id" type="var">P</span></span> is defined as <span class="inlinecode"><span class="id" type="var">P</span> -&gt; <span class="id" type="var">False</span></span>. Using this we can establish some basic theorems about negation. First we show that we cannot have both <span class="inlinecode"><span class="id" type="var">P</span></span> and <span class="inlinecode">~ <span class="id" type="var">P</span></span>, that is we prove <span class="inlinecode">~ (<span class="id" type="var">P</span> /\ ~ <span class="id" type="var">P</span>)</span>.
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" type="keyword">Lemma</span> <span class="id" type="var">incons</span> : ~ ( <span class="id" type="var">P</span> /\ ~ <span class="id" type="var">P</span>).<br/>
+<span class="id" type="tactic">unfold</span> <span class="id" type="var">not</span>.<br/>
+<span class="id" type="tactic">intro</span> <span class="id" type="var">h</span>.<br/>
+<span class="id" type="tactic">destruct</span> <span class="id" type="var">h</span> <span class="id" type="keyword">as</span> [<span class="id" type="var">p</span> <span class="id" type="var">np</span>].<br/>
+<span class="id" type="tactic">apply</span> <span class="id" type="var">np</span>.<br/>
+<span class="id" type="tactic">exact</span> <span class="id" type="var">p</span>.<br/>
+<span class="id" type="keyword">Qed</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Another example is to show that <span class="inlinecode"><span class="id" type="var">P</span></span> implies <span class="inlinecode">~ ~ <span class="id" type="var">P</span></span>. 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" type="keyword">Lemma</span> <span class="id" type="var">p2nnp</span> : <span class="id" type="var">P</span> -&gt; ~ ~ <span class="id" type="var">P</span>.<br/>
+<span class="id" type="tactic">unfold</span> <span class="id" type="var">not</span>.<br/>
+<span class="id" type="tactic">intros</span> <span class="id" type="var">p</span> <span class="id" type="var">np</span>.<br/>
+<span class="id" type="tactic">apply</span> <span class="id" type="var">np</span>.<br/>
+<span class="id" type="tactic">exact</span> <span class="id" type="var">p</span>.<br/>
+<span class="id" type="keyword">Qed</span>.<br/>
+
+<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab16"></a><h1 class="section">Classical Reasoning</h1>
+
+</div>
+<div class="code">
+
+<br/>
+</div>
+
+<div class="doc">
+You may expect that we can also prove the other direction <span class="inlinecode">~ ~ <span class="id" type="var">P</span> -&gt; <span class="id" type="var">P</span></span> and that indeed <span class="inlinecode"><span class="id" type="var">P</span> &lt;-&gt; ~ ~ <span class="id" type="var">P</span></span>. 
+    We can reason that <span class="inlinecode"><span class="id" type="var">P</span></span> is either <span class="inlinecode"><span class="id" type="var">True</span></span> or <span class="inlinecode"><span class="id" type="var">False</span></span> and in both cases <span class="inlinecode">~ ~ <span class="id" type="var">P</span></span> will be the same. However,
+    this reasoning is not possible using the principles we have introduced so far. The reason is that Coq is based
+    on intuitionistic logic, and the above proposition is not provable intuitionistically.
+
+<br/> <br/>
+    However, we can use an additional axiom, which corresponds to the principle that every proposition is either <span class="inlinecode"><span class="id" type="var">True</span></span> 
+    or <span class="inlinecode"><span class="id" type="var">False</span></span>, this is the Principle of the Excluded Middle <span class="inlinecode"><span class="id" type="var">P</span> \/ ~ <span class="id" type="var">P</span></span>. In Coq this can be achieved by: 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" type="keyword">Require</span> <span class="id" type="keyword">Import</span> <span class="id" type="var">Coq.Logic.Classical</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+This means we are now using Classical Logic instead of Intuitionistic Logic. The only difference is that we have an
+    axiom <span class="inlinecode"><span class="id" type="var">classic</span></span> which proves the principle of the excluded middle for any proposition. We can use this to prove 
+    <span class="inlinecode">~ ~ <span class="id" type="var">P</span> -&gt; <span class="id" type="var">P</span></span>. 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" type="keyword">Lemma</span> <span class="id" type="var">nnpp</span> : ~~<span class="id" type="var">P</span> -&gt; <span class="id" type="var">P</span>.<br/>
+<span class="id" type="tactic">intro</span> <span class="id" type="var">nnp</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Here we use a particular instance of <span class="inlinecode"><span class="id" type="var">classic</span></span> for <span class="inlinecode"><span class="id" type="var">P</span></span>. 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" type="tactic">destruct</span> (<span class="id" type="var">classic</span> <span class="id" type="var">P</span>) <span class="id" type="keyword">as</span> [<span class="id" type="var">p</span> | <span class="id" type="var">np</span>].<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+First case <span class="inlinecode"><span class="id" type="var">P</span></span> holds 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" type="tactic">exact</span> <span class="id" type="var">p</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+2nd case <span class="inlinecode">~ <span class="id" type="var">P</span></span> holds. Here we appeal to <span class="inlinecode"><span class="id" type="var">exFalso</span></span>. 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" type="tactic">apply</span> <span class="id" type="var">exFalso</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Notice that we have shown <span class="inlinecode"><span class="id" type="var">exFalso</span></span> only for <span class="inlinecode"><span class="id" type="var">P</span></span>. We should have shown it for any proposition but this would 
+   involve quantification over all propositions and we haven't done this yet. 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" type="tactic">apply</span> <span class="id" type="var">nnp</span>.<br/>
+<span class="id" type="tactic">exact</span> <span class="id" type="var">np</span>.<br/>
+<span class="id" type="keyword">Qed</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Unless stated otherwise we will try to prove propositions intuitionsitically, that is without using <span class="inlinecode"><span class="id" type="var">classic</span></span>.
+   An intuitionistic proof provides a positive reason why something is true, while a classical proof may be
+   quite indirect and not so easily acceptable intuitively. Another advantage of intuitionistic reasoning is that it
+   is constructive, that is whenever we prove the existence of a certain object we can also explicitly construct it.
+   This is not true in classical logic. Moreover, in intuitionistic logic we can make differences which disappear
+   when using classical logic. For example we can explicit state when a property is decidable, i.e. can be computed 
+   by a computer program. 
+
+</div>
+<div class="code">
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab17"></a><h1 class="section">The cut rule</h1>
+
+</div>
+<div class="code">
+
+<br/>
+</div>
+
+<div class="doc">
+This is a good point to introduce another structural rule: the cut rule.
+    Cutting a proof means to introduce an intermediate goal, then you prove 
+    your current goal from this intermediate goal, and you prove the intermediate goal.
+    This is particularly useful when you use the intermediate goal several times.
+
+<br/> <br/>
+    In Coq this can be achieved by using <span class="inlinecode"><span class="id" type="tactic">assert</span></span>. <span class="inlinecode"><span class="id" type="tactic">assert</span> <span class="id" type="var">h</span> : <span class="id" type="var">H</span></span> introduces <span class="inlinecode"><span class="id" type="var">H</span></span> as a new 
+    subgoal and after you have proven this you can use an assumption <span class="inlinecode"><span class="id" type="var">h</span> : <span class="id" type="var">H</span></span> to prove
+    your original goal.
+
+<br/> <br/>
+    The following (artificial) example demonstrates the use of <span class="inlinecode"><span class="id" type="tactic">assert</span></span>.
+ 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" type="keyword">Lemma</span> <span class="id" type="var">usecut</span> : (<span class="id" type="var">P</span> /\ ~<span class="id" type="var">P</span>) -&gt; <span class="id" type="var">Q</span>.<br/>
+<span class="id" type="tactic">intro</span> <span class="id" type="var">pnp</span>.<br/>
+</div>
+
+<div class="doc">
+If we had a generic version of <span class="inlinecode"><span class="id" type="var">exFalso</span></span> we could use this.
+    Instead we can introduce <span class="inlinecode"><span class="id" type="var">False</span></span> as an intermediate goal. 
+</div>
+<div class="code">
+<span class="id" type="tactic">assert</span> (<span class="id" type="var">f</span> : <span class="id" type="var">False</span>).<br/>
+</div>
+
+<div class="doc">
+which is easy to prove 
+</div>
+<div class="code">
+<span class="id" type="tactic">destruct</span> <span class="id" type="var">pnp</span> <span class="id" type="keyword">as</span> [<span class="id" type="var">p</span> <span class="id" type="var">np</span>].<br/>
+<span class="id" type="tactic">apply</span> <span class="id" type="var">np</span>.<br/>
+<span class="id" type="tactic">exact</span> <span class="id" type="var">p</span>.<br/>
+</div>
+
+<div class="doc">
+and using <span class="inlinecode"><span class="id" type="var">False</span></span> it is easy to prove <span class="inlinecode"><span class="id" type="var">Q</span></span>. 
+</div>
+<div class="code">
+<span class="id" type="tactic">destruct</span> <span class="id" type="var">f</span>.<br/>
+<span class="id" type="keyword">Qed</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+This example also shows that sometimes we have to cut (i.e. use <span class="inlinecode"><span class="id" type="tactic">assert</span></span>) to prove something.
+
+</div>
+<div class="code">
+ </div>
+</div>
+
+<div id="footer">
+<hr/><a href="index.html">Index</a><hr/>This page has been generated by <a href="http://coq.inria.fr/">coqdoc</a>
+</div>
+
+</div>
+
+</body>
+</html>

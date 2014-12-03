@@ -1,0 +1,548 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1"/>
+<link href="coqdoc.css" rel="stylesheet" type="text/css"/>
+<title>Bool</title>
+</head>
+
+<body>
+
+<div id="page">
+
+<div id="header">
+</div>
+
+<div id="main">
+
+<h1 class="libtitle">Library Bool</h1>
+
+<div class="code">
+
+<br/>
+</div>
+
+<div class="doc">
+<H0>Bool</H0> 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" type="keyword">Section</span> <span class="id" type="var">Bool</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab23"></a><h1 class="section">Defining bool and operations</h1>
+
+<div class="paragraph"> </div>
+
+ We define <span class="inlinecode"><span class="id" type="var">bool</span></span> <span class="inlinecode">:</span> <span class="inlinecode"><span class="id" type="keyword">Set</span></span> as a finite set with two elements:
+    <span class="inlinecode"><span class="id" type="var">true</span></span> <span class="inlinecode">:</span> <span class="inlinecode"><span class="id" type="var">bool</span></span> and <span class="inlinecode"><span class="id" type="var">false</span></span> <span class="inlinecode">:</span> <span class="inlinecode"><span class="id" type="var">bool</span></span>. In set theoretic notation
+    we would write <span class="inlinecode"><span class="id" type="var">bool</span></span> = { <span class="inlinecode"><span class="id" type="var">true</span></span> , <span class="inlinecode"><span class="id" type="var">false</span></span> }. 
+
+<div class="paragraph"> </div>
+
+ In Coq we write: 
+
+<div class="paragraph"> </div>
+
+<br/>
+<span class="inlinecode"><span class="id" type="keyword">Inductive</span> <span class="id" type="var">bool</span> : <span class="id" type="keyword">Set</span> :=<br/>
+&nbsp;&nbsp;| <span class="id" type="var">true</span> : <span class="id" type="var">bool</span><br/>
+&nbsp;&nbsp;| <span class="id" type="var">false</span>: <span class="id" type="var">bool</span>.<br/>
+
+<div class="paragraph"> </div>
+
+</span>However, we don't need to define <span class="inlinecode"><span class="id" type="var">bool</span></span> here because it is already defined in the Coq prelude. 
+<div class="paragraph"> </div>
+
+ The function <span class="inlinecode"><span class="id" type="var">negb</span></span> <span class="inlinecode">:</span> <span class="inlinecode"><span class="id" type="var">bool</span></span> <span class="inlinecode">-&gt;</span> <span class="inlinecode"><span class="id" type="var">bool</span></span> (boolean negation) can be defined by pattern
+    matching using the <span class="inlinecode"><span class="id" type="keyword">match</span></span> construct. 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" type="keyword">Definition</span> <span class="id" type="var">negb</span> (<span class="id" type="var">b</span>:<span class="id" type="var">bool</span>) : <span class="id" type="var">bool</span> :=<br/>
+&nbsp;&nbsp;<span class="id" type="keyword">match</span> <span class="id" type="var">b</span> <span class="id" type="keyword">with</span><br/>
+&nbsp;&nbsp;| <span class="id" type="var">true</span> =&gt; <span class="id" type="var">false</span><br/>
+&nbsp;&nbsp;| <span class="id" type="var">false</span> =&gt; <span class="id" type="var">true</span><br/>
+&nbsp;&nbsp;<span class="id" type="keyword">end</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+This should be familiar from g51fun - in Haskell <span class="inlinecode"><span class="id" type="keyword">match</span></span>
+    is called <span class="inlinecode"><span class="id" type="tactic">case</span></span>. Indeed Haskell offers a more convenient
+    syntax for top-level pattern.
+
+<div class="paragraph"> </div>
+
+    We can evaluate the function using the slightly lengthy phrase
+    <span class="inlinecode"><span class="id" type="keyword">Eval</span></span> <span class="inlinecode"><span class="id" type="tactic">compute</span></span> <span class="inlinecode"><span class="id" type="keyword">in</span></span> <span class="inlinecode">(...)</span>:
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" type="keyword">Eval</span> <span class="id" type="tactic">compute</span> <span class="id" type="keyword">in</span> (<span class="id" type="var">negb</span> <span class="id" type="var">true</span>).<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+The evaluator replaces
+
+<div class="paragraph"> </div>
+
+   <span class="inlinecode"><span class="id" type="var">negb</span></span> <span class="inlinecode"><span class="id" type="var">true</span></span>
+
+<div class="paragraph"> </div>
+
+   with
+
+<div class="paragraph"> </div>
+
+   <span class="inlinecode"><span class="id" type="keyword">match</span></span> <span class="inlinecode"><span class="id" type="var">true</span></span> <span class="inlinecode"><span class="id" type="keyword">with</span></span>
+    <span class="inlinecode">|</span> <span class="inlinecode"><span class="id" type="var">true</span></span> <span class="inlinecode">=&gt;</span> <span class="inlinecode"><span class="id" type="var">false</span></span>
+    <span class="inlinecode">|</span> <span class="inlinecode"><span class="id" type="var">false</span></span> <span class="inlinecode">=&gt;</span> <span class="inlinecode"><span class="id" type="var">true</span></span>
+    <span class="inlinecode"><span class="id" type="keyword">end</span>.</span>
+
+<div class="paragraph"> </div>
+
+    which in turn evaluates to
+
+<div class="paragraph"> </div>
+
+    <span class="inlinecode"><span class="id" type="var">false</span></span>
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" type="keyword">Eval</span> <span class="id" type="tactic">compute</span> <span class="id" type="keyword">in</span> <span class="id" type="var">negb</span> (<span class="id" type="var">negb</span> <span class="id" type="var">true</span>).<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+We know already that <span class="inlinecode"><span class="id" type="var">negb</span></span> <span class="inlinecode"><span class="id" type="var">true</span></span> evaluates to
+    <span class="inlinecode"><span class="id" type="var">false</span></span> hence <span class="inlinecode"><span class="id" type="var">negb</span></span> <span class="inlinecode">(<span class="id" type="var">negb</span></span> <span class="inlinecode"><span class="id" type="var">true</span>)</span> evaluates to
+    <span class="inlinecode"><span class="id" type="var">negb</span></span> <span class="inlinecode"><span class="id" type="var">false</span></span> which in turn evaluates to <span class="inlinecode"><span class="id" type="var">true</span></span>.
+
+<div class="paragraph"> </div>
+
+ Other boolean functions can be defined just as easily: 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" type="keyword">Definition</span> <span class="id" type="var">andb</span>(<span class="id" type="var">b</span> <span class="id" type="var">c</span>:<span class="id" type="var">bool</span>) : <span class="id" type="var">bool</span> :=<br/>
+&nbsp;&nbsp;<span class="id" type="keyword">if</span> <span class="id" type="var">b</span> <span class="id" type="keyword">then</span> <span class="id" type="var">c</span> <span class="id" type="keyword">else</span> <span class="id" type="var">false</span>.<br/>
+
+<br/>
+<span class="id" type="keyword">Definition</span> <span class="id" type="var">orb</span> (<span class="id" type="var">b</span> <span class="id" type="var">c</span> : <span class="id" type="var">bool</span>) : <span class="id" type="var">bool</span> :=<br/>
+&nbsp;&nbsp;<span class="id" type="keyword">if</span> <span class="id" type="var">b</span> <span class="id" type="keyword">then</span> <span class="id" type="var">true</span> <span class="id" type="keyword">else</span> <span class="id" type="var">c</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+The Coq prelude also defines the infix operators
+   &amp;&amp; and || for andb and orb respectively, with &amp;&amp; having
+   higher precedence than ||. Note however, that you cannot
+   use ! (for negb) since this is used for other purposes in Coq.
+
+<div class="paragraph"> </div>
+
+<a name="lab24"></a><h1 class="section">Reasoning about Bool</h1>
+
+<div class="paragraph"> </div>
+
+ We can now use predicate logic to show properties of 
+    boolean functions. As a first example we show that the
+    function <span class="inlinecode"><span class="id" type="var">negb</span></span> run twice is the identity:
+
+<div class="paragraph"> </div>
+
+    <span class="inlinecode"><span class="id" type="keyword">forall</span></span> <span class="inlinecode"><span class="id" type="var">b</span></span> <span class="inlinecode">:<span class="id" type="var">bool</span>,</span> <span class="inlinecode"><span class="id" type="var">negb</span></span> <span class="inlinecode">(<span class="id" type="var">negb</span></span> <span class="inlinecode"><span class="id" type="var">b</span>)</span> <span class="inlinecode">=</span> <span class="inlinecode"><span class="id" type="var">b</span></span>
+
+<div class="paragraph"> </div>
+
+    To prove this, the only additional thing we have to know
+    is that we can analyze a boolean variable <span class="inlinecode"><span class="id" type="var">b</span></span> <span class="inlinecode">:</span> <span class="inlinecode"><span class="id" type="var">bool</span></span> using
+    <span class="inlinecode"><span class="id" type="tactic">destruct</span></span> <span class="inlinecode"><span class="id" type="var">b</span></span> which creates a case for <span class="inlinecode"><span class="id" type="var">b</span></span> <span class="inlinecode">=</span> <span class="inlinecode"><span class="id" type="var">true</span></span> and one
+    for <span class="inlinecode"><span class="id" type="var">b</span></span> <span class="inlinecode">=</span> <span class="inlinecode"><span class="id" type="var">false</span></span>. 
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" type="keyword">Lemma</span> <span class="id" type="var">negb_twice</span> : <span class="id" type="keyword">forall</span> <span class="id" type="var">b</span> :<span class="id" type="var">bool</span>, <span class="id" type="var">negb</span> (<span class="id" type="var">negb</span> <span class="id" type="var">b</span>) = <span class="id" type="var">b</span>.<br/>
+<span class="id" type="tactic">intro</span> <span class="id" type="var">b</span>.<br/>
+<span class="id" type="tactic">destruct</span> <span class="id" type="var">b</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Case for <span class="inlinecode"><span class="id" type="var">b</span></span> <span class="inlinecode">=</span> <span class="inlinecode"><span class="id" type="var">true</span></span>  Our goal is negb (negb true) = true. 
+    As we have already seen <span class="inlinecode"><span class="id" type="var">negb</span></span> <span class="inlinecode">(<span class="id" type="var">negb</span></span> <span class="inlinecode"><span class="id" type="var">true</span>)</span> evaluates
+    to true. Hence this goal can be proven using <span class="inlinecode"><span class="id" type="tactic">reflexivity</span></span>.
+    Indeed, we can make this visible by using <span class="inlinecode"><span class="id" type="tactic">simpl</span></span>.
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" type="tactic">simpl</span>.<br/>
+<span class="id" type="tactic">reflexivity</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Case for <span class="inlinecode"><span class="id" type="var">b</span></span> <span class="inlinecode">=</span> <span class="inlinecode"><span class="id" type="var">false</span></span>  This case is exactly the same as before. 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" type="tactic">simpl</span>.<br/>
+<span class="id" type="tactic">reflexivity</span>.<br/>
+<span class="id" type="keyword">Qed</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+There is a shorter way to write this proof by using <span class="inlinecode">;</span>
+    instead of <span class="inlinecode">,</span> after <span class="inlinecode"><span class="id" type="tactic">destruct</span></span>. This means that <span class="inlinecode"><span class="id" type="tactic">reflexivity</span></span> is used for both cases. We can also omit the 
+    <span class="inlinecode"><span class="id" type="tactic">simpl</span></span> which we only use for cosmetic reasons. 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" type="keyword">Lemma</span> <span class="id" type="var">negb_twice'</span> : <span class="id" type="keyword">forall</span> <span class="id" type="var">b</span> :<span class="id" type="var">bool</span>, <span class="id" type="var">negb</span> (<span class="id" type="var">negb</span> <span class="id" type="var">b</span>) = <span class="id" type="var">b</span>.<br/>
+<span class="id" type="tactic">intro</span> <span class="id" type="var">b</span>.<br/>
+<span class="id" type="tactic">destruct</span> <span class="id" type="var">b</span>;<br/>
+&nbsp;&nbsp;<span class="id" type="tactic">reflexivity</span>.<br/>
+<span class="id" type="keyword">Qed</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Indeed, proving equalities of boolean functions is very
+    straightforward. All we need is to analyze all cases 
+    and then use <span class="inlinecode"><span class="id" type="tactic">reflexivity</span></span>. For example to prove that <span class="inlinecode"><span class="id" type="var">andb</span></span> is
+    commutative, i.e.
+
+<div class="paragraph"> </div>
+
+    <span class="inlinecode"><span class="id" type="keyword">forall</span></span> <span class="inlinecode"><span class="id" type="var">x</span></span> <span class="inlinecode"><span class="id" type="var">y</span></span> <span class="inlinecode">:</span> <span class="inlinecode"><span class="id" type="var">bool</span>,</span> <span class="inlinecode"><span class="id" type="var">andb</span></span> <span class="inlinecode"><span class="id" type="var">x</span></span> <span class="inlinecode"><span class="id" type="var">y</span></span> <span class="inlinecode">=</span> <span class="inlinecode"><span class="id" type="var">andb</span></span> <span class="inlinecode"><span class="id" type="var">y</span></span> <span class="inlinecode"><span class="id" type="var">x</span></span>
+
+<div class="paragraph"> </div>
+
+    (we use the abbrevation: <span class="inlinecode"><span class="id" type="keyword">forall</span></span> <span class="inlinecode"><span class="id" type="var">x</span></span> <span class="inlinecode"><span class="id" type="var">y</span></span> <span class="inlinecode">:</span> <span class="inlinecode"><span class="id" type="var">A</span>,...</span> is the 
+    same as <span class="inlinecode"><span class="id" type="keyword">forall</span></span> <span class="inlinecode"><span class="id" type="var">x</span>:<span class="id" type="var">A</span>,<span class="id" type="keyword">forall</span></span> <span class="inlinecode"><span class="id" type="var">y</span>:<span class="id" type="var">A</span>,</span> <span class="inlinecode">...</span>. Note that alas the same shorthand doesn't work for <span class="inlinecode"><span class="id" type="tactic">exists</span></span> (actually it now does in the latest version of Coq).
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" type="keyword">Lemma</span> <span class="id" type="var">andb_comm</span> : <span class="id" type="keyword">forall</span> <span class="id" type="var">x</span> <span class="id" type="var">y</span> : <span class="id" type="var">bool</span>, <span class="id" type="var">andb</span> <span class="id" type="var">x</span> <span class="id" type="var">y</span> = <span class="id" type="var">andb</span> <span class="id" type="var">y</span> <span class="id" type="var">x</span>.<br/>
+<span class="id" type="tactic">intros</span> <span class="id" type="var">x</span> <span class="id" type="var">y</span>.<br/>
+<span class="id" type="tactic">destruct</span> <span class="id" type="var">x</span>;<br/>
+&nbsp;&nbsp;(<span class="id" type="tactic">destruct</span> <span class="id" type="var">y</span>; <br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" type="tactic">reflexivity</span>).<br/>
+<span class="id" type="keyword">Qed</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+We can also prove other properties of <span class="inlinecode"><span class="id" type="var">bool</span></span> not directly
+    related to the functions, for example, we know that every
+    boolean is either true or false. That is 
+
+<div class="paragraph"> </div>
+
+    <span class="inlinecode"><span class="id" type="keyword">forall</span></span> <span class="inlinecode"><span class="id" type="var">b</span></span> <span class="inlinecode">:</span> <span class="inlinecode"><span class="id" type="var">bool</span>,</span> <span class="inlinecode"><span class="id" type="var">b</span></span> <span class="inlinecode">=</span> <span class="inlinecode"><span class="id" type="var">true</span></span> <span class="inlinecode">\/</span> <span class="inlinecode"><span class="id" type="var">b</span></span> <span class="inlinecode">=</span> <span class="inlinecode"><span class="id" type="var">false</span></span>
+
+<div class="paragraph"> </div>
+
+    This is easy to prove:
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" type="keyword">Lemma</span> <span class="id" type="var">true_or_false</span> : <span class="id" type="keyword">forall</span> <span class="id" type="var">b</span> : <span class="id" type="var">bool</span>, <br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" type="var">b</span> = <span class="id" type="var">true</span> \/ <span class="id" type="var">b</span> = <span class="id" type="var">false</span>.<br/>
+<span class="id" type="tactic">intro</span> <span class="id" type="var">b</span>.<br/>
+<span class="id" type="tactic">destruct</span> <span class="id" type="var">b</span>.<br/>
+</div>
+
+<div class="doc">
+b = true 
+</div>
+<div class="code">
+<span class="id" type="tactic">left</span>.<br/>
+<span class="id" type="tactic">reflexivity</span>.<br/>
+</div>
+
+<div class="doc">
+b = false 
+</div>
+<div class="code">
+<span class="id" type="tactic">right</span>.<br/>
+<span class="id" type="tactic">reflexivity</span>.<br/>
+<span class="id" type="keyword">Qed</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Next we want to prove something which doesn't involve any
+    quantifiers, namely
+
+<div class="paragraph"> </div>
+
+    <span class="inlinecode">~</span> <span class="inlinecode">(<span class="id" type="var">true</span></span> <span class="inlinecode">=</span> <span class="inlinecode"><span class="id" type="var">false</span>)</span> <span class="inlinecode"></span>
+
+<div class="paragraph"> </div>
+
+    This is not so easy, we need a little trick. We need to embed
+    <span class="inlinecode"><span class="id" type="var">bool</span></span> into <span class="inlinecode"><span class="id" type="keyword">Prop</span></span>, mapping <span class="inlinecode"><span class="id" type="var">true</span></span> to <span class="inlinecode"><span class="id" type="var">True</span></span> and <span class="inlinecode"><span class="id" type="var">false</span></span> to 
+    <span class="inlinecode"><span class="id" type="var">False</span></span>. This is achieved via the function Istrue:
+</div>
+<div class="code">
+
+<br/>
+<span class="id" type="keyword">Definition</span> <span class="id" type="var">Istrue</span> (<span class="id" type="var">b</span> : <span class="id" type="var">bool</span>) : <span class="id" type="keyword">Prop</span> := <br/>
+&nbsp;&nbsp;<span class="id" type="keyword">match</span> <span class="id" type="var">b</span> <span class="id" type="keyword">with</span><br/>
+&nbsp;&nbsp;| <span class="id" type="var">true</span> =&gt; <span class="id" type="var">True</span><br/>
+&nbsp;&nbsp;| <span class="id" type="var">false</span> =&gt; <span class="id" type="var">False</span><br/>
+&nbsp;&nbsp;<span class="id" type="keyword">end</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+So <span class="inlinecode"><span class="id" type="var">IsTrue</span></span> maps <span class="inlinecode"><span class="id" type="var">true</span></span> to <span class="inlinecode"><span class="id" type="var">True</span></span> and <span class="inlinecode"><span class="id" type="var">false</span></span> to <span class="inlinecode"><span class="id" type="var">False</span></span>.
+    What is the difference between the small and capital versions of true and false? 
+<div class="paragraph"> </div>
+
+ Now we can prove our property: 
+</div>
+<div class="code">
+<span class="id" type="keyword">Lemma</span> <span class="id" type="var">diff_true_false</span> : <br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;~ (<span class="id" type="var">true</span> = <span class="id" type="var">false</span>).<br/>
+<span class="id" type="tactic">intro</span> <span class="id" type="var">h</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+We now need to use a new tactic to replace
+    <span class="inlinecode"><span class="id" type="var">False</span></span> by <span class="inlinecode"><span class="id" type="var">IsTrue</span></span> <span class="inlinecode"><span class="id" type="var">false</span></span>. This is possible
+    because <span class="inlinecode"><span class="id" type="var">IsTrue</span></span> <span class="inlinecode"><span class="id" type="var">false</span></span> evaluates to <span class="inlinecode"><span class="id" type="var">False</span></span>.
+    We are using <span class="inlinecode"><span class="id" type="tactic">fold</span></span> which is the inverse to 
+    <span class="inlinecode"><span class="id" type="tactic">unfold</span></span> which we have seen earlier. 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" type="tactic">fold</span> (<span class="id" type="var">Istrue</span> <span class="id" type="var">false</span>).<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Now we can simply apply the equation <span class="inlinecode"><span class="id" type="var">h</span></span> backwards. 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" type="tactic">rewrite</span>&lt;- <span class="id" type="var">h</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Now by unfolding we can replace <span class="inlinecode"><span class="id" type="var">Istrue</span></span> <span class="inlinecode"><span class="id" type="var">true</span></span> by <span class="inlinecode"><span class="id" type="var">True</span></span> 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" type="tactic">unfold</span> <span class="id" type="var">Istrue</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Which is easy to prove.
+</div>
+<div class="code">
+
+<br/>
+<span class="id" type="tactic">split</span>.<br/>
+<span class="id" type="keyword">Qed</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Actually there is a tactic <span class="inlinecode"><span class="id" type="tactic">discriminate</span></span> which implements 
+    this proof and which allows us to prove directly that any 
+    two different constructors (like <span class="inlinecode"><span class="id" type="var">true</span></span> and <span class="inlinecode"><span class="id" type="var">false</span></span>) are
+    different. We shall use <span class="inlinecode"><span class="id" type="tactic">discriminate</span></span> in future.
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" type="keyword">Goal</span> <span class="id" type="var">true</span> &lt;&gt; <span class="id" type="var">false</span>.<br/>
+<span class="id" type="tactic">intro</span> <span class="id" type="var">h</span>.<br/>
+<span class="id" type="tactic">discriminate</span> <span class="id" type="var">h</span>.<br/>
+<span class="id" type="keyword">Qed</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab25"></a><h1 class="section">Reflection</h1>
+
+<div class="paragraph"> </div>
+
+
+<div class="paragraph"> </div>
+
+   We have <span class="inlinecode"><span class="id" type="keyword">Prop</span></span> and <span class="inlinecode"><span class="id" type="var">bool</span></span> which look very similar. However, an important
+   difference is that an proposition <span class="inlinecode"><span class="id" type="var">P</span></span> <span class="inlinecode">:</span> <span class="inlinecode"><span class="id" type="keyword">Prop</span></span> may have a proof or not but we cannot
+   see this easily. In contrast we cannot "prove" a boolean <span class="inlinecode"><span class="id" type="var">b</span></span> <span class="inlinecode">:</span> <span class="inlinecode"><span class="id" type="var">bool</span></span> but we can
+   see wether it is <span class="inlinecode"><span class="id" type="var">true</span></span> or <span class="inlinecode"><span class="id" type="var">false</span></span> just by looking at it.
+
+<div class="paragraph"> </div>
+
+   We also have similar operations on <span class="inlinecode"><span class="id" type="keyword">Prop</span></span> and <span class="inlinecode"><span class="id" type="var">bool</span></span>, e.g.
+   there is a logical operator <span class="inlinecode">/\</span> which acts
+    on <span class="inlinecode"><span class="id" type="keyword">Prop</span></span> and a boolean operator <span class="inlinecode"><span class="id" type="var">andb</span></span> (or <span class="inlinecode">&amp;&amp;</span>) which acts
+    on <span class="inlinecode"><span class="id" type="var">bool</span></span>. How are the two related?
+
+<div class="paragraph"> </div>
+
+    We can use <span class="inlinecode">/\</span> to specify <span class="inlinecode"><span class="id" type="var">andb</span></span>, namely we say that
+    <span class="inlinecode"><span class="id" type="var">andb</span></span> <span class="inlinecode"><span class="id" type="var">x</span></span> <span class="inlinecode"><span class="id" type="var">y</span></span> <span class="inlinecode">=</span> <span class="inlinecode"><span class="id" type="var">true</span></span> is equivalent to <span class="inlinecode"><span class="id" type="var">x</span></span> <span class="inlinecode">=</span> <span class="inlinecode"><span class="id" type="var">true</span></span> and <span class="inlinecode"><span class="id" type="var">y</span></span> <span class="inlinecode">=</span> <span class="inlinecode"><span class="id" type="var">true</span></span>. 
+    That is we prove:
+
+<div class="paragraph"> </div>
+
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" type="keyword">Lemma</span> <span class="id" type="var">and_ok</span> : <span class="id" type="keyword">forall</span> <span class="id" type="var">x</span> <span class="id" type="var">y</span> : <span class="id" type="var">bool</span>, <br/>
+&nbsp;&nbsp;<span class="id" type="var">andb</span> <span class="id" type="var">x</span> <span class="id" type="var">y</span> = <span class="id" type="var">true</span> &lt;-&gt; <span class="id" type="var">x</span> = <span class="id" type="var">true</span> /\ <span class="id" type="var">y</span> = <span class="id" type="var">true</span>.<br/>
+<span class="id" type="tactic">intros</span> <span class="id" type="var">x</span> <span class="id" type="var">y</span>.<br/>
+<span class="id" type="tactic">split</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<span class="inlinecode">-&gt;</span> 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" type="tactic">destruct</span> <span class="id" type="var">x</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+x=true
+</div>
+<div class="code">
+
+<br/>
+<span class="id" type="tactic">intro</span> <span class="id" type="var">h</span>.<br/>
+<span class="id" type="tactic">split</span>.<br/>
+<span class="id" type="tactic">reflexivity</span>.<br/>
+<span class="id" type="tactic">simpl</span> <span class="id" type="keyword">in</span> <span class="id" type="var">h</span>.<br/>
+<span class="id" type="tactic">exact</span> <span class="id" type="var">h</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Why did the last step work? 
+<div class="paragraph"> </div>
+
+ x = false 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" type="tactic">intro</span> <span class="id" type="var">h</span>.<br/>
+<span class="id" type="tactic">simpl</span> <span class="id" type="keyword">in</span> <span class="id" type="var">h</span>.<br/>
+<span class="id" type="tactic">discriminate</span> <span class="id" type="var">h</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<span class="inlinecode">&lt;-</span> 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" type="tactic">intro</span> <span class="id" type="var">h</span>.<br/>
+<span class="id" type="tactic">destruct</span> <span class="id" type="var">h</span> <span class="id" type="keyword">as</span> [<span class="id" type="var">hx</span> <span class="id" type="var">hy</span>].<br/>
+<span class="id" type="tactic">rewrite</span> <span class="id" type="var">hx</span>.<br/>
+<span class="id" type="tactic">exact</span> <span class="id" type="var">hy</span>.<br/>
+
+<br/>
+<span class="id" type="keyword">Qed</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+The two directions of the proof tell us different things:
+
+<div class="paragraph"> </div>
+
+<ul class="doclist">
+<li> <span class="inlinecode">&lt;-</span> tells us that <span class="inlinecode"><span class="id" type="var">andb</span></span> is sound, if both inputs are true if will return true.
+
+</li>
+<li> <span class="inlinecode">-&gt;</span> tells us that <span class="inlinecode"><span class="id" type="var">andb</span></span> is complete, it will only return <span class="inlinecode"><span class="id" type="var">true</span></span> if both inputs are <span class="inlinecode"><span class="id" type="var">true</span></span>.
+
+</li>
+</ul>
+What would be implementations of <span class="inlinecode"><span class="id" type="var">andb</span></span> which are sound but not complete, and complete but not sound?
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" type="keyword">End</span> <span class="id" type="var">Bool</span>.<br/>
+
+<br/>
+</div>
+</div>
+
+<div id="footer">
+<hr/><a href="index.html">Index</a><hr/>This page has been generated by <a href="http://coq.inria.fr/">coqdoc</a>
+</div>
+
+</div>
+
+</body>
+</html>

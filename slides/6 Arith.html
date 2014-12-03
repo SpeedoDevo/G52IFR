@@ -1,0 +1,858 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1"/>
+<link href="coqdoc.css" rel="stylesheet" type="text/css"/>
+<title>Arith</title>
+</head>
+
+<body>
+
+<div id="page">
+
+<div id="header">
+</div>
+
+<div id="main">
+
+<h1 class="libtitle">Library Arith</h1>
+
+<div class="code">
+
+<br/>
+</div>
+
+<div class="doc">
+<H0>Peano Arithmetic</H0> 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" type="keyword">Section</span> <span class="id" type="var">Arith</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab31"></a><h1 class="section">The natural numbers</h1>
+
+<div class="paragraph"> </div>
+
+ Guiseppe Peano defined the natural numbers as given by <span class="inlinecode">0</span> <span class="inlinecode">:</span> <span class="inlinecode"><span class="id" type="var">nat</span></span>
+    and if <span class="inlinecode"><span class="id" type="var">n</span></span> is a natural number then <span class="inlinecode"><span class="id" type="var">S</span></span> <span class="inlinecode"><span class="id" type="var">n</span></span> <span class="inlinecode">:</span> <span class="inlinecode"><span class="id" type="var">nat</span></span> is a natural number
+    called the successor of <span class="inlinecode"><span class="id" type="var">n</span></span>. Given this we can construct all the 
+    natural numbers, e.g.
+
+<div class="paragraph"> </div>
+
+<ul class="doclist">
+<li> 1 = S 0
+
+</li>
+<li> 2 = S 1 = S (S 0)
+
+</li>
+<li> 3 = S 2 = S (S (S 0))
+
+</li>
+</ul>
+    Moreover these are all natural numbers (we say they are defined <i>inductively</i> ).
+
+<div class="paragraph"> </div>
+
+    In Coq Peano's natural numbers are defined as follows:
+    <br/>
+<span class="inlinecode">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" type="keyword">Inductive</span> <span class="id" type="var">nat</span> : <span class="id" type="keyword">Set</span> :=<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| <span class="id" type="var">O</span> : <span class="id" type="var">nat</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| <span class="id" type="var">S</span> : <span class="id" type="var">nat</span> -&gt; <span class="id" type="var">nat</span>.<br/>
+
+<div class="paragraph"> </div>
+
+</span>    However, Coq will automatically translate the usual decimal notation of numbers
+    into Peano numbers, i.e. <span class="inlinecode">3</span> is translated into <span class="inlinecode"><span class="id" type="var">S</span></span> <span class="inlinecode">(<span class="id" type="var">S</span></span> <span class="inlinecode">(<span class="id" type="var">S</span></span> <span class="inlinecode">0))</span>.
+
+<div class="paragraph"> </div>
+
+    Peano went on to represent the fundamental properties of the natural 
+    numbers using axioms. Some of the axioms express general properties of 
+    equality, which we have already seen. But the following three are 
+    specific to the natural numbers. Indeed, they are provable propositions
+    in Coq:
+
+<div class="paragraph"> </div>
+
+<ul class="doclist">
+<li> Axiom 7 : 0 is not the successor of any number.
+      <span class="inlinecode"><span class="id" type="keyword">forall</span></span> <span class="inlinecode"><span class="id" type="var">n</span>:<span class="id" type="var">nat</span>,</span> <span class="inlinecode"><span class="id" type="var">S</span></span> <span class="inlinecode"><span class="id" type="var">n</span></span> <span class="inlinecode">&lt;&gt;</span> <span class="inlinecode">0</span>
+
+</li>
+<li> Axiom 8 : If two numbers have the same successor, then they are equal.
+      <span class="inlinecode"><span class="id" type="keyword">forall</span></span> <span class="inlinecode"><span class="id" type="var">m</span></span> <span class="inlinecode"><span class="id" type="var">n</span>:<span class="id" type="var">nat</span>,</span> <span class="inlinecode"><span class="id" type="var">S</span></span> <span class="inlinecode"><span class="id" type="var">m</span></span> <span class="inlinecode">=</span> <span class="inlinecode"><span class="id" type="var">S</span></span> <span class="inlinecode"><span class="id" type="var">n</span></span> <span class="inlinecode">-&gt;</span> <span class="inlinecode"><span class="id" type="var">m</span></span> <span class="inlinecode">=</span> <span class="inlinecode"><span class="id" type="var">n</span></span> <span class="inlinecode"></span>
+
+</li>
+<li> Axiom 9 : If any property holds for 0, and is closed under successor, 
+      then it holds 
+      for all natural numbers (principle of induction).
+      <br/>
+<span class="inlinecode">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" type="keyword">forall</span> <span class="id" type="var">P</span> : <span class="id" type="var">nat</span> -&gt; <span class="id" type="keyword">Prop</span>, <span class="id" type="var">P</span> 0 <br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&gt; (<span class="id" type="keyword">forall</span> <span class="id" type="var">m</span> : <span class="id" type="var">nat</span>, <span class="id" type="var">P</span> <span class="id" type="var">m</span> -&gt; <span class="id" type="var">P</span> (<span class="id" type="var">S</span> <span class="id" type="var">m</span>))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&gt; <span class="id" type="keyword">forall</span> <span class="id" type="var">n</span> : <span class="id" type="var">nat</span>, <span class="id" type="var">P</span> <span class="id" type="var">n</span>
+<div class="paragraph"> </div>
+
+</span>
+</li>
+</ul>
+    For illustration we are going to prove these principles:
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" type="keyword">Lemma</span> <span class="id" type="var">peano7</span> : <span class="id" type="keyword">forall</span> <span class="id" type="var">n</span>:<span class="id" type="var">nat</span>, <span class="id" type="var">S</span> <span class="id" type="var">n</span> &lt;&gt; 0.<br/>
+<span class="id" type="tactic">intro</span> <span class="id" type="var">n</span>.<br/>
+<span class="id" type="tactic">intro</span> <span class="id" type="var">h</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+This is basically the same problem as proving <span class="inlinecode"><span class="id" type="var">true</span></span> <span class="inlinecode">&lt;&gt;</span> <span class="inlinecode"><span class="id" type="var">false</span></span>, we
+    could apply the same technique here. To avoid repetetion we just
+    use the <span class="inlinecode"><span class="id" type="tactic">discriminate</span></span> tactic.
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" type="tactic">discriminate</span> <span class="id" type="var">h</span>.<br/>
+<span class="id" type="keyword">Qed</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+To prove the next axiom, it is useful to define the inverse to
+    S, the predecessor function pred. We arbitrarily decide that the 
+    predecessor of 0 is 0. 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" type="keyword">Definition</span> <span class="id" type="var">pred</span> (<span class="id" type="var">n</span> : <span class="id" type="var">nat</span>) : <span class="id" type="var">nat</span> :=<br/>
+&nbsp;&nbsp;<span class="id" type="keyword">match</span> <span class="id" type="var">n</span> <span class="id" type="keyword">with</span><br/>
+&nbsp;&nbsp;| 0 =&gt; 0<br/>
+&nbsp;&nbsp;| <span class="id" type="var">S</span> <span class="id" type="var">n</span> =&gt; <span class="id" type="var">n</span><br/>
+&nbsp;&nbsp;<span class="id" type="keyword">end</span>.<br/>
+
+<br/>
+<span class="id" type="keyword">Lemma</span> <span class="id" type="var">peano8</span> : <span class="id" type="keyword">forall</span> <span class="id" type="var">m</span> <span class="id" type="var">n</span>:<span class="id" type="var">nat</span>, <span class="id" type="var">S</span> <span class="id" type="var">m</span> = <span class="id" type="var">S</span> <span class="id" type="var">n</span> -&gt; <span class="id" type="var">m</span> = <span class="id" type="var">n</span>.<br/>
+<span class="id" type="tactic">intros</span> <span class="id" type="var">m</span> <span class="id" type="var">n</span> <span class="id" type="var">h</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+By folding with <span class="inlinecode"><span class="id" type="var">pred</span></span> we can change the current goal so that we can
+    apply our hypothesis. 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" type="tactic">fold</span> (<span class="id" type="var">pred</span> (<span class="id" type="var">S</span> <span class="id" type="var">m</span>)).<br/>
+<span class="id" type="tactic">rewrite</span> <span class="id" type="var">h</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+And now we just have to unfold. simpl would have done the job too. 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" type="tactic">unfold</span> <span class="id" type="var">pred</span>.<br/>
+<span class="id" type="tactic">reflexivity</span>.<br/>
+<span class="id" type="keyword">Qed</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+The 8th axiom says that the successor function is injective. 
+    Can we prove the other direction too? 
+    <span class="inlinecode"><span class="id" type="keyword">forall</span></span> <span class="inlinecode"><span class="id" type="var">m</span></span> <span class="inlinecode"><span class="id" type="var">n</span>:<span class="id" type="var">nat</span>,</span> <span class="inlinecode"><span class="id" type="var">m</span></span> <span class="inlinecode">=</span> <span class="inlinecode"><span class="id" type="var">n</span></span> <span class="inlinecode">-&gt;</span> <span class="inlinecode"><span class="id" type="var">S</span></span> <span class="inlinecode"><span class="id" type="var">m</span></span> <span class="inlinecode">=</span> <span class="inlinecode"><span class="id" type="var">S</span></span> <span class="inlinecode"><span class="id" type="var">n</span></span>
+    Does this tell us anything new
+    about the successor function? 
+<div class="paragraph"> </div>
+
+ The proof of the induction axiom is rather boring. It just uses a tactic
+    which is called <span class="inlinecode"><span class="id" type="tactic">induction</span></span>... 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" type="keyword">Lemma</span> <span class="id" type="var">peano9</span> : <span class="id" type="keyword">forall</span> <span class="id" type="var">P</span> : <span class="id" type="var">nat</span> -&gt; <span class="id" type="keyword">Prop</span>, <span class="id" type="var">P</span> 0 <br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&gt; (<span class="id" type="keyword">forall</span> <span class="id" type="var">m</span> : <span class="id" type="var">nat</span>, <span class="id" type="var">P</span> <span class="id" type="var">m</span> -&gt; <span class="id" type="var">P</span> (<span class="id" type="var">S</span> <span class="id" type="var">m</span>))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&gt; <span class="id" type="keyword">forall</span> <span class="id" type="var">n</span> : <span class="id" type="var">nat</span>, <span class="id" type="var">P</span> <span class="id" type="var">n</span>.<br/>
+<span class="id" type="tactic">intros</span> <span class="id" type="var">P</span> <span class="id" type="var">h0</span> <span class="id" type="var">hS</span> <span class="id" type="var">n</span>.<br/>
+<span class="id" type="tactic">induction</span> <span class="id" type="var">n</span>.<br/>
+<span class="id" type="tactic">exact</span> <span class="id" type="var">h0</span>.<br/>
+<span class="id" type="tactic">apply</span> <span class="id" type="var">hS</span>.<br/>
+<span class="id" type="tactic">exact</span> <span class="id" type="var">IHn</span>.<br/>
+<span class="id" type="keyword">Qed</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab32"></a><h1 class="section">Primitive recursion and induction</h1>
+
+<div class="paragraph"> </div>
+
+ To see the induction principle in action we will look at a simple 
+    example: we are going to define a doubling function and then show
+    that it always produces even numbers.
+
+<div class="paragraph"> </div>
+
+    To define the doubling function we first need to introduce another
+    principle <i>primitive recursion</i>. To define the doubling function
+    recursively we are using the fact that <span class="inlinecode"><span class="id" type="var">double</span></span> <span class="inlinecode">(<span class="id" type="var">S</span></span> <span class="inlinecode"><span class="id" type="var">n</span>)</span> is <span class="inlinecode"><span class="id" type="var">S</span></span> <span class="inlinecode">(<span class="id" type="var">S</span></span>
+    <span class="inlinecode">(<span class="id" type="var">double</span></span> <span class="inlinecode"><span class="id" type="var">n</span>)</span>, e.g. <span class="inlinecode"><span class="id" type="var">double</span></span> <span class="inlinecode">3</span> <span class="inlinecode">=</span> <span class="inlinecode"><span class="id" type="var">double</span></span> <span class="inlinecode">(<span class="id" type="var">S</span></span> <span class="inlinecode">2)</span> <span class="inlinecode">=</span> <span class="inlinecode"><span class="id" type="var">S</span></span> <span class="inlinecode">(<span class="id" type="var">S</span></span> <span class="inlinecode">(<span class="id" type="var">double</span></span> <span class="inlinecode">2))</span> <span class="inlinecode">=</span>
+    <span class="inlinecode"><span class="id" type="var">S</span></span> <span class="inlinecode">(</span> <span class="inlinecode"><span class="id" type="var">S</span></span> <span class="inlinecode">(<span class="id" type="var">double</span></span> <span class="inlinecode">4))</span> <span class="inlinecode">=</span> <span class="inlinecode">6</span>.
+
+<div class="paragraph"> </div>
+
+    To define a function recursively we cannot use the keyword
+    <span class="inlinecode"><span class="id" type="keyword">Definition</span></span> because this allows only the definition of of
+    non-recursive functions, but we have to use <span class="inlinecode"><span class="id" type="keyword">Fixpoint</span></span> instead.
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" type="keyword">Fixpoint</span> <span class="id" type="var">double</span> (<span class="id" type="var">m</span> : <span class="id" type="var">nat</span>) : <span class="id" type="var">nat</span> :=<br/>
+&nbsp;&nbsp;<span class="id" type="keyword">match</span> <span class="id" type="var">m</span> <span class="id" type="keyword">with</span><br/>
+&nbsp;&nbsp;| 0 =&gt; 0<br/>
+&nbsp;&nbsp;| <span class="id" type="var">S</span> <span class="id" type="var">n</span> =&gt; <span class="id" type="var">S</span> (<span class="id" type="var">S</span> (<span class="id" type="var">double</span> <span class="id" type="var">n</span>))<br/>
+&nbsp;&nbsp;<span class="id" type="keyword">end</span>.<br/>
+
+<br/>
+<span class="id" type="keyword">Eval</span> <span class="id" type="tactic">compute</span> <span class="id" type="keyword">in</span> <span class="id" type="var">double</span> 3.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<span class="inlinecode"><span class="id" type="var">double</span></span> is a fixpoint because it solves an equation of the form
+   <span class="inlinecode"><span class="id" type="var">double</span></span> <span class="inlinecode">=</span> <span class="inlinecode"><span class="id" type="var">f</span></span> <span class="inlinecode"><span class="id" type="var">double</span></span>. I leave it to you to figure out what <span class="inlinecode"><span class="id" type="var">f</span></span> is in 
+   this case.
+
+<div class="paragraph"> </div>
+
+   Not all recursive definitions have fixpoints, e.g. if we had tried
+   to define 
+<br/>
+<span class="inlinecode"><span class="id" type="keyword">Fixpoint</span> <span class="id" type="var">double</span> (<span class="id" type="var">m</span> : <span class="id" type="var">nat</span>) : <span class="id" type="var">nat</span> :=<br/>
+&nbsp;&nbsp;<span class="id" type="keyword">match</span> <span class="id" type="var">m</span> <span class="id" type="keyword">with</span><br/>
+&nbsp;&nbsp;| 0 =&gt; 0<br/>
+&nbsp;&nbsp;| <span class="id" type="var">S</span> <span class="id" type="var">n</span> =&gt; <span class="id" type="var">S</span> (<span class="id" type="var">S</span> (<span class="id" type="var">double</span> <span class="id" type="var">m</span>))<br/>
+&nbsp;&nbsp;<span class="id" type="keyword">end</span>.
+<div class="paragraph"> </div>
+
+</span>   then Coq would have reported an error (while Haskell would have just
+   looped). Because Coq is for reasoning there is no space for looping
+   function and Coq only allows terminating functions.
+
+<div class="paragraph"> </div>
+
+   In particular primitive recursive functions are this where the
+   computation of <span class="inlinecode"><span class="id" type="var">f</span></span> <span class="inlinecode">(<span class="id" type="var">S</span></span> <span class="inlinecode"><span class="id" type="var">n</span>)</span> only uses <span class="inlinecode"><span class="id" type="var">f</span></span> <span class="inlinecode"><span class="id" type="var">n</span></span>. All primitive recursive
+   functions are accepted by Coq.
+
+<div class="paragraph"> </div>
+
+   Another example of a primitive recursive function is the function
+   <span class="inlinecode"><span class="id" type="var">isEven</span></span> below which determines wether a number is even.
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" type="keyword">Fixpoint</span> <span class="id" type="var">isEven</span> (<span class="id" type="var">m</span> : <span class="id" type="var">nat</span>) : <span class="id" type="var">bool</span> :=<br/>
+&nbsp;&nbsp;<span class="id" type="keyword">match</span> <span class="id" type="var">m</span> <span class="id" type="keyword">with</span><br/>
+&nbsp;&nbsp;| 0 =&gt; <span class="id" type="var">true</span><br/>
+&nbsp;&nbsp;| <span class="id" type="var">S</span> <span class="id" type="var">m'</span> =&gt; <span class="id" type="var">negb</span> (<span class="id" type="var">isEven</span> <span class="id" type="var">m'</span>)<br/>
+&nbsp;&nbsp;<span class="id" type="keyword">end</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Having both <span class="inlinecode"><span class="id" type="var">double</span></span> and <span class="inlinecode"><span class="id" type="var">isEven</span></span> we can now prove
+   that <span class="inlinecode"><span class="id" type="var">double</span></span> always produces even numbers. To show
+   this we need to use <span class="inlinecode"><span class="id" type="tactic">induction</span></span>.
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" type="keyword">Lemma</span> <span class="id" type="var">evenDouble</span> : <span class="id" type="keyword">forall</span> <span class="id" type="var">n</span> : <span class="id" type="var">nat</span>, <span class="id" type="var">isEven</span> (<span class="id" type="var">double</span> <span class="id" type="var">n</span>) = <span class="id" type="var">true</span>.<br/>
+<span class="id" type="tactic">intro</span> <span class="id" type="var">n</span>.<br/>
+</div>
+
+<div class="doc">
+To show something for all numbers we use <span class="inlinecode"><span class="id" type="tactic">induction</span></span>. 
+</div>
+<div class="code">
+<span class="id" type="tactic">induction</span> <span class="id" type="var">n</span>.<br/>
+</div>
+
+<div class="doc">
+We get 2 subgoals: we have to show our goal for <span class="inlinecode">0</span> and 
+   for <span class="inlinecode"><span class="id" type="var">S</span></span> <span class="inlinecode"><span class="id" type="var">n</span></span>. What we don't see in the moment is that we can use our
+   goal for <span class="inlinecode"><span class="id" type="var">n</span></span> when proving it for <span class="inlinecode"><span class="id" type="var">S</span></span> <span class="inlinecode"><span class="id" type="var">n</span></span>.
+
+<div class="paragraph"> </div>
+
+   The <span class="inlinecode">0</span> case is very straightforward. We only need to compute. 
+
+</div>
+<div class="code">
+<span class="id" type="tactic">simpl</span>.<br/>
+<span class="id" type="tactic">reflexivity</span>.<br/>
+</div>
+
+<div class="doc">
+We now see that when priving the property for <span class="inlinecode"><span class="id" type="var">S</span></span> <span class="inlinecode"><span class="id" type="var">n</span></span> we
+   can use the property for <span class="inlinecode"><span class="id" type="var">n</span></span>. All we need in this simple 
+   exqmple is to compute before we can use the <i>induction hypothesis</i>.
+
+</div>
+<div class="code">
+<span class="id" type="tactic">simpl</span>.<br/>
+</div>
+
+<div class="doc">
+Now <span class="inlinecode"><span class="id" type="var">isEven</span></span> <span class="inlinecode">(<span class="id" type="var">double</span></span> <span class="inlinecode"><span class="id" type="var">n</span>)</span> appears in the goal and we know
+   by induction hypothesis that this is <span class="inlinecode"><span class="id" type="var">true</span></span>. 
+</div>
+<div class="code">
+<span class="id" type="tactic">rewrite</span> <span class="id" type="var">IHn</span>.<br/>
+</div>
+
+<div class="doc">
+Now it is only a simple calculation with booleans.
+</div>
+<div class="code">
+<span class="id" type="tactic">simpl</span>.<br/>
+<span class="id" type="tactic">reflexivity</span>.<br/>
+<span class="id" type="keyword">Qed</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab33"></a><h1 class="section">Addition and multiplication</h1>
+
+<div class="paragraph"> </div>
+
+ Peano defined the operations addition and multiplication.
+    These are actually examples of functions defined by <i>primitive
+    recursion</i>.
+
+<div class="paragraph"> </div>
+
+ The idea is that we can define addition like this:
+
+<div class="paragraph"> </div>
+
+<ul class="doclist">
+<li> to add 0 to a number is just this number,
+
+</li>
+<li> to add one more that n to a number is one more than adding
+     n to the number.
+
+</li>
+</ul>
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" type="keyword">Fixpoint</span> <span class="id" type="var">plus</span> (<span class="id" type="var">m</span> <span class="id" type="var">n</span> : <span class="id" type="var">nat</span>) {<span class="id" type="keyword">struct</span> <span class="id" type="var">m</span>} : <span class="id" type="var">nat</span> :=<br/>
+&nbsp;&nbsp;<span class="id" type="keyword">match</span> <span class="id" type="var">m</span> <span class="id" type="keyword">with</span><br/>
+&nbsp;&nbsp;| 0 =&gt; <span class="id" type="var">n</span><br/>
+&nbsp;&nbsp;| <span class="id" type="var">S</span> <span class="id" type="var">m</span> =&gt; <span class="id" type="var">S</span> (<span class="id" type="var">plus</span> <span class="id" type="var">m</span> <span class="id" type="var">n</span>)<br/>
+&nbsp;&nbsp;<span class="id" type="keyword">end</span>.<br/>
+
+<br/>
+<span class="id" type="keyword">Eval</span> <span class="id" type="tactic">compute</span> <span class="id" type="keyword">in</span> (<span class="id" type="var">plus</span> 2 3).<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+In the Coq library addition is defined using the usual infix
+    notation <span class="inlinecode">+</span>. 
+<div class="paragraph"> </div>
+
+ To define multiplication we use primitive recursion again. This time
+    the idea is the following.
+
+<div class="paragraph"> </div>
+
+<ul class="doclist">
+<li> multiplying 0 with a number is just 0.
+
+</li>
+<li> multiplying one more than n with a number is obtained by adding 
+      the number to multiplying n with the number.
+
+</li>
+</ul>
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" type="keyword">Fixpoint</span> <span class="id" type="var">mult</span> (<span class="id" type="var">m</span> <span class="id" type="var">n</span> : <span class="id" type="var">nat</span>) {<span class="id" type="keyword">struct</span> <span class="id" type="var">m</span>} : <span class="id" type="var">nat</span> :=<br/>
+&nbsp;&nbsp;<span class="id" type="keyword">match</span> <span class="id" type="var">m</span> <span class="id" type="keyword">with</span><br/>
+&nbsp;&nbsp;| 0 =&gt; 0<br/>
+&nbsp;&nbsp;| <span class="id" type="var">S</span> <span class="id" type="var">m</span> =&gt; <span class="id" type="var">plus</span> <span class="id" type="var">n</span> (<span class="id" type="var">mult</span> <span class="id" type="var">m</span> <span class="id" type="var">n</span>)<br/>
+&nbsp;&nbsp;<span class="id" type="keyword">end</span>.<br/>
+
+<br/>
+<span class="id" type="keyword">Eval</span> <span class="id" type="tactic">compute</span> <span class="id" type="keyword">in</span> (<span class="id" type="var">mult</span> 2 3).<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+In the Coq library addition is defined using the usual infix
+    notation <span class="inlinecode">+</span> and <span class="inlinecode">*</span> with the usual rules of precedence.
+    From now on we shall use the library versions which are defined
+    exactly in the same way as we have defined <span class="inlinecode"><span class="id" type="var">plus</span></span> and <span class="inlinecode"><span class="id" type="var">mult</span></span> 
+<div class="paragraph"> </div>
+
+<a name="lab34"></a><h1 class="section">Algebraic properties</h1>
+
+<div class="paragraph"> </div>
+
+ Addition and multiplication satisfy a number of important equations:
+
+<div class="paragraph"> </div>
+
+<ul class="doclist">
+<li> 0 is a neutral element for addition
+     <span class="inlinecode">0</span> <span class="inlinecode">+</span> <span class="inlinecode"><span class="id" type="var">m</span></span> <span class="inlinecode">=</span> <span class="inlinecode"><span class="id" type="var">m</span></span> and <span class="inlinecode"><span class="id" type="var">m</span></span> <span class="inlinecode">+</span> <span class="inlinecode">0</span> <span class="inlinecode">=</span> <span class="inlinecode"><span class="id" type="var">m</span></span>
+
+</li>
+<li> Addition is associative.
+     <span class="inlinecode"><span class="id" type="var">m</span></span> <span class="inlinecode">+</span> <span class="inlinecode">(<span class="id" type="var">n</span></span> <span class="inlinecode">+</span> <span class="inlinecode"><span class="id" type="var">l</span>)</span> <span class="inlinecode">=</span> <span class="inlinecode">(<span class="id" type="var">m</span></span> <span class="inlinecode">+</span> <span class="inlinecode"><span class="id" type="var">l</span>)</span> <span class="inlinecode">+</span> <span class="inlinecode"><span class="id" type="var">n</span></span>
+
+</li>
+<li> Addition is commutative.
+     <span class="inlinecode"><span class="id" type="var">m</span></span> <span class="inlinecode">+</span> <span class="inlinecode"><span class="id" type="var">n</span></span> <span class="inlinecode">=</span> <span class="inlinecode"><span class="id" type="var">n</span></span> <span class="inlinecode">+</span> <span class="inlinecode"><span class="id" type="var">m</span></span>
+
+</li>
+<li> 1 is a neutral element for multiplication
+     <span class="inlinecode">1</span> <span class="inlinecode">*</span> <span class="inlinecode"><span class="id" type="var">m</span></span> <span class="inlinecode">=</span> <span class="inlinecode"><span class="id" type="var">m</span></span> and <span class="inlinecode"><span class="id" type="var">m</span></span> <span class="inlinecode">*</span> <span class="inlinecode">1</span> <span class="inlinecode">=</span> <span class="inlinecode"><span class="id" type="var">m</span></span>
+
+</li>
+<li> Multiplication is associative.
+     <span class="inlinecode"><span class="id" type="var">m</span></span> <span class="inlinecode">*</span> <span class="inlinecode">(<span class="id" type="var">n</span></span> <span class="inlinecode">*</span> <span class="inlinecode"><span class="id" type="var">l</span>)</span> <span class="inlinecode">=</span> <span class="inlinecode">(<span class="id" type="var">m</span></span> <span class="inlinecode">*</span> <span class="inlinecode"><span class="id" type="var">n</span>)</span> <span class="inlinecode">*</span> <span class="inlinecode"><span class="id" type="var">l</span></span>
+
+</li>
+<li> Multiplication is commutative.
+     <span class="inlinecode"><span class="id" type="var">m</span></span> <span class="inlinecode">*</span> <span class="inlinecode"><span class="id" type="var">n</span></span> <span class="inlinecode">=</span> <span class="inlinecode"><span class="id" type="var">n</span></span> <span class="inlinecode">*</span> <span class="inlinecode"><span class="id" type="var">m</span></span>
+
+</li>
+<li> 0 is a null for multiplication.
+     <span class="inlinecode"><span class="id" type="var">m</span></span> <span class="inlinecode">*</span> <span class="inlinecode">0</span> <span class="inlinecode">=</span> <span class="inlinecode">0</span> and <span class="inlinecode">0</span> <span class="inlinecode">*</span> <span class="inlinecode"><span class="id" type="var">m</span></span> <span class="inlinecode">=</span> <span class="inlinecode">0</span>
+
+</li>
+<li> Addition distributes over multiplication.
+     <span class="inlinecode"><span class="id" type="var">m</span></span> <span class="inlinecode">*</span> <span class="inlinecode">(<span class="id" type="var">n</span></span> <span class="inlinecode">+</span> <span class="inlinecode"><span class="id" type="var">l</span>)</span> <span class="inlinecode">=</span> <span class="inlinecode"><span class="id" type="var">m</span></span> <span class="inlinecode">*</span> <span class="inlinecode"><span class="id" type="var">n</span></span> <span class="inlinecode">+</span> <span class="inlinecode"><span class="id" type="var">m</span></span> <span class="inlinecode">*</span> <span class="inlinecode"><span class="id" type="var">l</span></span>
+     and
+     <span class="inlinecode">(<span class="id" type="var">m</span></span> <span class="inlinecode">+</span> <span class="inlinecode"><span class="id" type="var">n</span>)</span> <span class="inlinecode">*</span> <span class="inlinecode"><span class="id" type="var">l</span></span> <span class="inlinecode">=</span> <span class="inlinecode"><span class="id" type="var">m</span></span> <span class="inlinecode">*</span> <span class="inlinecode"><span class="id" type="var">l</span></span> <span class="inlinecode">+</span> <span class="inlinecode"><span class="id" type="var">n</span></span> <span class="inlinecode">*</span> <span class="inlinecode"><span class="id" type="var">l</span></span>
+
+</li>
+</ul>
+   In the language of universal algebra, we say that 
+
+<div class="paragraph"> </div>
+
+<ul class="doclist">
+<li> (+,0) is a <i>commutative monoid</i>,
+     because 0 is neutral, <span class="inlinecode">+</span> is associative and commutative.
+
+</li>
+<li> ( *,1) is a commutative monoid,
+     because 1 is neutral, <span class="inlinecode">*</span> is associative and commutative.
+
+</li>
+<li> (+,0,*,1) is a <i>commutative semiring</i> because
+     (+,0) and ( *,1) are commutative monoids and
+     <span class="inlinecode">0</span> is a zero for multiplication and 
+     addition distributes over multiplication. 
+
+</li>
+</ul>
+   We are going to prove that (+,0) is a commutative monoid 
+   and leave the remaining properties as an exercise. 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" type="keyword">Lemma</span> <span class="id" type="var">plus_0_n</span> : <span class="id" type="keyword">forall</span> <span class="id" type="var">n</span>:<span class="id" type="var">nat</span>, <span class="id" type="var">n</span> = 0 + <span class="id" type="var">n</span>.<br/>
+</div>
+
+<div class="doc">
+This property is very easy to prove.
+    Can you see why?
+
+</div>
+<div class="code">
+<span class="id" type="tactic">intro</span> <span class="id" type="var">n</span>.<br/>
+<span class="id" type="tactic">reflexivity</span>.<br/>
+<span class="id" type="keyword">Qed</span>.<br/>
+
+<br/>
+<span class="id" type="keyword">Lemma</span> <span class="id" type="var">plus_n_0</span> : <span class="id" type="keyword">forall</span> <span class="id" type="var">n</span>:<span class="id" type="var">nat</span>, <span class="id" type="var">n</span> = <span class="id" type="var">n</span> + 0.<br/>
+<span class="id" type="tactic">intro</span> <span class="id" type="var">n</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+This one cannot be proven by reflexivity.
+    So we have to use induction. 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" type="tactic">induction</span> <span class="id" type="var">n</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+n = 0 
+    This is easy. 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" type="tactic">simpl</span>.<br/>
+<span class="id" type="tactic">reflexivity</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+We can simplify <span class="inlinecode"><span class="id" type="var">S</span></span> <span class="inlinecode"><span class="id" type="var">n</span></span> <span class="inlinecode">+</span> <span class="inlinecode">0</span> using the definition of <span class="inlinecode">+</span> 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" type="tactic">simpl</span>.<br/>
+<span class="id" type="tactic">rewrite</span>&lt;- <span class="id" type="var">IHn</span>.<br/>
+<span class="id" type="tactic">reflexivity</span>.<br/>
+<span class="id" type="keyword">Qed</span>.<br/>
+
+<br/>
+<span class="id" type="keyword">Lemma</span> <span class="id" type="var">plus_assoc</span> : <span class="id" type="keyword">forall</span> (<span class="id" type="var">l</span> <span class="id" type="var">m</span> <span class="id" type="var">n</span>:<span class="id" type="var">nat</span>),<span class="id" type="var">l</span> + (<span class="id" type="var">m</span> + <span class="id" type="var">n</span>) = (<span class="id" type="var">l</span> + <span class="id" type="var">m</span>) + <span class="id" type="var">n</span>.<br/>
+<span class="id" type="tactic">intros</span> <span class="id" type="var">l</span> <span class="id" type="var">m</span> <span class="id" type="var">n</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+There seems to be quite a choice what to do induction over:
+    <span class="inlinecode"><span class="id" type="var">l</span></span>,<span class="inlinecode"><span class="id" type="var">m</span></span>,<span class="inlinecode"><span class="id" type="var">n</span></span> but only one of them works. Why? 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" type="tactic">induction</span> <span class="id" type="var">l</span>.<br/>
+<span class="id" type="tactic">simpl</span>.<br/>
+<span class="id" type="tactic">reflexivity</span>.<br/>
+<span class="id" type="tactic">simpl</span>.<br/>
+<span class="id" type="tactic">rewrite</span> <span class="id" type="var">IHl</span>.<br/>
+<span class="id" type="tactic">reflexivity</span>.<br/>
+<span class="id" type="keyword">Qed</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+To prove commutativity we first prove a lemma 
+    we know already that <span class="inlinecode">0</span> <span class="inlinecode">+</span> <span class="inlinecode"><span class="id" type="var">m</span></span> <span class="inlinecode">=</span> <span class="inlinecode"><span class="id" type="var">m</span></span> <span class="inlinecode">=</span> <span class="inlinecode"><span class="id" type="var">m</span></span> <span class="inlinecode">+</span> <span class="inlinecode">0</span>
+    but what about <span class="inlinecode"><span class="id" type="var">S</span></span> <span class="inlinecode"><span class="id" type="var">m</span></span> <span class="inlinecode">+</span> <span class="inlinecode"><span class="id" type="var">n</span></span> <span class="inlinecode">=</span> <span class="inlinecode"><span class="id" type="var">S</span></span> <span class="inlinecode">(<span class="id" type="var">m</span></span> <span class="inlinecode">+</span> <span class="inlinecode"><span class="id" type="var">n</span>)</span> <span class="inlinecode">=</span> <span class="inlinecode"><span class="id" type="var">m</span></span> <span class="inlinecode">+</span> <span class="inlinecode"><span class="id" type="var">S</span></span> <span class="inlinecode"><span class="id" type="var">n</span></span> ?
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" type="keyword">Lemma</span> <span class="id" type="var">plus_n_Sm</span> : <span class="id" type="keyword">forall</span> <span class="id" type="var">n</span> <span class="id" type="var">m</span> : <span class="id" type="var">nat</span>, <span class="id" type="var">S</span> (<span class="id" type="var">m</span> + <span class="id" type="var">n</span>) = <span class="id" type="var">m</span> + <span class="id" type="var">S</span> <span class="id" type="var">n</span>.<br/>
+<span class="id" type="tactic">intros</span>.<br/>
+<span class="id" type="tactic">induction</span> <span class="id" type="var">m</span>.<br/>
+<span class="id" type="tactic">simpl</span>.<br/>
+<span class="id" type="tactic">reflexivity</span>.<br/>
+<span class="id" type="tactic">simpl</span>.<br/>
+<span class="id" type="tactic">rewrite</span> <span class="id" type="var">IHm</span>.<br/>
+<span class="id" type="tactic">reflexivity</span>.<br/>
+<span class="id" type="keyword">Qed</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+We are now ready to prove commutativity. 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" type="keyword">Lemma</span> <span class="id" type="var">plus_comm</span> : <span class="id" type="keyword">forall</span> <span class="id" type="var">n</span> <span class="id" type="var">m</span>:<span class="id" type="var">nat</span>, <span class="id" type="var">n</span> + <span class="id" type="var">m</span> = <span class="id" type="var">m</span> + <span class="id" type="var">n</span>.<br/>
+<span class="id" type="tactic">intros</span>.<br/>
+<span class="id" type="tactic">induction</span> <span class="id" type="var">n</span>.<br/>
+<span class="id" type="tactic">simpl</span>.<br/>
+<span class="id" type="tactic">apply</span> <span class="id" type="var">plus_n_0</span>.<br/>
+<span class="id" type="tactic">simpl</span>.<br/>
+<span class="id" type="tactic">rewrite</span> <span class="id" type="var">IHn</span>.<br/>
+<span class="id" type="tactic">apply</span> <span class="id" type="var">plus_n_Sm</span>.<br/>
+<span class="id" type="keyword">Qed</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab35"></a><h1 class="section">Ordering the numbers</h1>
+
+<div class="paragraph"> </div>
+
+ We define the relation <span class="inlinecode">&lt;=</span> on natural numbers by saying 
+    that <span class="inlinecode"><span class="id" type="var">m</span></span> <span class="inlinecode">&lt;=</span> <span class="inlinecode"><span class="id" type="var">n</span></span> holds if there is a number <span class="inlinecode"><span class="id" type="var">k</span></span> such that 
+    <span class="inlinecode"><span class="id" type="var">m</span></span> <span class="inlinecode">=</span> <span class="inlinecode"><span class="id" type="var">k</span></span> <span class="inlinecode">+</span> <span class="inlinecode"><span class="id" type="var">n</span></span>. 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" type="keyword">Definition</span> <span class="id" type="var">leq</span> (<span class="id" type="var">m</span> <span class="id" type="var">n</span> : <span class="id" type="var">nat</span>) : <span class="id" type="keyword">Prop</span> :=<br/>
+&nbsp;&nbsp;<span class="id" type="tactic">exists</span> <span class="id" type="var">k</span> : <span class="id" type="var">nat</span>, <span class="id" type="var">n</span> = <span class="id" type="var">k</span> + <span class="id" type="var">m</span>.<br/>
+
+<br/>
+<span class="id" type="keyword">Notation</span> "m &lt;= n" := (<span class="id" type="var">leq</span> <span class="id" type="var">m</span> <span class="id" type="var">n</span>).<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+We verify some basic properties of <span class="inlinecode">&lt;=</span>:
+
+<div class="paragraph"> </div>
+
+<ul class="doclist">
+<li> <span class="inlinecode">&lt;=</span> is reflexive.
+      <span class="inlinecode"><span class="id" type="keyword">forall</span></span> <span class="inlinecode"><span class="id" type="var">n</span>:<span class="id" type="var">nat</span>,</span> <span class="inlinecode"><span class="id" type="var">n</span></span> <span class="inlinecode">&lt;=</span> <span class="inlinecode"><span class="id" type="var">n</span></span>
+
+</li>
+<li> <span class="inlinecode">&lt;=</span> is transitive.
+      <span class="inlinecode"><span class="id" type="keyword">forall</span></span> <span class="inlinecode"><span class="id" type="var">l</span></span> <span class="inlinecode"><span class="id" type="var">m</span></span> <span class="inlinecode"><span class="id" type="var">n</span>:<span class="id" type="var">nat</span>,</span> <span class="inlinecode"><span class="id" type="var">l</span></span> <span class="inlinecode">&lt;=</span> <span class="inlinecode"><span class="id" type="var">m</span></span> <span class="inlinecode">-&gt;</span> <span class="inlinecode"><span class="id" type="var">m</span></span> <span class="inlinecode">&lt;=</span> <span class="inlinecode"><span class="id" type="var">n</span></span> <span class="inlinecode">-&gt;</span> <span class="inlinecode"><span class="id" type="var">l</span></span> <span class="inlinecode">&lt;=</span> <span class="inlinecode"><span class="id" type="var">n</span></span>
+
+</li>
+<li> <span class="inlinecode">&lt;=</span> is antisymmetric.
+      <span class="inlinecode"><span class="id" type="keyword">forall</span></span> <span class="inlinecode"><span class="id" type="var">l</span></span> <span class="inlinecode"><span class="id" type="var">m</span></span> <span class="inlinecode">:</span> <span class="inlinecode"><span class="id" type="var">nat</span>,</span> <span class="inlinecode"><span class="id" type="var">l</span></span> <span class="inlinecode">&lt;=</span> <span class="inlinecode"><span class="id" type="var">m</span></span> <span class="inlinecode">-&gt;</span> <span class="inlinecode"><span class="id" type="var">m</span></span> <span class="inlinecode">&lt;=</span> <span class="inlinecode"><span class="id" type="var">l</span></span> <span class="inlinecode">-&gt;</span> <span class="inlinecode"><span class="id" type="var">m</span></span> <span class="inlinecode">=</span> <span class="inlinecode"><span class="id" type="var">l</span></span>
+
+</li>
+</ul>
+
+<div class="paragraph"> </div>
+
+  Any relation which is reflexive, transitive and antisymmetric is a <i>partial order</i>.
+  Here the word <i>partial</i> is used to differentiate <span class="inlinecode">&lt;=</span> from a total order like <span class="inlinecode">&lt;</span>.
+  We verify the first two properties in Coq, but leave antisymmetry as an exercise.
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" type="keyword">Lemma</span> <span class="id" type="var">le_refl</span>: <span class="id" type="keyword">forall</span> <span class="id" type="var">n</span>:<span class="id" type="var">nat</span>,<span class="id" type="var">n</span> &lt;= <span class="id" type="var">n</span>.<br/>
+<span class="id" type="tactic">intro</span> <span class="id" type="var">n</span>.<br/>
+<span class="id" type="tactic">exists</span> 0.<br/>
+<span class="id" type="tactic">reflexivity</span>.<br/>
+<span class="id" type="keyword">Qed</span>.<br/>
+
+<br/>
+<span class="id" type="keyword">Lemma</span> <span class="id" type="var">le_trans</span> : <span class="id" type="keyword">forall</span> (<span class="id" type="var">l</span> <span class="id" type="var">m</span> <span class="id" type="var">n</span> : <span class="id" type="var">nat</span>), <span class="id" type="var">l</span> &lt;= <span class="id" type="var">m</span> -&gt; <span class="id" type="var">m</span> &lt;= <span class="id" type="var">n</span> -&gt; <span class="id" type="var">l</span> &lt;= <span class="id" type="var">n</span>.<br/>
+<span class="id" type="tactic">intros</span> <span class="id" type="var">l</span> <span class="id" type="var">m</span> <span class="id" type="var">n</span> <span class="id" type="var">lm</span> <span class="id" type="var">mn</span>.<br/>
+<span class="id" type="tactic">destruct</span> <span class="id" type="var">lm</span> <span class="id" type="keyword">as</span> [<span class="id" type="var">k</span> <span class="id" type="var">klm</span>].<br/>
+<span class="id" type="tactic">destruct</span> <span class="id" type="var">mn</span> <span class="id" type="keyword">as</span> [<span class="id" type="var">j</span> <span class="id" type="var">jmn</span>].<br/>
+<span class="id" type="tactic">exists</span> (<span class="id" type="var">j</span>+<span class="id" type="var">k</span>).<br/>
+<span class="id" type="tactic">rewrite</span>&lt;- <span class="id" type="var">plus_assoc</span>.<br/>
+<span class="id" type="tactic">rewrite</span>&lt;- <span class="id" type="var">klm</span>.<br/>
+<span class="id" type="tactic">rewrite</span>&lt;- <span class="id" type="var">jmn</span>.<br/>
+<span class="id" type="tactic">reflexivity</span>.<br/>
+<span class="id" type="keyword">Qed</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab36"></a><h1 class="section">Decidable properties</h1>
+
+<div class="paragraph"> </div>
+
+ We say a predicate <span class="inlinecode"><span class="id" type="var">P</span></span> <span class="inlinecode">:</span> <span class="inlinecode"><span class="id" type="var">A</span></span> <span class="inlinecode">-&gt;</span> <span class="inlinecode"><span class="id" type="keyword">Prop</span></span> is <i>decidable</i> if we can define
+    a boolean function <span class="inlinecode"><span class="id" type="var">decP</span></span> <span class="inlinecode">:</span> <span class="inlinecode"><span class="id" type="var">A</span></span> <span class="inlinecode">-&gt;</span> <span class="inlinecode"><span class="id" type="var">bool</span></span> which agrees with the predicate,
+    i.e. <span class="inlinecode"><span class="id" type="keyword">forall</span></span> <span class="inlinecode"><span class="id" type="var">a</span>:<span class="id" type="var">A</span>,</span> <span class="inlinecode"><span class="id" type="var">P</span></span> <span class="inlinecode"><span class="id" type="var">a</span></span> <span class="inlinecode">&lt;-&gt;</span> <span class="inlinecode"><span class="id" type="var">decP</span></span> <span class="inlinecode"><span class="id" type="var">a</span></span> <span class="inlinecode">=</span> <span class="inlinecode"><span class="id" type="var">true</span></span>. This also extends to relations
+    in the obvious way.
+
+<div class="paragraph"> </div>
+
+    We show below that equality on natural numbers is decidable. 
+    Do you know any undecidable predicates? 
+    Is equality always decidable?
+
+<div class="paragraph"> </div>
+
+ First we define the <i>decision procedure</i>. In the case of equality this is quite obvious:
+   we inspect both parameters, if they start with different constructors (i.e. 0 vs S) they are certainly 
+   not equal. If they are both <span class="inlinecode">0</span> they are equal, and if they both start with <span class="inlinecode"><span class="id" type="var">S</span></span> then we recursively 
+   compare the arguments. 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" type="keyword">Fixpoint</span> <span class="id" type="var">eqnat</span> (<span class="id" type="var">m</span> <span class="id" type="var">n</span> : <span class="id" type="var">nat</span>) {<span class="id" type="keyword">struct</span> <span class="id" type="var">m</span>} : <span class="id" type="var">bool</span> :=<br/>
+&nbsp;&nbsp;<span class="id" type="keyword">match</span> <span class="id" type="var">m</span> <span class="id" type="keyword">with</span> <br/>
+&nbsp;&nbsp;| 0 =&gt; <span class="id" type="keyword">match</span> <span class="id" type="var">n</span> <span class="id" type="keyword">with</span> <br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| 0 =&gt; <span class="id" type="var">true</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| <span class="id" type="var">S</span> <span class="id" type="var">n'</span> =&gt; <span class="id" type="var">false</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" type="keyword">end</span><br/>
+&nbsp;&nbsp;| <span class="id" type="var">S</span> <span class="id" type="var">m'</span> =&gt; <span class="id" type="keyword">match</span> <span class="id" type="var">n</span> <span class="id" type="keyword">with</span> <br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| 0 =&gt; <span class="id" type="var">false</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| <span class="id" type="var">S</span> <span class="id" type="var">n'</span> =&gt; <span class="id" type="var">eqnat</span> <span class="id" type="var">m'</span> <span class="id" type="var">n'</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" type="keyword">end</span><br/>
+&nbsp;&nbsp;<span class="id" type="keyword">end</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Now we show both direction seperately. The <span class="inlinecode">-&gt;</span> direction just boils down
+   to showing that <span class="inlinecode"><span class="id" type="var">eqnat</span></span> is reflexive. Why? 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" type="keyword">Lemma</span> <span class="id" type="var">eqnat_refl</span> : <span class="id" type="keyword">forall</span> <span class="id" type="var">m</span> : <span class="id" type="var">nat</span>,  <span class="id" type="var">eqnat</span> <span class="id" type="var">m</span> <span class="id" type="var">m</span> = <span class="id" type="var">true</span>.<br/>
+<span class="id" type="tactic">intro</span> <span class="id" type="var">m</span>.<br/>
+<span class="id" type="tactic">induction</span> <span class="id" type="var">m</span>.<br/>
+<span class="id" type="tactic">reflexivity</span>.<br/>
+<span class="id" type="tactic">simpl</span>.<br/>
+<span class="id" type="tactic">exact</span> <span class="id" type="var">IHm</span>.<br/>
+<span class="id" type="keyword">Qed</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+The other direction is more interesting and requires a <i>double induction</i>
+   over <span class="inlinecode"><span class="id" type="var">m</span></span> and <span class="inlinecode"><span class="id" type="var">n</span></span>. 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" type="keyword">Lemma</span> <span class="id" type="var">eqnat_compl</span> : <span class="id" type="keyword">forall</span> <span class="id" type="var">m</span> <span class="id" type="var">n</span> : <span class="id" type="var">nat</span>, <span class="id" type="var">eqnat</span> <span class="id" type="var">m</span> <span class="id" type="var">n</span> = <span class="id" type="var">true</span> -&gt; <span class="id" type="var">m</span> = <span class="id" type="var">n</span>.<br/>
+<span class="id" type="tactic">intro</span> <span class="id" type="var">m</span>.<br/>
+</div>
+
+<div class="doc">
+Here it would have been a mistake to do <span class="inlinecode"><span class="id" type="tactic">intros</span></span> <span class="inlinecode"><span class="id" type="var">m</span></span> <span class="inlinecode"><span class="id" type="var">n</span></span>. Why?  m = 0 
+</div>
+<div class="code">
+<span class="id" type="tactic">induction</span> <span class="id" type="var">m</span>.<br/>
+<span class="id" type="tactic">intro</span> <span class="id" type="var">n</span>.<br/>
+<span class="id" type="tactic">induction</span> <span class="id" type="var">n</span>.<br/>
+</div>
+
+<div class="doc">
+n = 0 
+</div>
+<div class="code">
+<span class="id" type="tactic">intro</span> <span class="id" type="var">h</span>.<br/>
+<span class="id" type="tactic">reflexivity</span>.<br/>
+</div>
+
+<div class="doc">
+n = S n' 
+</div>
+<div class="code">
+<span class="id" type="tactic">intro</span> <span class="id" type="var">h</span>.<br/>
+<span class="id" type="tactic">simpl</span> <span class="id" type="keyword">in</span> <span class="id" type="var">h</span>.<br/>
+<span class="id" type="tactic">discriminate</span> <span class="id" type="var">h</span>.<br/>
+</div>
+
+<div class="doc">
+m = S m' 
+</div>
+<div class="code">
+<span class="id" type="tactic">intro</span> <span class="id" type="var">n</span>.<br/>
+<span class="id" type="tactic">induction</span> <span class="id" type="var">n</span>.<br/>
+</div>
+
+<div class="doc">
+n = 0 
+</div>
+<div class="code">
+<span class="id" type="tactic">intro</span> <span class="id" type="var">h</span>.<br/>
+<span class="id" type="tactic">discriminate</span> <span class="id" type="var">h</span>.<br/>
+</div>
+
+<div class="doc">
+n = S n' 
+</div>
+<div class="code">
+<span class="id" type="tactic">intro</span> <span class="id" type="var">h</span>.<br/>
+<span class="id" type="tactic">assert</span> (<span class="id" type="var">h'</span> : <span class="id" type="var">m</span> = <span class="id" type="var">n</span>).<br/>
+<span class="id" type="tactic">apply</span> <span class="id" type="var">IHm</span>.<br/>
+<span class="id" type="tactic">exact</span> <span class="id" type="var">h</span>.<br/>
+<span class="id" type="tactic">rewrite</span> <span class="id" type="var">h'</span>.<br/>
+<span class="id" type="tactic">reflexivity</span>.<br/>
+<span class="id" type="keyword">Qed</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Finally, we can prove the theorem that equality for natural numbers is decidable. 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" type="keyword">Theorem</span> <span class="id" type="var">eqnat_dec</span> : <span class="id" type="keyword">forall</span> <span class="id" type="var">m</span> <span class="id" type="var">n</span> : <span class="id" type="var">nat</span>, <span class="id" type="var">m</span> = <span class="id" type="var">n</span> &lt;-&gt; <span class="id" type="var">eqnat</span> <span class="id" type="var">m</span> <span class="id" type="var">n</span> = <span class="id" type="var">true</span>.<br/>
+<span class="id" type="tactic">intros</span> <span class="id" type="var">m</span> <span class="id" type="var">n</span>.<br/>
+<span class="id" type="tactic">split</span>.<br/>
+<span class="id" type="tactic">intro</span> <span class="id" type="var">h</span>.<br/>
+<span class="id" type="tactic">rewrite</span> <span class="id" type="var">h</span>.<br/>
+<span class="id" type="tactic">apply</span> <span class="id" type="var">eqnat_refl</span>.<br/>
+<span class="id" type="tactic">apply</span> <span class="id" type="var">eqnat_compl</span>.<br/>
+<span class="id" type="keyword">Qed</span>.<br/>
+
+<br/>
+<span class="id" type="keyword">End</span> <span class="id" type="var">Arith</span>.<br/>
+</div>
+</div>
+
+<div id="footer">
+<hr/><a href="index.html">Index</a><hr/>This page has been generated by <a href="http://coq.inria.fr/">coqdoc</a>
+</div>
+
+</div>
+
+</body>
+</html>
